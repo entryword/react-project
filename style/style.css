@@ -1,0 +1,167 @@
+.page-title{
+    text-align: center;
+    margin-left: auto;
+    margin-right:auto;
+}
+.top-nav{
+    background: #fff;
+    margin-right: 0;
+        padding-right:0;
+        padding-top: 0;
+        padding-bottom: 0;
+}
+.top-nav .navbar-brand{
+    width: 200px;
+    height: 200px;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-right: 0;
+    text-align: center;
+    color: #F95F62;
+    background: url(../images/logos/pyladies-text.png) center center no-repeat;
+    background-size:90%;
+}
+.side-bar{
+    width: 200px;
+    height: 100vh;
+    position: fixed;
+    right: 0;
+    background-color: #F95F62;
+}
+.menu{
+    color: #fff;
+    font-size: 2.5em;
+    text-align: center;
+    margin-top: 15vh;
+    position:relative;
+}
+.menu:before, .menu:after{
+    content: "";
+    position:absolute;
+    top: -20px;
+    left: 50%;
+    right: 0;
+    width: 50px;
+    height: 10px;
+    margin-left: -25px;
+    background-color: #fff;
+}
+.menu:after{
+    top: -45px;
+}
+.bulletin li{
+    margin-bottom: 1rem;
+    line-height: 2rem;
+}
+.footer{
+    background-color: #47525E;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    position: relative;
+}
+.footer .container{
+    display: flex;
+    justify-content: space-between;
+}
+.footer-logo{
+    width: 250px;
+}
+.footer-session{
+    color: #F7F7F7;
+}
+.footer-session a{
+    display: block;
+    margin: 10px 0;
+    color: #F7F7F7;
+}
+.footer-session a:hover{
+    color: #F7F7F7;
+}
+.footer-session .social a{
+    display: inline-block;
+    font-size: 28px;
+}
+.footer-session .social a{
+    width: 25px;
+    height: auto;
+    margin: 0 5px;
+}
+/* 小螢幕 */
+@media only screen and (max-width: 540px) {
+    .side-bar{
+        display: none;
+    }
+    .top-nav{
+        display: flex;
+        margin-bottom: 20px;
+    }
+    .top-nav h1{
+        font-size: 1.5rem;
+        order:2;
+    }
+    .top-nav .navbar-brand{
+        width: 50px;
+        height: 50px;
+        margin-left: 0;
+        order:1;
+        font-size: .5rem; 
+    }
+    .top-nav .menu{
+        order:3;
+        /* color: #000; */
+        background-color: #F95F62;
+        font-size: 1rem;
+        text-align: center;
+        margin-top: 0;
+        width: 50px;
+        height: 50px;
+        padding-top: 5px;
+        position: relative;
+    }
+    .menu:before, .menu:after{
+        content: "";
+        position:absolute;
+        top: 32px;
+        left: 50%;
+        right: 0;
+        width: 30px;
+        height: 3px;
+        margin-left: -15px;
+        background-color: #fff;
+    }
+    .menu:after{
+        top:40px;
+    }
+    .bulletin li{
+        margin-bottom: 1rem;
+        line-height: 2rem;
+    }
+    .footer{
+        padding: 10px 0;
+    }
+    .footer .container{
+        flex-direction: column;
+    }
+    .footer-logo{
+        margin: 0 auto; 
+        text-align: center;
+    }
+    .footer-session{
+        text-align: center;
+        margin-bottom: 10px;
+    }
+}
+/* 大螢幕 */
+@media only screen and (min-width: 541px) {
+    .container-with-menu{
+        padding-right: 200px;
+        min-height: calc(100vh - 500px);
+    }
+    .top-nav{
+        background: #fff;
+    }
+    .top-nav .menu{
+        display: none;
+    }
+}
