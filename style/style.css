@@ -1,7 +1,19 @@
+html, body{
+    font-size: 21px;
+    line-height: 1.6rem;
+}
 .page-title{
     text-align: center;
     margin-left: auto;
     margin-right:auto;
+    font-size: 2em;
+}
+.top-header{
+    font-size: 1.6rem;
+}
+.second-header{
+    font-size: 1.2rem;
+
 }
 .top-nav{
     background: #fff;
@@ -11,19 +23,22 @@
         padding-bottom: 0;
 }
 .top-nav .navbar-brand{
-    width: 200px;
-    height: 200px;
+    width: 100px;
+    height: 100px;
     padding-right: 0;
     padding-top: 0;
     padding-bottom: 0;
     margin-right: 0;
     text-align: center;
     color: #F95F62;
-    background: url(../images/logos/pyladies-text.png) center center no-repeat;
+    background: url(../images/logos/pyladiestw-text-2line.svg) center center no-repeat;
     background-size:90%;
 }
+.mobile-title{
+    display: none;
+}
 .side-bar{
-    width: 200px;
+    width: 100px;
     height: 100vh;
     position: fixed;
     right: 0;
@@ -31,7 +46,7 @@
 }
 .menu{
     color: #fff;
-    font-size: 2.5em;
+    font-size: 1.5em;
     text-align: center;
     margin-top: 15vh;
     position:relative;
@@ -39,37 +54,49 @@
 .menu:before, .menu:after{
     content: "";
     position:absolute;
-    top: -20px;
+    top: -10px;
     left: 50%;
     right: 0;
     width: 50px;
-    height: 10px;
+    height: 5px;
     margin-left: -25px;
     background-color: #fff;
 }
 .menu:after{
-    top: -45px;
-}
-.bulletin li{
-    margin-bottom: 1rem;
-    line-height: 2rem;
+    top: -30px;
 }
 .footer{
     background-color: #47525E;
     padding-top: 50px;
     padding-bottom: 50px;
     position: relative;
+    font-size: .8rem;
+}
+.footer h5{
+    font-size: 1rem;
 }
 .footer .container{
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
 }
 .footer-logo{
-    width: 250px;
+    width: 200px;
+    text-align: center;
+}
+.footer-logo-image{
+    width: 150px;
+    height: auto;
+}
+.footer-logo-tagline{
+    width: 120px;
+    height: auto;
 }
 .footer-session{
     color: #F7F7F7;
+    min-width: 150px;
 }
+
 .footer-session a{
     display: block;
     margin: 10px 0;
@@ -87,31 +114,54 @@
     height: auto;
     margin: 0 5px;
 }
+hr{
+    margin: 2rem 0;
+}
+blockquote{
+    border-left: 3px solid rgba(0,0,0,.84);
+    padding-left: 20px;
+    margin-left: -23px;
+    padding-bottom: 2px
+}
+/* list ol */
+.bulletin li{
+    line-height: 2rem;
+}
+/* faq dl */
+.question-title{
+    font-size: 1.5rem;
+}
+.question-answer{
+    margin-bottom: 1.5rem;
+    line-height: 2rem;
+}
 /* 小螢幕 */
-@media only screen and (max-width: 540px) {
+@media only screen and (max-width: 720px) {
     .side-bar{
         display: none;
     }
     .top-nav{
         display: flex;
         margin-bottom: 20px;
+        padding-left: 0;
     }
-    .top-nav h1{
-        font-size: 1.5rem;
-        order:2;
+    .top-nav .page-title{
+        display: none;
     }
     .top-nav .navbar-brand{
-        width: 50px;
+        width: calc(100vw - 70px);
         height: 50px;
         margin-left: 0;
         order:1;
         font-size: .5rem; 
+        background: url(../images/logos/pyladiestw-text-1line.svg) center center no-repeat;
+        background-size: auto 40px;
     }
     .top-nav .menu{
         order:3;
         /* color: #000; */
         background-color: #F95F62;
-        font-size: 1rem;
+        font-size: .8rem;
         text-align: center;
         margin-top: 0;
         width: 50px;
@@ -122,16 +172,20 @@
     .menu:before, .menu:after{
         content: "";
         position:absolute;
-        top: 32px;
+        top: 34px;
         left: 50%;
         right: 0;
         width: 30px;
-        height: 3px;
+        height: 2px;
         margin-left: -15px;
         background-color: #fff;
     }
     .menu:after{
         top:40px;
+    }
+    .mobile-title{
+        display: block;
+        font-size: 1.5rem;
     }
     .bulletin li{
         margin-bottom: 1rem;
@@ -153,9 +207,9 @@
     }
 }
 /* 大螢幕 */
-@media only screen and (min-width: 541px) {
+@media only screen and (min-width: 721px) {
     .container-with-menu{
-        padding-right: 200px;
+        padding-right: 100px;
         min-height: calc(100vh - 500px);
     }
     .top-nav{
