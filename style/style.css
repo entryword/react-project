@@ -1,3 +1,6 @@
+:root{
+    --footer-text-color: #F7F7F7;
+}
 html, body{
     font-size: 21px;
     line-height: 1.6rem;
@@ -67,21 +70,13 @@ html, body{
 }
 .footer{
     background-color: #47525E;
-    padding-top: 50px;
-    padding-bottom: 50px;
+    padding: 50px 20px;
     position: relative;
     font-size: .8rem;
-}
-.footer h5{
-    font-size: 1rem;
-}
-.footer .container{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 200px 1fr;
 }
 .footer-logo{
-    width: 200px;
     text-align: center;
 }
 .footer-logo-image{
@@ -92,24 +87,32 @@ html, body{
     width: 120px;
     height: auto;
 }
+.footer h5{
+    font-size: 1rem;
+}
+.footer .container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
 .footer-session{
-    color: #F7F7F7;
-    min-width: 150px;
+    color: var(--footer-text-color);
+    flex: 1 0 120px;
+    margin-bottom: 20px;
 }
 
 .footer-session a{
     display: block;
     margin: 10px 0;
-    color: #F7F7F7;
+    color: var(--footer-text-color);
 }
 .footer-session a:hover{
-    color: #F7F7F7;
+    color: var(--footer-text-color);
 }
 .footer-session .social a{
     display: inline-block;
     font-size: 28px;
-}
-.footer-session .social a{
     width: 25px;
     height: auto;
     margin: 0 5px;
@@ -192,18 +195,8 @@ blockquote{
         line-height: 2rem;
     }
     .footer{
-        padding: 10px 0;
-    }
-    .footer .container{
-        flex-direction: column;
-    }
-    .footer-logo{
-        margin: 0 auto; 
-        text-align: center;
-    }
-    .footer-session{
-        text-align: center;
-        margin-bottom: 10px;
+        grid-template-columns: 1fr;
+        grid-row-gap: 20px;
     }
 }
 /* 大螢幕 */
