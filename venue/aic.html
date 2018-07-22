@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>美國創新中心 AIC</title>
+    <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB"
         crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp"
@@ -14,14 +15,14 @@
     <nav class="navbar navbar-light top-nav sticky-top">
         <h1 class="page-title">美國創新中心 AIC</h1>
         <a href="http://tw.pyladies.com/" class="navbar-brand"></a>
-        <input type="checkbox" class="menu-control" id="menu-control-top">
-        <label class="menu" for="menu-control-top">
+        <h1 class="mobile-page-title">美國創新中心 AIC</h1>
+        <!-- <input type="checkbox" class="menu-control" id="menu-control-top"> -->
+        <div class="menu" for="menu-control-top">
             <span class="menu-line"></span>
             <span class="menu-line"></span>
-            <span class="menu-wording menu-wording-close">Menu</span>
-            <span class="menu-wording menu-wording-open">Close</span>
-        </label>
-        <div class="menu-content menu-content-top-nav"></div>
+            <a class="menu-wording menu-wording-close" href="#footer">Menu</a>
+        </div>
+        <!-- <div class="menu-content menu-content-top-nav"></div> -->
     </nav>
     <div class="side-bar">
         <input type="checkbox" class="menu-control" id="menu-control">
@@ -36,11 +37,12 @@
     <div class="container container-with-menu">
         <div class="row">
             <div class="col-md-12">
-                <h1 class="page-title mobile-title">美國創新中心 AIC</h1>
+                <!-- <h1 class="page-title mobile-title">美國創新中心 AIC</h1> -->
                 <p>粉絲頁：
                     <a href="https://www.facebook.com/twaic/" target="_blank">https://www.facebook.com/twaic/</a>
                 </p>
-                <p>地址：台北市信義區光復南路133號1樓 (在松菸文創園區內)</p>
+                <p>地址：台北市信義區光復南路133號1樓 (<a href="http://maps.apple.com/?q=25.043494,121.559860">地圖</a>)<br>
+                    (在松菸文創園區內)</p>
                 <h4 class="second-header">大眾運輸工具：</h4>
                 <ul>
                     <li>不管哪一種都要走很遠</li>
@@ -82,7 +84,7 @@
             </div>
         </div>
     </div>
-    <footer class="footer"></footer>
+    <footer class="footer" id="footer"></footer>
     <script src="../scripts/import.js"></script>
     <script src="../scripts/template.js"></script>
 </body>

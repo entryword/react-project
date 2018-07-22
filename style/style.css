@@ -7,11 +7,18 @@ html, body{
     font-size: 21px;
     line-height: 1.6rem;
 }
+html {
+    scroll-behavior: smooth;
+}
 .page-title{
     text-align: center;
     margin-left: auto;
     margin-right:auto;
     font-size: 2em;
+}
+/* 最上方title */
+.top-nav .mobile-page-title{
+    display: none;
 }
 .top-header{
     font-size: 1.6rem;
@@ -39,16 +46,6 @@ html, body{
     color: var(--pyladies-pink);
     background: url(../images/logos/pyladiestw-text-2line.svg) center center no-repeat;
     background-size:90%;
-}
-.mobile-title{
-    display: none;
-}
-.side-bar{
-    width: 100px;
-    height: 100vh;
-    position: fixed;
-    right: 0;
-    background-color: var(--pyladies-pink);
 }
 /* menu */
 .menu{
@@ -79,18 +76,18 @@ html, body{
     left: 5rem;
     opacity: 0;
 }
- .menu-wording-close{
-        display: block;
-    }
+.menu-wording-close{
+    display: block;
+}
     .menu-wording-open{
         display: none;
     }
-    .menu-control:checked~.menu .menu-wording-close{
+     .menu-control:checked~.menu .menu-wording-close{
         display: none;
-    }
-    .menu-control:checked~.menu .menu-wording-open{
-        display: block;
-    }
+     }
+     .menu-control:checked~.menu .menu-wording-open{
+         display: block;
+     }
 .menu-control:checked~.menu .menu-line{
     transition: all 0.2s ease-in-out;
     transform-origin: center;
@@ -166,6 +163,17 @@ html, body{
     color: var(--footer-text-color);
     margin-bottom: 10px;
     text-align: center;
+}
+/* header 下方 title */
+.mobile-title{
+    display: none;
+}
+.side-bar{
+    width: 100px;
+    height: 100vh;
+    position: fixed;
+    right: 0;
+    background-color: var(--pyladies-pink);
 }
 .col-md-4, .col-md-8,.col-md-12{
     position: static;
@@ -259,14 +267,14 @@ a{
     .top-nav .page-title{
         display: none;
     }
+    .top-nav .mobile-page-title{
+        display: block;
+        text-align: center;
+        font-size: 1.5em;
+        margin: 0 auto;
+    }
     .top-nav .navbar-brand{
-        width: calc(100vw - 70px);
-        height: 50px;
-        margin-left: 0;
-        order:1;
-        font-size: .5rem; 
-        background: url(../images/logos/pyladiestw-text-1line.svg) center center no-repeat;
-        background-size: auto 40px;
+        display: none;
     }
     .top-nav .menu{
         order:3;
@@ -278,20 +286,12 @@ a{
         padding-top: 5px;
         position: relative;
     }
-    .menu-control:checked~.menu .menu-line{
-        transition: all 0.2s ease-in-out;
-        transform-origin: center;
-        transform: translateY(4px) rotate(45deg);
-    }
-    .menu-control:checked~.menu .menu-line:nth-child(2){
-        transform: translateY(-4px) rotate(-45deg);
-    }
-    .menu-control~.menu-content{
-        transition: all 0.2s ease-in-out;
-        transform: translate(0, -100vh);
-    }
-    .menu-control:checked~.menu-content{
-        transform: translate(0, 0);
+    .top-nav .menu-wording:hover, 
+    .top-nav .menu-wording:focus, 
+    .top-nav .menu-wording:active, 
+    .top-nav .menu-wording:visited{
+        text-decoration: none;
+        color: #fff;
     }
     .menu-content{
         flex-direction: column;
@@ -348,6 +348,13 @@ a{
     .footer{
         grid-template-columns: 1fr;
         grid-row-gap: 20px;
+    }
+    /*faq*/
+    .question-title{
+        font-size: 1.2rem;
+    }
+    .top-header{
+        font-size: 1.2rem;
     }
 }
 /* 大螢幕 */
