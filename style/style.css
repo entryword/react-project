@@ -2,6 +2,7 @@
     --footer-text-color: #F7F7F7;
     --pyladies-pink: #F95F62;
     --dark-gray-background: #47525E;
+    --text-gray-color: #868686;
 }
 html, body{
     font-size: 21px;
@@ -10,13 +11,43 @@ html, body{
 html {
     scroll-behavior: smooth;
 }
+/* utility */
+.color-pink{
+    color: var(--pyladies-pink);
+}
+.color-gray{
+    color: var(--text-gray-color);
+}
+.pink-link,
+.pink-link:hover,
+.pink-link:focus,
+.pink-link:active,
+.pink-link:visited{
+    color: var(--pyladies-pink);
+}
+/*覆寫 bootstrap*/
+hr{
+    margin: 2rem 0;
+}
+blockquote{
+    border-left: 3px solid rgba(0,0,0,.84);
+    padding-left: 20px;
+    margin-left: -23px;
+    padding-bottom: 2px
+}
+/*避免網址文字過長 導致破版*/
+a,p{
+    word-wrap: break-word;
+}
+/* -------- */
+/* 最上方title */
 .page-title{
     text-align: center;
     margin-left: auto;
     margin-right:auto;
     font-size: 2em;
 }
-/* 最上方title */
+
 .top-nav .mobile-page-title{
     display: none;
 }
@@ -28,12 +59,12 @@ html {
 
 }
 .top-nav{
-    z-index: inherit;
+    z-index: 2;
     background: #fff;
     margin-right: 0;
-        padding-right:0;
-        padding-top: 0;
-        padding-bottom: 0;
+    padding-right:0;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 .top-nav .navbar-brand{
     width: 100px;
@@ -174,6 +205,7 @@ html {
     position: fixed;
     right: 0;
     background-color: var(--pyladies-pink);
+    z-index: 2;
 }
 .col-md-4, .col-md-8,.col-md-12{
     position: static;
@@ -228,20 +260,7 @@ html {
     height: auto;
     margin: 0 5px;
 }
-/*覆寫 bootstrap*/
-hr{
-    margin: 2rem 0;
-}
-blockquote{
-    border-left: 3px solid rgba(0,0,0,.84);
-    padding-left: 20px;
-    margin-left: -23px;
-    padding-bottom: 2px
-}
-/*避免網址文字過長 導致破版*/
-a{
-    word-wrap: break-word;
-}
+
 /* list ol */
 .bulletin li{
     line-height: 2rem;
@@ -254,6 +273,7 @@ a{
     margin-bottom: 1.5rem;
     line-height: 2rem;
 }
+
 /* 小螢幕 */
 @media only screen and (max-width: 720px) {
     .side-bar{
@@ -361,7 +381,7 @@ a{
 @media only screen and (min-width: 721px) {
     .container-with-menu{
         padding-right: 100px;
-        min-height: calc(100vh - 500px);
+        min-height: calc(100vh - 465px);
     }
     .top-nav{
         background: #fff;

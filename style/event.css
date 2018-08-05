@@ -1,0 +1,211 @@
+/* event */
+.event-menu{
+    text-align: center;
+    font-size: 1.2rem;
+}
+.event-menu h1{
+    font-size: 1.5rem;
+    padding-bottom: 30px;
+}
+
+.event-menu-list{
+    list-style: none;
+    text-align: center;
+    background-color: #fff;
+    padding: 1.4rem 0 1rem;
+    z-index: 2;
+}
+.event-menu-list.fixed{
+    position: fixed;
+    top: 100px;
+    width: 100%;
+}
+.event-menu-list li{
+    text-align: center;
+    line-height: 1.4rem;
+    font-size: 1rem;
+    padding: 0 .2rem;
+    margin: 0 1.3rem;
+    border-bottom: 4px solid transparent;
+    display: inline-block;
+}
+
+.event-menu-list a,
+.event-menu-list a:hover,
+.event-menu-list a:focus,
+.event-menu-list a:active,
+.event-menu-list a:visited{
+    color: var(--text-gray-color);
+    text-decoration: none;
+}
+.event-menu-list li:hover{
+    color: var(--pyladies-pink);
+    border-bottom: 4px solid var(--pyladies-pink);
+}
+.event-menu-list li.active{
+    color: var(--pyladies-pink);
+    border-bottom: 4px solid var(--pyladies-pink);
+}
+.event-menu-list li.active, .event-menu-list li.active a{
+    color: var(--pyladies-pink);
+}
+/* 報明按鈕 */
+.event-menu-list li.attend-btn:hover{
+    color: #fff;
+    border-bottom: none;
+}
+.event-menu-list a.sign-up-btn,
+.event-menu-list a.sign-up-btn,
+.event-menu-list a.sign-up-btn:hover,
+.event-menu-list a.sign-up-btn:focus,
+.event-menu-list a.sign-up-btn:active,
+.event-menu-list a.sign-up-btn:visited{
+    color: #fff;
+    text-decoration: none;
+    background-color: var(--pyladies-pink);
+    line-height: 1.4rem;
+    padding: 0.5rem;
+}
+
+.event-body{
+    padding: 0 50px;
+}
+.event-session{
+    margin-bottom: 30px;
+}
+.event-session h3{
+    padding-top: 20px;
+    font-size: 1.2rem;
+}
+.event-menu-header{
+    /*height: 40vh;*/
+    height: 400px;
+    background-image: url(../events/images/header.jpg);
+    background-position: top right;
+    background-size: cover;
+    background-repeat: no-repeat;
+    padding: 100px 0 0 2rem;
+}
+.event-menu-header .header-content{
+    text-align: left;
+}
+.event-menu-header h1{
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+}
+.event-menu-header h2{
+    font-size: 1.2rem;
+    color: var(--pyladies-pink);
+}
+.event-menu-header h3{
+    font-size: 1.6rem;
+}
+
+.tag{
+    color: var(--pyladies-pink);
+    word-break: keep-all;
+    white-space: nowrap;
+}
+.event-tutor-region{
+    display: flex;
+    justify-content: space-evenly;
+    align-content: flex-start;
+    flex-wrap: wrap;
+}
+.tutor-area{
+    flex-basis: 240px;
+    text-align: center;
+    flex-direction: row;
+    justify-content: center;
+    margin: 20px 0;
+}
+.tutor-image{
+    width: 200px;
+    height: 200px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin: 10px auto;
+}
+.tutor-name{
+    color: var(--text-gray-color);
+}
+
+.event-pictures{
+    margin-top: 10px;
+    width: 60vh;
+    height: 400px;
+    line-height: 400px;
+    font-size: 4rem;
+    text-align: center;
+    color: #fff;
+    background-color: var(--text-gray-color);
+}
+.event-topic-list{
+    list-style: none;
+}
+.event-topic-list li{
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    position: relative;
+}
+.event-topic-list li:before{
+    content: "";
+    width: 16px;
+    height: 16px;
+    border-radius: 59%;
+    background-color: var(--text-gray-color);
+    position: absolute;
+    top: 10px;
+    left: -26px;
+}
+.event-topic-list li:after{
+    content: "";
+    width: 2px;
+    height: 5rem;
+    background-color: var(--text-gray-color);
+    position: absolute;
+    top: 26px;
+    left: -19px;
+}
+.topic-title{
+    color: var(--pyladies-pink);
+}
+/* 小螢幕 */
+@media only screen and (max-width: 720px) {
+    .top-nav{
+        margin-bottom: 0;
+    }
+    /* events */
+    .event-menu-header{
+        height: auto;
+        padding: 10px;
+    }
+    .event-menu-header .header-content{
+        margin: 0 10px;
+    }
+    .event-menu-header h1{
+        font-size: 1rem;
+        padding-bottom: 0;
+        margin-bottom: 10px;
+    }
+    .event-menu-header h2{
+        font-size: 1rem;
+        color: var(--pyladies-pink);
+    }
+    .event-menu-header h3{
+        font-size: 1.4rem;
+    }
+    .event-menu-list{
+        padding-top: 0;
+    }
+    .event-menu-list li{
+        margin: 0 0 .5rem;
+    }
+    .attend-btn{
+        margin: 30px auto;
+        text-align: center;
+    }
+    .event-pictures{
+        width: 100%;
+    }
+}
