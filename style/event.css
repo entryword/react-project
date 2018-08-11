@@ -77,7 +77,7 @@
     padding-top: 20px;
     font-size: 1.2rem;
 }
-.event-menu-header{
+.event-menu-header, .topic-menu-header{
     /*height: 40vh;*/
     height: 400px;
     background-image: url(../events/images/header.jpg);
@@ -86,7 +86,7 @@
     background-repeat: no-repeat;
     padding: 100px 0 0 2rem;
 }
-.event-menu-header .header-content{
+.header-content{
     text-align: left;
 }
 .event-menu-header h1{
@@ -99,6 +99,15 @@
 }
 .event-menu-header h3{
     font-size: 1.6rem;
+}
+.topic-menu-header h1{
+    font-size: 1.2rem;
+    padding-bottom: 0;
+    margin-bottom: 10px;
+}
+.topic-menu-header h2{
+    font-size: 1.4rem;
+    color :#000;
 }
 
 .tag{
@@ -195,8 +204,20 @@
     .event-menu-header h3{
         font-size: 1.4rem;
     }
+    .topic-menu-header h1{
+        font-size: 1rem;
+        padding-bottom: 0;
+        margin-bottom: 10px;
+    }
+    .topic-menu-header h2{
+        font-size: 1rem;
+        color: #000;
+
+    }
     .event-menu-list{
         padding-top: 0;
+        text-align: left;
+        padding-left: 20px;
     }
     .event-menu-list li{
         margin: 0 0 .5rem;

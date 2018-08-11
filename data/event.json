@@ -1,0 +1,33 @@
+{
+  "topic_info": {
+    "name": "Flask Web Development",
+    "id": 1
+  },
+  "title": "Basic Knowledge",
+  "fields": [
+    1
+  ],
+  "desc": "",
+  "level": 2,
+  "date": "2017-01-01",
+  "start_time": "14:00",
+  "end_time": "17:00",
+  "place_info": {
+    "name": "AIC",
+    "map": "http://..."
+  },
+  "host": 0,
+  "speakers": [
+    {
+      "id": 1,
+      "name": "Maomao",
+      "photo": "https://www.facebook.com/photo.php?fbid=1334097389992985&set=a.119182404817829.16439.100001782111855&type=3&theater"
+    }
+  ],
+  "slides": [
+    {
+      "title": "Class 1",
+      "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html"
+    }
+  ]
+}

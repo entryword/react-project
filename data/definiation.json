@@ -1,0 +1,24 @@
+{
+  "field": {
+    "0": "Data Science",
+    "1": "Web",
+    "2": "Crawler",
+    "3": "Deep Learning"
+  },
+  "freq": {
+    "0": "Series activities",
+    "1": "Workshop",
+    "2": "Single activity"
+  },
+  "level": {
+    "0": "No experience",
+    "1": "Elementary",
+    "2": "Advanced",
+    "3": "Proficient"
+  },
+  "host": {
+    "0": "Host",
+    "1": "Co-host",
+    "2": "Invited"
+  }
+}
