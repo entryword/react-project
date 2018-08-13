@@ -1,94 +1,106 @@
-let fixedMenuOffset = -100;
-let fixedItemOffset = -200;
-let timeDurationOffset = 450;
-let anchorMenuOffset = 184;
-const eventMenu = document.querySelector('#event-menu-list').getBoundingClientRect();
-let timeOffset = -1 * (eventMenu.top + eventMenu.height + 30) - window.scrollY;
-if (window.innerWidth < 768) {
-    fixedMenuOffset = -50;
-    fixedItemOffset = -1 * (eventMenu.height + 50);
-    timeOffset -= 20;
-    timeDurationOffset = document.querySelector(".event-menu-header").getBoundingClientRect().height + 60;
-    anchorMenuOffset = 154;
-}
-// ScrollMagic
-const controller = new ScrollMagic.Controller({
-    globalSceneOptions: {
-        triggerHook: 'onLeave'
-    }
-});
-
-//  fixed event menu
-const scene = new ScrollMagic.Scene({offset: fixedMenuOffset, triggerElement: "#event-menu-list"})
-    .setPin("#event-menu-list", {pushFollowers: false})
-    .addTo(controller);
-// event menu class
-const timeSession = new ScrollMagic.Scene({
-    triggerElement: "#event-first-session",
-    offset: timeOffset,
-    duration: (document.querySelector('.event-first-session').getBoundingClientRect().height + timeDurationOffset)
-})
-    .setClassToggle("#event-first", "active")
-    // .addIndicators()
-    .addTo(controller);
-const contentSession = new ScrollMagic.Scene({
-    triggerElement: "#event-second-session",
-    offset: fixedItemOffset,
-    duration: document.querySelector('.event-second-session').getBoundingClientRect().height + 30
-})
-    .setClassToggle("#event-second", "active")
-    // .addIndicators()
-    .addTo(controller);
-const tutorSession = new ScrollMagic.Scene({
-    triggerElement: "#event-tutor-session",
-    offset: fixedItemOffset,
-    duration: document.querySelector('.event-tutor-session').getBoundingClientRect().height + 30
-})
-    .setClassToggle("#event-tutor", "active")
-    // .addIndicators()
-    .addTo(controller);
-const materialSession = new ScrollMagic.Scene({
-    triggerElement: "#event-material-session",
-    offset: fixedItemOffset,
-    duration: document.querySelector('.event-material-session').getBoundingClientRect().height + 30
-})
-    .setClassToggle("#event-material", "active")
-    // .addIndicators()
-    .addTo(controller);
-const retroSession = new ScrollMagic.Scene({
-    triggerElement: "#event-retro-session",
-    offset: fixedItemOffset,
-    duration: document.querySelector('.event-retro-session').getBoundingClientRect().height + 30
-})
-    .setClassToggle("#event-retro", "active")
-    // .addIndicators()
-    .addTo(controller);
-const anchorMenu = new ScrollMagic.Scene({
-    triggerElement: "#event-first-session",
-    duration: document.querySelector(".event-body").getBoundingClientRect().height
-})
-    // .addIndicators()
-    .addTo(controller);
-
-// 定義 scrollTo function
-controller.scrollTo(function (newpost) {
-    let top = newpost - anchorMenuOffset;
-    window.scrollTo({
-        top: top,
-        behavior: "smooth"
+(function () {
+    // data
+    const mapUrl = {
+        'aic': 'https://www.google.com/maps/search/?api=1&query=25.043494,121.559860&query_place_id=ChIJwd1FrMCrQjQRAnOWONioLcI',
+        'tpewomen': 'https://www.google.com/maps/search/?api=1&query=25.033459,121.501280&query_place_id=ChIJaRFJC6-pQjQRx9I-a2QVtYI'
+    };
+    const placePage = {
+        'aic': '/venue/aic.html',
+        'tpewomen': '/venue/tpewomen.html'
+    };
+    const address = {
+        'aic': '台北市信義區光復南路133號1樓',
+        'tpewomen': '台北市萬華區艋舺大道 101 號'
+    };
+    const pathName = getPath();
+    // handlerbars helper
+    Handlebars.registerHelper("setDefaultHeadShout", function(url) {
+        if(!url) {
+            return "/images/logos/twgirl_logo.png";
+        }
+        return url;
     });
-});
+    // Get Data
+    // get pathname from url
+    function getPath(){
+        let regex =  /\/events\/([^&#]*).html/;
+        let results = regex.exec(window.location.pathname);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+    //get id from url
+    // ref: https://github.com/WebReflection/url-search-params
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        console.log(regex);
+        var results = regex.exec(window.location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+    function getDefinition() {
+        return axios.get('/data/definition.json');
+    }
 
-document.querySelector('.event-menu-list').addEventListener("click", function (e) {
-    for (let target = e.target; target && target !== this; target = target.parentNode) {
-        if (target.matches('li')) {
-            handler.call(target, e);
-            break;
+    function getEvent() {
+        let id = getUrlParameter('id');
+        let url = `/data/${pathName}.json`;
+        return axios.get(url);
+    }
+    axios.all([getDefinition(), getEvent()])
+        .then(axios.spread(function (definition, event) {
+            if(pathName === 'event'){
+                eventTemplating(definition.data, event.data);
+            }else{
+                topicTemplating(definition.data, event.data);
+            }
+
+        }))
+        .catch(function (error) {
+            console.log(error)
+        });
+
+    // template
+    function eventTemplating(definition, data) {
+        let place = data.place_info.name.toLowerCase() === 'aic' ? 'aic': 'tpewomen';
+        //data processing
+        data.hostName = definition.host[data.host];
+        data.levelName = definition.level[data.level];
+        data.placeAddress = address[place];
+        data.placePage = placePage[place];
+        data.placeMap = mapUrl[place];
+        data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
+        // template
+        const blocks = ['event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
+        for(let i=0, len = blocks.length;i<len;i++){
+            //Grab the inline template
+            let template = document.getElementById(blocks[i] + '-template').innerHTML;
+            //Compile the template
+            let compiled_template = Handlebars.compile(template);
+            //Render the data into the template
+            let rendered = compiled_template(data);
+            //Overwrite the contents of #target with the renderer HTML
+            document.getElementById(blocks[i]).innerHTML = rendered;
         }
     }
-}, false);
-
-function handler(e) {
-    let id = "#" + e.target.id + "-session";
-    controller.scrollTo(id);
-}
+    function topicTemplating(definition, data) {
+        let place = data.place_info.name.toLowerCase() === 'aic' ? 'aic': 'tpewomen';
+        //data processing
+        data.hostName = definition.host[data.host];
+        data.freqName = definition.freq[data.freq];
+        data.levelName = definition.level[data.level];
+        data.placeAddress = address[place];
+        data.placePage = placePage[place];
+        data.placeMap = mapUrl[place];
+        // template
+        const blocks = ['event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
+        for(let i=0, len = blocks.length;i<len;i++){
+            //Grab the inline template
+            let template = document.getElementById(blocks[i] + '-template').innerHTML;
+            //Compile the template
+            let compiled_template = Handlebars.compile(template);
+            //Render the data into the template
+            let rendered = compiled_template(data);
+            //Overwrite the contents of #target with the renderer HTML
+            document.getElementById(blocks[i]).innerHTML = rendered;
+        }
+    }
+})();

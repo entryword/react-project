@@ -1,20 +1,21 @@
 {
   "topic_info": {
-    "name": "Flask Web Development",
+    "name": "生活中的程式 - Python自動化",
     "id": 1
   },
-  "title": "Basic Knowledge",
+  "title": "處理 Excel 試算表",
   "fields": [
-    1
+    0,1,2,3
   ],
-  "desc": "",
-  "level": 2,
+  "desc": "書本 - Python 自動化的樂趣：搞定重複瑣碎&單調無聊的工作",
+  "level": 0,
   "date": "2017-01-01",
   "start_time": "14:00",
   "end_time": "17:00",
   "place_info": {
     "name": "AIC",
-    "map": "http://..."
+    "map": "http://...",
+    "addr": ""
   },
   "host": 0,
   "speakers": [
@@ -22,6 +23,11 @@
       "id": 1,
       "name": "Maomao",
       "photo": "https://www.facebook.com/photo.php?fbid=1334097389992985&set=a.119182404817829.16439.100001782111855&type=3&theater"
+    },
+    {
+      "id": 2,
+      "name": "中文字",
+      "photo": ""
     }
   ],
   "slides": [

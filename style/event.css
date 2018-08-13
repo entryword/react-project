@@ -131,9 +131,11 @@
 .tutor-image{
     width: 200px;
     height: 200px;
-    background-color: #ccc;
+    /*background-color: #ccc;*/
     border-radius: 50%;
     margin: 10px auto;
+    background-size: contain;
+    background-position: center center;
 }
 .tutor-name{
     color: var(--text-gray-color);
