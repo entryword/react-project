@@ -28,16 +28,9 @@
     margin: 0 1.3rem;
     border-bottom: 4px solid transparent;
     display: inline-block;
+    cursor: pointer;
 }
 
-.event-menu-list a,
-.event-menu-list a:hover,
-.event-menu-list a:focus,
-.event-menu-list a:active,
-.event-menu-list a:visited{
-    color: var(--text-gray-color);
-    text-decoration: none;
-}
 .event-menu-list li:hover{
     color: var(--pyladies-pink);
     border-bottom: 4px solid var(--pyladies-pink);

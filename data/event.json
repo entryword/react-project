@@ -13,9 +13,9 @@
   "start_time": "14:00",
   "end_time": "17:00",
   "place_info": {
-    "name": "AIC",
+    "name": "台北婦女館",
     "map": "http://...",
-    "addr": ""
+    "addr": "台北市萬華區艋舺大道 101 號"
   },
   "host": 0,
   "speakers": [
@@ -34,6 +34,16 @@
     {
       "title": "Class 1",
       "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html"
+    }
+  ],
+  "resources": [
+    {
+      "title": "Resource 1",
+      "url": "http://flask.pocoo.org/docs/1.0/"
+    },
+    {
+      "title": "Resource 2",
+      "url": "https://github.com/miguelgrinberg/flasky"
     }
   ]
 }

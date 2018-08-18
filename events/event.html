@@ -45,19 +45,17 @@
             </div>
         </div>
         <ul class="event-menu-list" id="event-menu-list">
-            <li id="event-first">
+            <li class="event-menu-item" id="event-first">
                 時間場地
             </li>
-            <li id="event-second">
+            <li class="event-menu-item" id="event-second">
                 內容說明
             </li>
-            <li id="event-third">
+            <li class="event-menu-item" id="event-third">
                 講師 | 助教
             </li>
-            <li id="event-fourth">
+            <li class="event-menu-item" id="event-fourth">
                 講義 | 教材
-            <li id="event-fifth">
-                紀錄 | 回顧
             </li>
             <li class="attend-btn">
                 <a class="sign-up-btn" href="#">按此報名</a>
@@ -66,9 +64,7 @@
     </div>
     <div class="event-body" id="event-body">
         <div class="event-session event-first-session" id="event-first-session">
-            <div id="event-time">
-
-            </div>
+            <div id="event-time"></div>
         </div>
         <div class="event-session event-second-session" id="event-second-session">
             <h3>內容說明</h3>
@@ -80,32 +76,7 @@
         </div>
         <div class="event-session event-fourth-session" id="event-fourth-session">
             <h3>講義 | 教材</h3>
-            <div class="event-material" id="event-material">
-
-            </div>
-        </div>
-        <div class="event-session event-fifth-session" id="event-fifth-session">
-            <h3>紀錄 | 回顧</h3>
-            <ol class="record-link">
-                <li class="color-pink">
-                    <a class="pink-link" href="#" target="_blank">紀錄 ㄧ</a>
-                </li>
-                <li class="color-pink">
-                    <a class="pink-link" href="#" target="_blank">紀錄 ㄧ</a>
-                </li>
-                <li class="color-pink">
-                    <a class="pink-link" href="#" target="_blank">紀錄 ㄧ</a>
-                </li>
-                <li class="color-pink">
-                    <a class="pink-link" href="#" target="_blank">紀錄 ㄧ</a>
-                </li>
-                <li class="color-pink">
-                    <a class="pink-link" href="#" target="_blank">紀錄 ㄧ</a>
-                </li>
-            </ol>
-            <div class="event-pictures">
-                活動照片區塊
-            </div>
+            <div class="event-material" id="event-material"></div>
         </div>
     </div>
 </div>
@@ -118,18 +89,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
 <!--Template header-->
 <script id="event-header-content-template" type="text/x-handlebars-template">
-    <h1>{{hostName}}・系列活動・{{levelName}}</h1>
+    <h1>{{hostName}}・{{levelName}}</h1>
     <h2>{{topic_info.name}}</h2>
     <h3>{{title}}</h3>
 </script>
 <!-- Template 時間地點 -->
 <script id="event-time-template" type="text/x-handlebars-template">
     <h3>時間</h3>
-    <p><span class="color-gray">2018-04-29 六 18:00</span></p>
+    <p><span class="color-gray">{{date}} {{start_time}}-{{end_time}}</span></p>
     <h3>場地</h3>
     <p>{{place_info.name}}</p>
-    <p class="color-gray">{{place_info.addr}} <a href="{{placeMap}}" target="_blank"><i class="fa fa-external-link-alt"></i></a></p>
-    <p class="color-gray">詳細路線說明 <a href="{{placePage}}" target="_blank"><i class="fa fa-clone"></i></a></p>
+    <p class="color-gray">{{place_info.addr}}<a href=">{{place_info.map}}"><i class="fa fa-clone"></i></a></p>
+    <p class="color-gray">詳細路線說明
+        <a href="#"><i class="fa fa-external-link-alt"></i></a>
+    </p>
 </script>
 <!-- Template 內容說明 -->
 <script id="event-content-template" type="text/x-handlebars-template">
@@ -157,11 +130,16 @@
             <a class="pink-link" href="{{url}}" target="_blank">{{title}}</a>
         </li>
         {{/each}}
+        {{#each resources}}
+        <li class="color-pink">
+            <a class="pink-link" href="{{url}}" target="_blank">{{title}}</a>
+        </li>
+        {{/each}}
     </ol>
 </script>
-<!-- Template 紀錄回庫 -->
+<script>let tw_pyladies = {};</script>
 <script src="../scripts/scroll.js"></script>
 <script src="../scripts/event.js"></script>
-</body>
 
+</body>
 </html>

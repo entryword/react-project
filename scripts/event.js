@@ -1,4 +1,4 @@
-(function () {
+(function (tw_pyladies) {
     // data
     const mapUrl = {
         'aic': 'https://www.google.com/maps/search/?api=1&query=25.043494,121.559860&query_place_id=ChIJwd1FrMCrQjQRAnOWONioLcI',
@@ -24,6 +24,11 @@
     // get pathname from url
     function getPath(){
         let regex =  /\/events\/([^&#]*).html/;
+        // pathname = "/event/123"
+        // let regex =  /(event|topic)\/([0-9]+)/;
+        // result[1]: event
+        // result[2]: 123 (id)
+
         let results = regex.exec(window.location.pathname);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
@@ -32,7 +37,6 @@
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
         var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        console.log(regex);
         var results = regex.exec(window.location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
@@ -52,7 +56,7 @@
             }else{
                 topicTemplating(definition.data, event.data);
             }
-
+            tw_pyladies.goScroll();
         }))
         .catch(function (error) {
             console.log(error)
@@ -82,14 +86,11 @@
         }
     }
     function topicTemplating(definition, data) {
-        let place = data.place_info.name.toLowerCase() === 'aic' ? 'aic': 'tpewomen';
         //data processing
         data.hostName = definition.host[data.host];
         data.freqName = definition.freq[data.freq];
         data.levelName = definition.level[data.level];
-        data.placeAddress = address[place];
-        data.placePage = placePage[place];
-        data.placeMap = mapUrl[place];
+        data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
         // template
         const blocks = ['event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
         for(let i=0, len = blocks.length;i<len;i++){
@@ -103,4 +104,4 @@
             document.getElementById(blocks[i]).innerHTML = rendered;
         }
     }
-})();
+})(tw_pyladies);

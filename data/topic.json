@@ -1,64 +1,66 @@
 {
-    "name": "Flask Web Development",
-    "fields": [
-    1
-],
-    "freq": 0,
-    "desc": "We use the book \"Flask Web Development\" by Miguel Grinberg as our material for the workshop.",
-    "level": 2,
-    "events": [
+  "name": "生活中的程式 - Python自動化",
+  "fields": [
+    1,2,3,4
+  ],
+  "freq": 0,
+  "desc": "書本 - Python 自動化的樂趣：搞定重複瑣碎&單調無聊的工作",
+  "level": 2,
+  "events": [
     {
-        "id": 1,
-        "date": "2017-01-01",
-        "place_info": {
-            "name": "AIC",
-            "map": "http://..."
-        }
+      "id": 1,
+      "date": "2017-01-01",
+      "place_info": {
+        "name": "AIC",
+        "addr": "台北市信義區光復南路133號1樓",
+        "map": "/venue/aic.html"
+      }
     },
     {
-        "id": 2,
-        "date": "2017-01-01",
-        "place_info": {
-            "name": "AIC",
-            "map": "http://..."
-        }
+      "id": 2,
+      "date": "2017-01-01",
+      "place_info": {
+        "name": "AIC",
+        "addr": "台北市信義區光復南路133號1樓",
+        "map": "/venue/aic.html"
+      }
     }
-],
-    "host": 0,
-    "speakers": [
+  ],
+  "host": 0,
+  "speakers": [
     {
-        "id": 1,
-        "name": "Maomao",
-        "photo": "https://www.facebook.com/photo.php?fbid=1334097389992985&set=a.119182404817829.16439.100001782111855&type=3&theater"
+      "id": 1,
+      "name": "Maomao",
+      "photo": ""
     },
     {
-        "id": 2,
-        "name": "Alicia",
-        "photo": "https://www.facebook.com/photo.php?fbid=1255786694517455&set=a.103161179780018.6272.100002584093577&type=3&theater"
+      "id": 2,
+      "name": "Alicia",
+      "photo": ""
     }
-],
-    "slides": [
+  ],
+  "slides": [
     {
-        "title": "Class 1",
-        "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html"
+      "title": "Class 1",
+      "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html"
     },
     {
-        "title": "Class 2",
-        "url": "http://tw.pyladies.com/~maomao/2_flask.slides.html"
+      "title": "Class 2",
+      "url": "http://tw.pyladies.com/~maomao/2_flask.slides.html"
     },
     {
-        "title": "Class 3",
-        "url": "http://tw.pyladies.com/~maomao/3_flask.slides.html"
+      "title": "Class 3",
+      "url": "http://tw.pyladies.com/~maomao/3_flask.slides.html"
     }
-],
-    "materials": [
+  ],
+  "resources": [
     {
-        "title": "Class 1",
-        "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html"
+      "title": "Resource 1",
+      "url": "http://flask.pocoo.org/docs/1.0/"
     },
     {
-        "title": "Class 2",
-        "url": "http://tw.pyladies.com/~maomao/2_flask.slides.html"
+      "title": "Resource 2",
+      "url": "https://github.com/miguelgrinberg/flasky"
     }
-]
+  ]
 }

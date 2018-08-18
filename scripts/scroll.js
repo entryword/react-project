@@ -1,4 +1,4 @@
-(function () {
+(function (tw_pyladies) {
     // top nav
     let fixedMenuOffset = -100;
     // nav + menu list + spacing (人工決定)
@@ -7,7 +7,8 @@
     let timeDurationOffset = 450;
     // nav + menu list
     let anchorMenuOffset = 184;
-    const blocks = ['event-first', 'event-second', 'event-third','event-fourth','event-fifth'];
+    // const blocks = ['event-first', 'event-second', 'event-third','event-fourth'];
+    const blocks = document.querySelectorAll('.event-menu-item');
     const eventMenu = document.querySelector('#event-menu-list').getBoundingClientRect();
     let timeOffset = -1 * (eventMenu.top + eventMenu.height + 30) - window.scrollY;
     // 手機版
@@ -29,24 +30,26 @@
         .setPin("#event-menu-list", {pushFollowers: false})
         .addTo(controller);
     // event menu class
-    for(let i=0, len=blocks.length;i<len;i++){
-        let duration, offset;
-        if(i===0){
-            duration = document.querySelector('.'+ blocks[i] +'-session').getBoundingClientRect().height + timeDurationOffset;
-            offset = timeOffset;
-        }else{
-            duration = document.querySelector('.'+ blocks[i] +'-session').getBoundingClientRect().height + 30;
-            offset = fixedItemOffset;
+    tw_pyladies.goScroll = function(){
+        for(let i=0, len=blocks.length;i<len;i++){
+            let duration, offset, name =  blocks[i].getAttribute('id');
+            if(i===0){
+                duration = document.querySelector('.'+ name +'-session').getBoundingClientRect().height + timeDurationOffset;
+                offset = timeOffset;
+            }else{
+                duration = document.querySelector('.'+name +'-session').getBoundingClientRect().height + 30;
+                offset = fixedItemOffset;
+            }
+            new ScrollMagic.Scene({
+                triggerElement: "#"+name+"-session",
+                offset: offset,
+                duration: duration
+            })
+                .setClassToggle("#"+ name , "active")
+                // .addIndicators()
+                .addTo(controller);
         }
-        new ScrollMagic.Scene({
-            triggerElement: "#"+blocks[i]+"-session",
-            offset: offset,
-            duration: duration
-        })
-            .setClassToggle("#"+ blocks[i] , "active")
-            // .addIndicators()
-            .addTo(controller);
-    }
+    };
 
 // 定義 scrollTo function
     controller.scrollTo(function (newpost) {
@@ -70,4 +73,4 @@
         let id = "#" + e.target.id + "-session";
         controller.scrollTo(id);
     }
-})();
+})(tw_pyladies);
