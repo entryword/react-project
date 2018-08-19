@@ -19,7 +19,7 @@
         let result = "";
         if(!!url){
             url  = Handlebars.Utils.escapeExpression(url);
-            result = new Handlebars.SafeString(`<p class="color-gray">詳細路線說明<a href="${url}"><i class="fa fa-external-link-alt"></i></a></p>`);
+            result = new Handlebars.SafeString(`<p class="color-gray">詳細路線說明<a href="/${url}"> <i class="fa fa-external-link-alt"></i></a></p>`);
         }
         return result;
     });
@@ -94,6 +94,8 @@
             tw_pyladies.goScroll();
         }))
         .catch(function (error) {
+            alert( error.data.message);
+
             console.log(error)
         });
 
