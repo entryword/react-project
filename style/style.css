@@ -154,6 +154,11 @@ a,p{
     margin: 10px 0;
     color: var(--footer-text-color);
 }
+.menu-item span{
+    display: block;
+    margin: 10px 0;
+    color: #fd9193;
+}
 .menu-item a:hover{
     color: var(--footer-text-color);
 }
@@ -244,6 +249,11 @@ a,p{
     flex: 1 0 120px;
     margin-bottom: 20px;
 }
+.footer-session span{
+    display: block;
+    margin: 10px 0;
+    color: #ccc;
+}
 
 .footer-session a{
     display: block;
@@ -273,7 +283,20 @@ a,p{
     margin-bottom: 1.5rem;
     line-height: 2rem;
 }
-
+.top-header a.signup-btn,
+.top-header a.signup-btn:hover,
+.top-header a.signup-btn:focus,
+.top-header a.signup-btn:active,
+.top-header a.signup-btn:visited {
+    font-size: .8rem;
+    color: #fff;
+    text-decoration: none;
+    background-color: var(--pyladies-pink);
+    line-height: 1rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 5px;
+    float: right;
+}
 /* 小螢幕 */
 @media only screen and (max-width: 720px) {
     .side-bar{
