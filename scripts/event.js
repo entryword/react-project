@@ -70,10 +70,8 @@
     function getEvent() {
         let id = getUrlParameter('id'), url;
         if(tw_pyladies.path === 'topic'){
-            // url = 'http://127.0.0.1:5000/v1/api/topic/1';
             url = '../data/topic.json';
         }else{
-            // url = 'http://127.0.0.1:5000/v1/api/event/1';
             url = '../data/event.json';
         }
 
@@ -82,9 +80,9 @@
     axios.all([getDefinition(), getEvent()])
         .then(axios.spread(function (definition, event) {
             if(tw_pyladies.path === 'event'){
-                eventTemplating(definition.data, event.data);
+                eventTemplating(definition.data.data, event.data.data);
             }else{
-                topicTemplating(definition.data, event.data);
+                topicTemplating(definition.data.data, event.data.data);
             }
             // template 完成後再處理 scroll 位置
             tw_pyladies.goScroll();
