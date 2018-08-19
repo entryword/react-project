@@ -22,9 +22,19 @@
       "title": "Title 2",
       "date": "2017-01-01",
       "place_info": {
-        "name": "AIC",
-        "addr": "台北市信義區光復南路133號1樓",
-        "map": "/venue/aic.html"
+        "name": "123",
+        "addr": "台北市123123",
+        "map": ""
+      }
+    },
+    {
+      "id": 3,
+      "title": "Title 3",
+      "date": "2018-08-29",
+      "place_info": {
+        "name": "台北婦女館",
+        "addr": "臺北市萬華區艋舺大道101號3樓",
+        "map": "/venue/tpewomen.html"
       }
     }
   ],
