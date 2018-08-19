@@ -87,7 +87,7 @@
 </script>
 <!--Template 內容說明-->
 <script id="event-content-template" type="text/x-handlebars-template">
-    <p>{{desc}}</p>
+    <p>{{{desc}}}</p>
     <div class="tags">
         {{#each tags}}
         <span class="tag">{{this}}</span>
@@ -99,7 +99,7 @@
     <ul class="event-topic-list">
         {{#each events}}
         <li>
-            <div class="topic-title">{{this.title}}</div>
+            <div class="topic-title"><a href="/website2018/events/event.html?id={{this.id}}" target="_blank">{{this.title}}</a></div>
             <div class="topic-time">{{this.date}} ({{this.day}})</div>
             <div class="topic-venue">{{this.place_info.name}}
                 {{setMapPageLink place_info.map}}
@@ -119,12 +119,20 @@
 </script>
 <!--Template 講義 | 教材-->
 <script id="event-material-template" type="text/x-handlebars-template">
+    {{#unless slides}}
+    <h6>講義</h6>
+    {{/unless}}
     <ol class="record-link">
         {{#each slides}}
         <li class="color-pink">
             <a class="pink-link" href="{{url}}" target="_blank">{{title}}</a>
         </li>
         {{/each}}
+    </ol>
+    {{#unless resources}}
+    <h6>資源</h6>
+    {{/unless}}
+    <ol class="record-link">
         {{#each resources}}
         <li class="color-pink">
             <a class="pink-link" href="{{url}}" target="_blank">{{title}}</a>
