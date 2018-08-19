@@ -30,6 +30,7 @@
         .setPin("#event-menu-list", {pushFollowers: false})
         .addTo(controller);
     // event menu class
+    // 資料取得後才要執行，儲存到 tw_pyladies 讓 template 處理完後呼叫
     tw_pyladies.goScroll = function(){
         for(let i=0, len=blocks.length;i<len;i++){
             let duration, offset, name =  blocks[i].getAttribute('id');
@@ -68,6 +69,7 @@
             }
         }
     }, false);
+
 
     function handler(e) {
         let id = "#" + e.target.id + "-session";

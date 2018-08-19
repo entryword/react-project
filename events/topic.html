@@ -80,7 +80,6 @@
     </div>
 </div>
 <footer class="footer" id="footer"></footer>
-<script src="../scripts/import.js"></script>
 <script src="../scripts/template.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js"></script>
 <!--<script src="//cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/plugins/debug.addIndicators.min.js"></script>-->
@@ -105,9 +104,11 @@
     <ul class="event-topic-list">
         {{#each events}}
         <li>
-            <div class="topic-title">處理 Excel 試算表</div>
-            <div class="topic-time">{{this.date}}</div>
-            <div class="topic-venue">{{this.place_info.name}}</div>
+            <div class="topic-title">{{this.title}}</div>
+            <div class="topic-time">{{this.date}} ({{this.day}})</div>
+            <div class="topic-venue">{{this.place_info.name}}
+                <a href="{{place_info.map}}"><i class="fa fa-external-link-alt"></i></a>
+            </div>
         </li>
         {{/each}}
     </ul>
