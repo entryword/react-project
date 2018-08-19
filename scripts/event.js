@@ -63,16 +63,16 @@
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
     function getDefinition() {
-        return axios.get('../data/definition.json');
+        return axios.get('/v1.0/api/definitions');
     }
 
     // TODO: 確認 API URL
     function getEvent() {
         let id = getUrlParameter('id'), url;
         if(tw_pyladies.path === 'topic'){
-            url = '../data/topic.json';
+            url = '/v1.0/api/topic/1';
         }else{
-            url = '../data/event.json';
+            url = '/v1.0/event/topic/1';
         }
 
         return axios.get(url);
