@@ -9,7 +9,7 @@
     // handlerbars helper
     // 如果講書沒有給圖，放入預設圖
     Handlebars.registerHelper("setDefaultHeadShout", function(url) {
-        if(!url) {
+        if(!url || url == 'null') {
             return "/images/logos/twgirl_logo.png";
         }
         return url;
@@ -71,7 +71,7 @@
         return axios.get('/v1.0/api/definitions');
     }
 
-    // TODO: 確認 API URL
+    // API
     function getEvent() {
         let id = getUrlParameter('id') || 1,
             url;
@@ -110,11 +110,7 @@
         data.levelName = definition.level[data.level];
         data.placeGoogleMap = !!place ? mapUrl[place] : '';
         data.day = days[new Date(data.date).getUTCDay()];
-        data.tags = data.fields.map(field=> {
-            if(definition.field[field]){
-                return "#" + definition.field[field] + " ";
-            }
-        });
+        data.tags = data.fields.map(field=> definition.field[field] + " ");
         // template blocks
         const blocks = ['event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
         renderHtml(blocks, data);
@@ -124,7 +120,7 @@
         data.hostName = definition.host[data.host];
         data.freqName = definition.freq[data.freq];
         data.levelName = definition.level[data.level];
-        data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
+        data.tags = data.fields.map(field=> definition.field[field] + " ");
         data.events.forEach(event=>{
             event.day = days[new Date(event.date).getUTCDay()];
         })

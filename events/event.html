@@ -118,17 +118,17 @@
 <!-- Template 講義教材 -->
 <script id="event-material-template" type="text/x-handlebars-template">
     <ol class="record-link">
-        {{#unless slides}}
+        {{#if slides}}
         <h6>講義</h6>
-        {{/unless}}
+        {{/if}}
         {{#each slides}}
         <li class="color-pink">
             <a class="pink-link" href="{{url}}" target="_blank">{{title}}</a>
         </li>
         {{/each}}
-        {{#unless resources}}
+        {{#if resources}}
         <h6>資源</h6>
-        {{/unless}}
+        {{/if}}
         {{#each resources}}
         <li class="color-pink">
             <a class="pink-link" href="{{url}}" target="_blank">{{title}}</a>
