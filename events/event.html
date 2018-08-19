@@ -81,7 +81,6 @@
     </div>
 </div>
 <footer class="footer" id="footer"></footer>
-<script src="../scripts/import.js"></script>
 <script src="../scripts/template.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js"></script>
 <!--<script src="//cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/plugins/debug.addIndicators.min.js"></script>-->
@@ -96,12 +95,14 @@
 <!-- Template 時間地點 -->
 <script id="event-time-template" type="text/x-handlebars-template">
     <h3>時間</h3>
-    <p><span class="color-gray">{{date}} {{start_time}}-{{end_time}}</span></p>
+    <p><span class="color-gray">{{date}} ({{day}}) {{start_time}}-{{end_time}}</span></p>
     <h3>場地</h3>
     <p>{{place_info.name}}</p>
-    <p class="color-gray">{{place_info.addr}}<a href=">{{place_info.map}}"><i class="fa fa-clone"></i></a></p>
+    <p class="color-gray">{{place_info.addr}}
+        <a href="{{placeGoogleMap}}"><i class="fa fa-clone"></i></a>
+    </p>
     <p class="color-gray">詳細路線說明
-        <a href="#"><i class="fa fa-external-link-alt"></i></a>
+        <a href="{{place_info.map}}"><i class="fa fa-external-link-alt"></i></a>
     </p>
 </script>
 <!-- Template 內容說明 -->
