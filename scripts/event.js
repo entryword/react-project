@@ -68,11 +68,12 @@
 
     // TODO: 確認 API URL
     function getEvent() {
-        let id = getUrlParameter('id'), url;
+        let id = getUrlParameter('id') || 1,
+            url;
         if(tw_pyladies.path === 'topic'){
-            url = '/v1.0/api/topic/1';
+            url = `/v1.0/api/topic/${id}`;
         }else{
-            url = '/v1.0/event/topic/1';
+            url = `/v1.0/api/event/${id}`;
         }
 
         return axios.get(url);
