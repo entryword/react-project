@@ -110,7 +110,7 @@
         data.levelName = definition.level[data.level];
         data.placeGoogleMap = !!place ? mapUrl[place] : '';
         data.day = days[new Date(data.date).getUTCDay()];
-        data.tags = data.fields.map(field=> definition.field[field] + " ");
+        data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
         // template blocks
         const blocks = ['event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
         renderHtml(blocks, data);
@@ -120,7 +120,7 @@
         data.hostName = definition.host[data.host];
         data.freqName = definition.freq[data.freq];
         data.levelName = definition.level[data.level];
-        data.tags = data.fields.map(field=> definition.field[field] + " ");
+        data.tags = data.fields.map(field=>  "#" + definition.field[field] + " ");
         data.events.forEach(event=>{
             event.day = days[new Date(event.date).getUTCDay()];
         })
