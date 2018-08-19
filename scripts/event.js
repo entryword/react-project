@@ -35,13 +35,18 @@
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
     function getDefinition() {
-        return axios.get('/data/definition.json');
+        return axios.get('data/definition.json');
     }
 
     // TODO: 確認 API URL
     function getEvent() {
-        let id = getUrlParameter('id');
-        let url = `/data/${tw_pyladies.path}.json`;
+        let id = getUrlParameter('id'), url;
+        if(tw_pyladies.path === 'topic'){
+            url = 'http://127.0.0.1:500/v1/api/topic/1';
+        }else{
+            url = 'http://127.0.0.1:500/v1/api/event/1';
+        }
+
         return axios.get(url);
     }
     axios.all([getDefinition(), getEvent()])
