@@ -94,9 +94,7 @@
             tw_pyladies.goScroll();
         }))
         .catch(function (error) {
-            alert( error.data.message);
-
-            console.log(error)
+            window.location = '/error/error/html';
         });
 
     // template
