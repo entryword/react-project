@@ -14,6 +14,34 @@
         }
         return url;
     });
+    // 地圖 如果沒有url 地圖不用給連結
+    Handlebars.registerHelper('setMapPageLink', function(url) {
+        let result = "";
+        if(!!url){
+            url  = Handlebars.Utils.escapeExpression(url);
+            result = new Handlebars.SafeString(`<a href="${url}"><i class="fa fa-external-link-alt"></i></a>`);
+        }
+        return result;
+    });
+    // 地圖 如果沒有url GoogleMap 地圖不用給連結
+    Handlebars.registerHelper('setGoogleMapLink', function(url) {
+        let result = "";
+        if(!!url){
+            url  = Handlebars.Utils.escapeExpression(url);
+            result = new Handlebars.SafeString(`<a href="${url}"><i class="fa fa-clone"></i></a>`);
+        }
+        return result;
+    });
+    Handlebars.registerHelper('noResources', function(slides, resources) {
+        let result = "";
+        if(!slides && !resources){
+            result = "尚無資源";
+        }
+        if(slides.length === 0 && resources.length===0){
+            result = "尚無資源";
+        }
+        return result;
+    });
     // Get Data
     // get pathname from url
     function getPath(){
@@ -35,16 +63,18 @@
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
     function getDefinition() {
-        return axios.get('data/definition.json');
+        return axios.get('../data/definition.json');
     }
 
     // TODO: 確認 API URL
     function getEvent() {
         let id = getUrlParameter('id'), url;
         if(tw_pyladies.path === 'topic'){
-            url = 'http://127.0.0.1:500/v1/api/topic/1';
+            // url = 'http://127.0.0.1:5000/v1/api/topic/1';
+            url = '../data/topic.json';
         }else{
-            url = 'http://127.0.0.1:500/v1/api/event/1';
+            // url = 'http://127.0.0.1:5000/v1/api/event/1';
+            url = '../data/event.json';
         }
 
         return axios.get(url);
@@ -65,11 +95,16 @@
 
     // template
     function eventTemplating(definition, data) {
-        let place = data.place_info.name.toLowerCase() === 'aic' ? 'aic': 'tpewomen';
+        let place = '';
+        if(data.place_info.name.toLowerCase().indexOf('aic')>=0){
+            place = 'aic';
+        }else if(data.place_info.name.toLowerCase().indexOf('tpewomen')>=0){
+            place = 'tpewomen';
+        }
         //data processing
         data.hostName = definition.host[data.host];
         data.levelName = definition.level[data.level];
-        data.placeGoogleMap = mapUrl[place];
+        data.placeGoogleMap = !!place ? mapUrl[place] : '';
         data.day = days[new Date(data.date).getUTCDay()];
         data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
         // template blocks

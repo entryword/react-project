@@ -1,0 +1,23 @@
+{
+  "name": "website2018",
+  "version": "1.0.0",
+  "description": "PyLadies Website 2018",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/duffycheng/website2018.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/duffycheng/website2018#readme",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.2.0",
+    "axios": "^0.18.0",
+    "bootstrap": "^4.1.3",
+    "handlebars": "^4.0.11",
+    "scrollmagic": "^2.0.5"
+  }
+}
