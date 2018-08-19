@@ -46,14 +46,18 @@
     // Get Data
     // get pathname from url
     function getPath(){
-        let regex =  /\/fs\/([^&#]*).html/;
+        // let regex =  /\/fs\/([^&#]*).html/;
         // pathname = "/event/123"
         // let regex =  /(event|topic)\/([0-9]+)/;
         // result[1]: event
         // result[2]: 123 (id)
-
-        let results = regex.exec(window.location.pathname);
-        return !results ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        // let results = regex.exec(window.location.pathname);
+        // return !results ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        if(window.location.pathname.indexOf('topic')>=0){
+            return 'topic';
+        }else{
+            return 'event';
+        }
     }
     //get id from url
     // ref: https://github.com/WebReflection/url-search-params
