@@ -104,9 +104,13 @@
 }
 
 .tag{
-    color: var(--pyladies-pink);
     word-break: keep-all;
     white-space: nowrap;
+    border-radius: 10px;
+    padding: 5px 15px;
+    margin: 0 5px;
+    background-color: var(--pyladies-pink);
+    color: #fff;
 }
 .event-tutor-region{
     display: flex;
@@ -172,6 +176,13 @@
     left: -19px;
 }
 .topic-title{
+    color: var(--pyladies-pink);
+}
+.topic-title a,
+.topic-title a:hover,
+.topic-title a:focus,
+.topic-title a:active,
+.topic-title a:visited {
     color: var(--pyladies-pink);
 }
 /* 小螢幕 */

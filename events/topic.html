@@ -82,11 +82,12 @@
 <script src="../sources/handlebars.min.js"></script>
 <!--Template header-->
 <script id="event-header-content-template" type="text/x-handlebars-template">
-    <h1>{{hostName}}・{{freqName}}・{{levelName}}</h1>
+    <h1>{{hostName}}・{{freqName}}</h1>
     <h2>{{name}}</h2>
 </script>
 <!--Template 內容說明-->
 <script id="event-content-template" type="text/x-handlebars-template">
+    <h6>適合程度：{{levelName}}</h6>
     <p>{{{desc}}}</p>
     <div class="tags">
         {{#each tags}}
@@ -119,9 +120,9 @@
 </script>
 <!--Template 講義 | 教材-->
 <script id="event-material-template" type="text/x-handlebars-template">
-    {{#unless slides}}
+    {{#if slides}}
     <h6>講義</h6>
-    {{/unless}}
+    {{/if}}
     <ol class="record-link">
         {{#each slides}}
         <li class="color-pink">
@@ -129,9 +130,9 @@
         </li>
         {{/each}}
     </ol>
-    {{#unless resources}}
+    {{#if resources}}
     <h6>資源</h6>
-    {{/unless}}
+    {{/if}}
     <ol class="record-link">
         {{#each resources}}
         <li class="color-pink">
