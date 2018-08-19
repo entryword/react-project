@@ -8,9 +8,9 @@
     tw_pyladies.path = getPath();
     // handlerbars helper
     // 如果講書沒有給圖，放入預設圖
-    Handlebars.registerHelper("setDefaultHeadShout", function(url) {
+    Handlebars.registerHelper("setDefaultHeadShot", function(url) {
         if(!url || url == 'null') {
-            return "/images/logos/twgirl_logo.png";
+            return "../images/logos/twgirl_logo.png";
         }
         return url;
     });
