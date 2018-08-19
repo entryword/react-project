@@ -19,7 +19,7 @@
         let result = "";
         if(!!url){
             url  = Handlebars.Utils.escapeExpression(url);
-            result = new Handlebars.SafeString(`<a href="${url}"><i class="fa fa-external-link-alt"></i></a>`);
+            result = new Handlebars.SafeString(`<p class="color-gray">詳細路線說明<a href="${url}"><i class="fa fa-external-link-alt"></i></a></p>`);
         }
         return result;
     });
@@ -32,6 +32,7 @@
         }
         return result;
     });
+    // 沒有資源的顯示
     Handlebars.registerHelper('noResources', function(slides, resources) {
         let result = "";
         if(!slides && !resources){
@@ -45,7 +46,7 @@
     // Get Data
     // get pathname from url
     function getPath(){
-        let regex =  /\/events\/([^&#]*).html/;
+        let regex =  /\/fs\/([^&#]*).html/;
         // pathname = "/event/123"
         // let regex =  /(event|topic)\/([0-9]+)/;
         // result[1]: event
@@ -105,7 +106,11 @@
         data.levelName = definition.level[data.level];
         data.placeGoogleMap = !!place ? mapUrl[place] : '';
         data.day = days[new Date(data.date).getUTCDay()];
-        data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
+        data.tags = data.fields.map(field=> {
+            if(definition.field[field]){
+                return "#" + definition.field[field] + " ";
+            }
+        });
         // template blocks
         const blocks = ['event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
         renderHtml(blocks, data);
