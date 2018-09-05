@@ -112,7 +112,13 @@
     {{#each speakers}}
     <div class="tutor-area">
             <div class="tutor-image" style="background-image:url({{setDefaultHeadShot photo}})"></div>
-        <div class="tutor-name">{{name}}</div>
+        <div class="tutor-name">{{name}} (講師)</div>
+    </div>
+    {{/each}}
+    {{#each assistants}}
+    <div class="tutor-area">
+        <div class="tutor-image" style="background-image:url({{setDefaultHeadShot photo}})"></div>
+        <div class="tutor-name">{{name}} (助教)</div>
     </div>
     {{/each}}
 </script>
