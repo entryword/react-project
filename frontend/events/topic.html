@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Topic 主題</title>
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../sources/all.min.css">
+    <link rel="stylesheet" href="../sources/bootstrap.min.css">
+    <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/event.css">
+</head>
+<body>
+<nav class="navbar navbar-light top-nav sticky-top">
+    <h1 class="page-title color-pink">Topic 主題</h1>
+    <a href="http://tw.pyladies.com/" class="navbar-brand"></a>
+    <h1 class="mobile-page-title color-pink">Topic 主題</h1>
+    <div class="menu" for="menu-control-top">
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <a class="menu-wording menu-wording-close" href="#footer">Menu</a>
+    </div>
+</nav>
+<div class="side-bar">
+    <input type="checkbox" class="menu-control" id="menu-control">
+    <label class="menu" for="menu-control">
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="menu-wording menu-wording-close">Menu</span>
+        <span class="menu-wording menu-wording-open">Close</span>
+    </label>
+    <div class="menu-content menu-content-side-bar"></div>
+</div>
+<div class="event-container container-with-menu">
+    <div class="event-menu">
+        <div class="event-menu-header topic-menu-header menu-header">
+            <div class="header-content" id="event-header-content"></div>
+        </div>
+        <ul class="event-menu-list" id="event-menu-list">
+            <li class="event-menu-item" id="event-first">
+                內容說明
+            </li>
+            <li class="event-menu-item" id="event-second">
+                時間場地
+            </li>
+            <li class="event-menu-item" id="event-third">
+                講師 | 助教
+            </li>
+            <li class="event-menu-item" id="event-fourth">
+                講義 | 資源
+            </li>
+            <li class="attend-btn">
+                <a class="sign-up-btn" href="/signup/meetup.html">按此報名</a>
+            </li>
+        </ul>
+    </div>
+    <div class="event-body" id="event-body">
+        <div class="event-session event-first-session" id="event-first-session">
+            <h3>內容說明</h3>
+            <div id="event-content"></div>
+        </div>
+        <div class="event-session event-second-session" id="event-second-session">
+            <h3>時間場地</h3>
+            <div id="event-time"></div>
+        </div>
+        <div class="event-session event-third-session" id="event-third-session">
+            <h3>講師 | 助教</h3>
+            <div class="event-tutor-region" id="event-tutor"></div>
+        </div>
+        <div class="event-session event-fourth-session" id="event-fourth-session">
+            <h3>講義 | 資源</h3>
+            <div class="event-material" id="event-material"></div>
+        </div>
+    </div>
+</div>
+<footer class="footer" id="footer"></footer>
+<script src="../scripts/template.js"></script>
+<script src="../sources/ScrollMagic.min.js"></script>
+<script src="../sources/axios.min.js"></script>
+<script src="../sources/handlebars.min.js"></script>
+<!--Template header-->
+<script id="event-header-content-template" type="text/x-handlebars-template">
+    <h1>{{hostName}}・{{freqName}}</h1>
+    <h2>{{name}}</h2>
+</script>
+<!--Template 內容說明-->
+<script id="event-content-template" type="text/x-handlebars-template">
+    <h6>適合程度：{{levelName}}</h6>
+    <p>{{{desc}}}</p>
+    <div class="tags">
+        {{#each tags}}
+        <span class="tag">{{this}}</span>
+        {{/each}}
+    </div>
+</script>
+<!--Template 時間場地-->
+<script id="event-time-template" type="text/x-handlebars-template">
+    <ul class="event-topic-list">
+        {{#each events}}
+        <li>
+            <div class="topic-title"><a href="/events/event.html?id={{this.id}}" target="_blank">{{this.title}}</a></div>
+            <div class="topic-time">{{this.date}} ({{this.day}})</div>
+            <div class="topic-venue">{{this.place_info.name}}
+                {{setMapPageLink place_info.map}}
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+</script>
+<!--Template 講師 | 助教-->
+<script id="event-tutor-template" type="text/x-handlebars-template">
+    {{#each speakers}}
+    <div class="tutor-area">
+        <div class="tutor-image" style="background-image:url({{setDefaultHeadShot photo}})"></div>
+        <div class="tutor-name">{{name}} (講師)</div>
+    </div>
+    {{/each}}
+    {{#each assistants}}
+    <div class="tutor-area">
+        <div class="tutor-image" style="background-image:url({{setDefaultHeadShot photo}})"></div>
+        <div class="tutor-name">{{name}} (助教)</div>
+    </div>
+    {{/each}}
+</script>
+<!--Template 講義 | 教材-->
+<script id="event-material-template" type="text/x-handlebars-template">
+    {{#if slides}}
+    <h6>講義</h6>
+    {{/if}}
+    <ol class="record-link">
+        {{#each slides}}
+        <li class="color-pink">
+            <a class="pink-link" href="{{url}}" target="_blank">{{title}}</a>
+        </li>
+        {{/each}}
+    </ol>
+    {{#if resources}}
+    <h6>資源</h6>
+    {{/if}}
+    <ol class="record-link">
+        {{#each resources}}
+        <li class="color-pink">
+            <a class="pink-link" href="{{url}}" target="_blank">{{title}}</a>
+        </li>
+        {{/each}}
+    </ol>
+    {{noResources slides resources}}
+</script>
+<script>let tw_pyladies = {};</script>
+<script src="../scripts/scroll.js"></script>
+<script src="../scripts/event.js"></script>
+</body>
+
+</html>
