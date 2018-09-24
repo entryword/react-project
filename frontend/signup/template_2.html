@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>報名資訊</title>
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../sources/all.min.css">
+    <link rel="stylesheet" href="../sources/bootstrap.min.css">
+    <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/event.css">
+</head>
+<body>
+<nav class="navbar navbar-light top-nav sticky-top">
+    <h1 class="page-title color-pink">Signup Info. 報名資訊</h1>
+    <a href="http://tw.pyladies.com/" class="navbar-brand"></a>
+    <h1 class="mobile-page-title color-pink">Signup Info. 報名資訊</h1>
+    <div class="menu" for="menu-control-top">
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <a class="menu-wording menu-wording-close" href="#footer">Menu</a>
+    </div>
+</nav>
+<div class="side-bar">
+    <input type="checkbox" class="menu-control" id="menu-control">
+    <label class="menu" for="menu-control">
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="menu-wording menu-wording-close">Menu</span>
+        <span class="menu-wording menu-wording-open">Close</span>
+    </label>
+    <div class="menu-content menu-content-side-bar"></div>
+</div>
+<div class="event-container container-with-menu">
+    <div class="event-menu">
+        <ul class="event-menu-list" id="event-menu-list">
+            <li class="event-menu-item" id="event-first">
+                管道1
+            </li>
+            <li class="event-menu-item" id="event-second">
+                管道2
+            </li>
+        </ul>
+    </div>
+    <div class="event-body" id="event-body">
+        <div class="event-session event-first-session" id="event-first-session">
+            <h3>管道1-Meetup</h3>
+            <h4>負責單位：PyLadies Taiwan</h4>
+            <ul>
+                <li>報名方式：每次分開報名</li>
+                <li>報名費用：一般人100元，學生50元</li>
+                <li>報名時間：2018-09-22 (六) 10:00 ~ 2018-09-29 (六) 13:59 </li>
+                <li>報名網址：<a href="https://www.meetup.com/PyLadiesTW/events/254788605/" target="_blank">按此報名</a></li>
+                <li>報名步驟：<a href="meetup.html" target="_blank">Meetup教學</a><font color="red">(帳號需審核，請詳閱)</font></li>
+                <li>報名對象：
+                    <ul>
+                        <li>性別：限女</li>
+                        <li>年齡：不限</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="event-session event-second-session" id="event-second-session">
+            <h3>管道2-Accupass</h3>
+            <h4>負責單位：PyLadies Taiwan</h4>
+            <ul>
+                <li>報名方式：一次報名整系列</li>
+                <li>報名費用：一般人400元，學生200元</li>
+                <li>報名時間：2018-09-22 (六) 10:00 ~ 2018-09-29 (六) 13:59 </li>
+                <li>報名網址：<a href="https://www.accupass.com/event/1711080356068300456090" target="_blank">按此報名</a></li>
+                <li>報名步驟：<a href="accupass.html" target="_blank">Accupass教學</a></li>
+                <li>報名對象：
+                    <ul>
+                        <li>性別：限女</li>
+                        <li>年齡：不限</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<footer class="footer" id="footer"></footer>
+<script src="../scripts/template.js"></script>
+<script src="../sources/ScrollMagic.min.js"></script>
+<script src="../sources/axios.min.js"></script>
+<script src="../sources/handlebars.min.js"></script>
+<script>let tw_pyladies = {};</script>
+<script src="../scripts/scroll.js"></script>
+
+</body>
+</html>
