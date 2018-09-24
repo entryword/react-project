@@ -7,7 +7,7 @@
     const days = ['日', '一', '二', '三', '四', '五', '六'];
     tw_pyladies.path = getPath();
     // handlerbars helper
-    // 如果講書沒有給圖，放入預設圖
+    // 如果講師沒有給圖，放入預設圖
     Handlebars.registerHelper("setDefaultHeadShot", function(url) {
         if(!url || url == 'null') {
             return "../images/logos/twgirl_logo.png";
@@ -40,6 +40,15 @@
         }
         if(slides.length === 0 && resources.length===0){
             result = "尚無資源";
+        }
+        return result;
+    });
+    // 報名 如果時間已過 就不用給連結
+    Handlebars.registerHelper('setSignupLink', function(eventId, date) {
+        let result = "";
+        if(Date.parse(date) > Date.parse(new Date())){
+            eventId  = Handlebars.Utils.escapeExpression(eventId);
+            result = new Handlebars.SafeString(`<a class="sign-up-btn" href="/signup/${eventId}.html">按此報名</a>`);
         }
         return result;
     });
@@ -111,8 +120,9 @@
         data.placeGoogleMap = !!place ? mapUrl[place] : '';
         data.day = days[new Date(data.date).getUTCDay()];
         data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
+        data.eventId = getUrlParameter('id') || 1;
         // template blocks
-        const blocks = ['event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
+        const blocks = ['event-signup','event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
         renderHtml(blocks, data);
     }
     function topicTemplating(definition, data) {
