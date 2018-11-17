@@ -1,4 +1,4 @@
-class SQLDatabaseAPI(object):
+class SQLDatabaseAPI():
     def __init__(self, session):
         self.session = session
 
@@ -16,8 +16,8 @@ class SQLDatabaseAPI(object):
     def create_place(self, info, autocommit=False):
         raise NotImplementedError()
 
-    def create_slide_resource(self, info, autocommit=False):
-        raise NotImplementedError()
+    # def create_slide_resource(self, info, autocommit=False):
+    #     raise NotImplementedError()
 
     def create_speaker(self, info, autocommit=False):
         raise NotImplementedError()
@@ -32,8 +32,8 @@ class SQLDatabaseAPI(object):
     def get_topic_by_name(self, name):
         raise NotImplementedError()
 
-    def get_event_basics(self):
-        raise NotImplementedError()
+    # def get_event_basics(self):
+    #     raise NotImplementedError()
 
     def get_event_basic(self, sn):
         raise NotImplementedError()
@@ -41,8 +41,8 @@ class SQLDatabaseAPI(object):
     def get_event_info(self, sn):
         raise NotImplementedError()
 
-    def get_slide_resource(self, sn):
-        raise NotImplementedError()
+    # def get_slide_resource(self, sn):
+    #     raise NotImplementedError()
 
     def get_speakers(self):
         raise NotImplementedError()
@@ -61,8 +61,8 @@ class SQLDatabaseAPI(object):
     def update_event_info(self, sn, info, autocommit=False):
         raise NotImplementedError()
 
-    def update_slide_resource(self, sn, info, autocommit=False):
-        raise NotImplementedError()
+    # def update_slide_resource(self, sn, info, autocommit=False):
+    #     raise NotImplementedError()
 
     def update_speaker(self, sn, info, autocommit=False):
         raise NotImplementedError()

@@ -14,6 +14,13 @@ db = SQLAlchemy()
 class IntegerArrayType(types.TypeDecorator):
     impl = String
 
+    @property
+    def python_type(self):
+        return list
+
+    def process_literal_param(self, value, dialect):
+        raise RuntimeError("Not allow to use this")
+
     def process_bind_param(self, value, dialect):
         # from python to database
         value = [str(i) for i in value]
@@ -209,11 +216,11 @@ class EventInfo(db.Model):
                                   backref=db.backref("event_info", uselist=False))
     slide_resources = db.relationship("SlideResource", uselist=True)
     speakers = db.relationship("Speaker",
-                                secondary=event_info_to_speaker,
-                                uselist=True)
+                               secondary=event_info_to_speaker,
+                               uselist=True)
     assistants = db.relationship("Speaker",
-                                secondary=event_info_to_assistant,
-                                uselist=True)
+                                 secondary=event_info_to_assistant,
+                                 uselist=True)
 
     def __str__(self):
         return ("<EventInfo event_basic_sn: {obj.event_basic_sn}"

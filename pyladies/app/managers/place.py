@@ -2,12 +2,12 @@ import json
 
 from flask import current_app
 
-from .abstract import BaseTopicManager
 from app.sqldb import DBWrapper
+from .abstract import BasePlaceManager
 
 
 # TODO: error handling & input verification
-class Manager(BaseTopicManager):
+class Manager(BasePlaceManager):
     @staticmethod
     def create_place(file_path):
         with open(file_path) as f:

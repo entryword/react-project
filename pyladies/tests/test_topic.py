@@ -178,7 +178,7 @@ class TopicTestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(info, autocommit=True)
             topic = manager.get_topic_by_name(info["name"])
-            
+
             # test
             manager.delete_topic(topic.sn, autocommit=True)
 

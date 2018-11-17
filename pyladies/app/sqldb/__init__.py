@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from .api import MySQLDatabaseAPI
 
 
-class DBWrapper(object):
+class DBWrapper():
     def __init__(self, conn):
         self._conn = create_engine(conn)
 

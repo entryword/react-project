@@ -1,5 +1,2 @@
-from flask import Blueprint
-
-api = Blueprint('api', __name__)
-
+from .blueprint import api
 from . import topic, event, definition

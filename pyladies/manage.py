@@ -27,11 +27,13 @@ def test():
 
 
 @manager.option('-c', '--create', action='count', help='create topic (must be used with -f)')
-@manager.option('-u', '--update', dest='update_sn', metavar='ID', type=int, help='update topic (must be used with -f)')
+@manager.option('-u', '--update', dest='update_sn', metavar='ID', type=int,
+                help='update topic (must be used with -f)')
 @manager.option('-d', '--delete', dest='delete_sn', metavar='ID', type=int, help='delete topic')
 @manager.option('-f', '--file', dest='f', metavar='FILE')
 @manager.option('-l', '--list', dest='ls', action='count', help='list topics')
-@manager.option('-k', '--keyword', dest='key', help='filter topics (must be used with -l)', default=None)
+@manager.option('-k', '--keyword', dest='key', help='filter topics (must be used with -l)',
+                default=None)
 def topic(create, update_sn, delete_sn, f, ls, key):
     tm = TopicManager()
     if create:
@@ -57,10 +59,12 @@ def topic(create, update_sn, delete_sn, f, ls, key):
 
 
 @manager.option('-c', '--create', action='count', help='create event (must be used with -f)')
-@manager.option('-u', '--update', dest='update_sn', metavar='ID', type=int, help='update event (must be used with -f)')
+@manager.option('-u', '--update', dest='update_sn', metavar='ID', type=int,
+                help='update event (must be used with -f)')
 @manager.option('-d', '--delete', dest='delete_sn', metavar='ID', type=int, help='delete event')
 @manager.option('-f', '--file', dest='f', metavar='FILE')
-@manager.option('-l', '--list', dest='topic_sn', metavar='TOPIC_ID', type=int, help='list topic\'s events')
+@manager.option('-l', '--list', dest='topic_sn', metavar='TOPIC_ID', type=int,
+                help='list topic\'s events')
 def event(create, update_sn, delete_sn, f, topic_sn):
     tm = EventManager()
     if create:
@@ -86,7 +90,8 @@ def event(create, update_sn, delete_sn, f, topic_sn):
 
 
 @manager.option('-c', '--create', action='count', help='create speaker (must be used with -f)')
-@manager.option('-u', '--update', dest='update_sn', metavar='ID', type=int, help='update speaker (must be used with -f)')
+@manager.option('-u', '--update', dest='update_sn', metavar='ID', type=int,
+                help='update speaker (must be used with -f)')
 @manager.option('-d', '--delete', dest='delete_sn', metavar='ID', type=int, help='delete speaker')
 @manager.option('-f', '--file', dest='f', metavar='FILE')
 @manager.option('-l', '--list', dest='ls', action='count', help='list speakers')
@@ -115,7 +120,8 @@ def speaker(create, update_sn, delete_sn, f, ls):
 
 
 @manager.option('-c', '--create', action='count', help='create place (must be used with -f)')
-@manager.option('-u', '--update', dest='update_sn', metavar='ID', type=int, help='update place (must be used with -f)')
+@manager.option('-u', '--update', dest='update_sn', metavar='ID', type=int,
+                help='update place (must be used with -f)')
 @manager.option('-d', '--delete', dest='delete_sn', metavar='ID', type=int, help='delete place')
 @manager.option('-f', '--file', dest='f', metavar='FILE')
 @manager.option('-l', '--list', dest='ls', action='count', help='list places')

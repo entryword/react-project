@@ -2,8 +2,8 @@ import json
 
 from flask import current_app
 
-from .abstract import BaseEventManager
 from app.sqldb import DBWrapper
+from .abstract import BaseEventManager
 
 
 # TODO: error handling & input verification
@@ -43,7 +43,8 @@ class Manager(BaseEventManager):
             if new_info["event_info"]:
                 event_basic = manager.get_event_basic(sn)
                 if event_basic.event_info:
-                    manager.update_event_info(event_basic.event_info.sn, new_info["event_info"], autocommit=True)
+                    manager.update_event_info(event_basic.event_info.sn, new_info["event_info"],
+                                              autocommit=True)
                 else:
                     new_info["event_info"]["event_basic_sn"] = event_basic.sn
                     manager.create_event_info(new_info["event_info"], autocommit=True)
