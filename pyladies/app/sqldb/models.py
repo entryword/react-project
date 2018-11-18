@@ -81,7 +81,7 @@ class Link(db.Model):
                            db.ForeignKey("speaker.sn", ondelete="CASCADE"),
                            nullable=False)
     type = db.Column(db.String(128), nullable=False)
-    url = db.Column(db.String(128), nullable=False)
+    url = db.Column(db.String(1024), nullable=False)
 
     speaker = db.relationship("Speaker",
                               backref=db.backref("links", uselist=True))
@@ -192,7 +192,7 @@ class SlideResource(db.Model):
                               nullable=False)
     type = db.Column(db.String(128), nullable=False)
     title = db.Column(db.String(128), nullable=False)
-    url = db.Column(db.String(128), nullable=False)
+    url = db.Column(db.String(1024), nullable=False)
 
     def __str__(self):
         return ("<SlideResource sn {obj.sn}"
