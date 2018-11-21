@@ -5,6 +5,7 @@ services:
     image: mariadb:10
     volumes:
       - ./data/mariadb_data:/var/lib/mysql
+      - ./mysql.cnf:/etc/mysql/conf.d/custom.cnf
     environment:
       - MYSQL_ROOT_PASSWORD=12345678
       - MYSQL_DATABASE=pyladies
@@ -12,13 +13,14 @@ services:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       interval: 5s
       timeout: 3s
-      retries: 10
+      retries: 15
     restart: always
-
+    
   testdb:
     image: mariadb:10
     volumes:
       - ./data/testdb_data:/var/lib/mysql
+      - ./mysql.cnf:/etc/mysql/conf.d/custom.cnf
     environment:
       - MYSQL_ROOT_PASSWORD=12345678
       - MYSQL_DATABASE=test
@@ -26,7 +28,7 @@ services:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       interval: 5s
       timeout: 3s
-      retries: 10
+      retries: 15
     restart: always
 
   phpmyadmin:
