@@ -2,12 +2,12 @@ import json
 
 from flask import current_app
 
-from .abstract import BaseTopicManager
 from app.sqldb import DBWrapper
+from .abstract import BaseSpeakerManager
 
 
 # TODO: error handling & input verification
-class Manager(BaseTopicManager):
+class Manager(BaseSpeakerManager):
     @staticmethod
     def create_speaker(file_path):
         with open(file_path) as f:

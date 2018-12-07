@@ -2,6 +2,15 @@
 <!--suppress ALL -->
 <html lang="en">
 <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-45593621-3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-45593621-3');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>活動</title>
@@ -52,8 +61,9 @@
             <li class="event-menu-item" id="event-fourth">
                 講義 | 資源
             </li>
-            <li class="attend-btn">
-                <a class="sign-up-btn" href="/signup/meetup.html">按此報名</a>
+            <li class="attend-btn" id="event-signup">
+                <div id="event-signup">
+                </div>
             </li>
         </ul>
     </div>
@@ -80,10 +90,14 @@
 <script src="../sources/ScrollMagic.min.js"></script>
 <script src="../sources/axios.min.js"></script>
 <script src="../sources/handlebars.min.js"></script>
+<!--Template signup-->
+<script id="event-signup-template" type="text/x-handlebars-template">
+    {{setSignupLink eventId date}}
+</script>
 <!--Template header-->
 <script id="event-header-content-template" type="text/x-handlebars-template">
     <h1>{{hostName}}</h1>
-    <h2>{{topic_info.name}}</h2>
+    <a href="topic.html?id={{topic_info.id}}" target="_blank"><h2>{{topic_info.name}}</h2></a>
     <h3>{{title}}</h3>
 </script>
 <!-- Template 時間地點 -->

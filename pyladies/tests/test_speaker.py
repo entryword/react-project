@@ -270,7 +270,7 @@ class SpeakerTestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_speaker(info, autocommit=True)
             speaker = manager.get_speaker_by_name(info["name"])
-            
+
             # test
             manager.delete_speaker(speaker.sn, autocommit=True)
 

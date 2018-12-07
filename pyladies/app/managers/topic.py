@@ -2,8 +2,8 @@ import json
 
 from flask import current_app
 
-from .abstract import BaseTopicManager
 from app.sqldb import DBWrapper
+from .abstract import BaseTopicManager
 
 
 # TODO: error handling & input verification

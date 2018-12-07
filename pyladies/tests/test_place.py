@@ -141,7 +141,7 @@ class PlaceTestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_place(info, autocommit=True)
             place = manager.get_place_by_name(info["name"])
-            
+
             # test
             manager.delete_place(place.sn, autocommit=True)
 

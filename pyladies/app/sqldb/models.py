@@ -14,6 +14,13 @@ db = SQLAlchemy()
 class IntegerArrayType(types.TypeDecorator):
     impl = String
 
+    @property
+    def python_type(self):
+        return list
+
+    def process_literal_param(self, value, dialect):
+        raise RuntimeError("Not allow to use this")
+
     def process_bind_param(self, value, dialect):
         # from python to database
         value = [str(i) for i in value]
@@ -74,7 +81,7 @@ class Link(db.Model):
                            db.ForeignKey("speaker.sn", ondelete="CASCADE"),
                            nullable=False)
     type = db.Column(db.String(128), nullable=False)
-    url = db.Column(db.String(128), nullable=False)
+    url = db.Column(db.String(1024), nullable=False)
 
     speaker = db.relationship("Speaker",
                               backref=db.backref("links", uselist=True))
@@ -185,7 +192,7 @@ class SlideResource(db.Model):
                               nullable=False)
     type = db.Column(db.String(128), nullable=False)
     title = db.Column(db.String(128), nullable=False)
-    url = db.Column(db.String(128), nullable=False)
+    url = db.Column(db.String(1024), nullable=False)
 
     def __str__(self):
         return ("<SlideResource sn {obj.sn}"
@@ -209,11 +216,11 @@ class EventInfo(db.Model):
                                   backref=db.backref("event_info", uselist=False))
     slide_resources = db.relationship("SlideResource", uselist=True)
     speakers = db.relationship("Speaker",
-                                secondary=event_info_to_speaker,
-                                uselist=True)
+                               secondary=event_info_to_speaker,
+                               uselist=True)
     assistants = db.relationship("Speaker",
-                                secondary=event_info_to_assistant,
-                                uselist=True)
+                                 secondary=event_info_to_assistant,
+                                 uselist=True)
 
     def __str__(self):
         return ("<EventInfo event_basic_sn: {obj.event_basic_sn}"

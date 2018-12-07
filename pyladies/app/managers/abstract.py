@@ -1,10 +1,10 @@
-class BaseTopicManager(object):
+class BaseTopicManager():
     @staticmethod
-    def create_topic(f):
+    def create_topic(file_path):
         raise NotImplementedError()
 
     @staticmethod
-    def update_topic(sn, f):
+    def update_topic(sn, file_path):
         raise NotImplementedError()
 
     @staticmethod
@@ -16,13 +16,13 @@ class BaseTopicManager(object):
         raise NotImplementedError()
 
 
-class BaseEventManager(object):
+class BaseEventManager():
     @staticmethod
-    def create_event(f):
+    def create_event(file_path):
         raise NotImplementedError()
 
     @staticmethod
-    def update_event(sn, f):
+    def update_event(sn, file_path):
         raise NotImplementedError()
 
     @staticmethod
@@ -30,5 +30,41 @@ class BaseEventManager(object):
         raise NotImplementedError()
 
     @staticmethod
-    def list_events(key=None):
+    def list_events(topic_sn):
+        raise NotImplementedError()
+
+
+class BasePlaceManager():
+    @staticmethod
+    def create_place(file_path):
+        raise NotImplementedError()
+
+    @staticmethod
+    def update_place(sn, file_path):
+        raise NotImplementedError()
+
+    @staticmethod
+    def delete_place(sn):
+        raise NotImplementedError()
+
+    @staticmethod
+    def list_places():
+        raise NotImplementedError()
+
+
+class BaseSpeakerManager():
+    @staticmethod
+    def create_speaker(file_path):
+        raise NotImplementedError()
+
+    @staticmethod
+    def update_speaker(sn, file_path):
+        raise NotImplementedError()
+
+    @staticmethod
+    def delete_speaker(sn):
+        raise NotImplementedError()
+
+    @staticmethod
+    def list_speakers():
         raise NotImplementedError()

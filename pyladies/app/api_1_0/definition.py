@@ -1,8 +1,8 @@
 from flask import jsonify, abort
 
-from . import api
 from app.constant import DEFINITION_1_0
 from app.exceptions import OK
+from . import api
 
 
 @api.route("/definitions", methods=["GET"])

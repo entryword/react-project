@@ -304,7 +304,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         rv = self.test_client.get("/v1.0/api/definitions")
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]["field"]), 8)
+        self.assertEquals(len(rv.json["data"]["field"]), 12)
         self.assertEquals(len(rv.json["data"]["freq"]), 3)
         self.assertEquals(len(rv.json["data"]["level"]), 4)
         self.assertEquals(len(rv.json["data"]["host"]), 3)
@@ -313,7 +313,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         rv = self.test_client.get("/v1.0/api/definition/field")
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]), 8)
+        self.assertEquals(len(rv.json["data"]), 12)
 
         rv = self.test_client.get("/v1.0/api/definition/freq")
         self.assertEquals(rv.status_code, 200)

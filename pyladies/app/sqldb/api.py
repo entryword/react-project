@@ -1,13 +1,14 @@
-from functools import wraps
-
 from sqlalchemy.sql import text
 
-from .abstract import SQLDatabaseAPI
-from .models import *
 from app.exceptions import (
     TOPIC_NOT_EXIST, EVENTBASIC_NOT_EXIST,
-    EVENTINFO_NOT_EXIST, SLIDERESOURCE_NOT_EXIST,
-    SPEAKER_NOT_EXIST, PLACE_NOT_EXIST
+    EVENTINFO_NOT_EXIST, SPEAKER_NOT_EXIST,
+    PLACE_NOT_EXIST
+)
+from .abstract import SQLDatabaseAPI
+from .models import (
+    Topic, Speaker, Link, Place, EventBasic,
+    SlideResource, EventInfo
 )
 
 

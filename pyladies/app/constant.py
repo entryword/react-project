@@ -8,7 +8,11 @@ FIELD_1_0 = {
     4: "Optimization",
     5: "Tutorial",
     6: "Application",
-    7: "Experience"
+    7: "Experience",
+    8: "Party",
+    9: "IoT",
+    10: "Finance",
+    11: "Bot"
 }
 
 FREQ_1_0 = {
