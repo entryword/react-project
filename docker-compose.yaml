@@ -1,0 +1,77 @@
+version: '2.1'
+
+services:
+  mariadb:
+    image: mariadb:10
+    volumes:
+      - ./data/mariadb_data:/var/lib/mysql
+      - ./mysql.cnf:/etc/mysql/conf.d/custom.cnf
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+      - MYSQL_DATABASE=pyladies
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: always
+    
+  testdb:
+    image: mariadb:10
+    volumes:
+      - ./data/testdb_data:/var/lib/mysql
+      - ./mysql.cnf:/etc/mysql/conf.d/custom.cnf
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345678
+      - MYSQL_DATABASE=test
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:4.7
+    ports:
+        - 5566:80
+    volumes:
+        - ./data/phpmyadmin_data:/sessions
+    environment:
+       - PMA_HOSTS=mariadb,testdb
+       - PMA_PORT=3306
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      testdb:
+        condition: service_healthy
+    restart: always
+
+  app:
+    build: .
+    ports:
+        - 55688:5000
+    volumes:
+      - ./pyladies:/var/www/html/website2018/pyladies
+    environment:
+      - PYTHONPATH=/var/www/html/website2018/pyladies/
+      - DEV_DATABASE_URL=mysql+pymysql://root:12345678@mariadb/pyladies
+      - TEST_DATABASE_URL=mysql+pymysql://root:12345678@testdb/test
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      testdb:
+        condition: service_healthy
+    restart: always
+
+  nginx:
+    image: nginx:1.14-alpine
+    ports:
+      - 5555:80
+    volumes:
+      - ./frontend:/var/www/html/website2018/frontend
+      - ./nginx_web.conf:/etc/nginx/nginx.conf
+    restart: always
+    command: [nginx-debug, '-g', 'daemon off;']
+
+    
