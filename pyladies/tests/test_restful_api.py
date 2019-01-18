@@ -347,3 +347,37 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
         self.assertEquals(len(rv.json["data"]), 3)
+
+    def test_get_places(self):
+        places = [
+            {
+                "name": "place 1",
+                "addr": "台北市信義區光復南路133號",
+                "map": "http://abc.com/map1.html"
+            },
+            {
+                "name": "place 2",
+                "addr": "台北市萬華區艋舺大道101號",
+                "map": "http://abc.com/map2.html"
+            },
+            {
+                "name": "place 3",
+                "addr": "台北市大安區和平東路二段50號",
+                "map": "http://abc.com/map3.html"
+            }
+        ]
+
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            for place in places:
+                manager.create_place(place, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/v1.0/api/places/")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEquals(rv.json["data"]["places"][1]["name"], places[1]["name"])
+        self.assertEquals(rv.json["data"]["places"][1]["addr"], places[1]["addr"])
+        self.assertEquals(rv.json["data"]["places"][1]["map"], places[1]["map"])
+        self.assertEquals(len(rv.json["data"]["places"]), 3)
