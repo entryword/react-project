@@ -113,6 +113,42 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         event_info = self.session.merge(event_info)
         return event_info
 
+    def get_event_apply_info_by_event_basic_id(self, sn):
+        event_apply_info = {
+            "event_basic_id": 128,
+            "host": "American Innovation Center 美國創新中心",
+            "start_time": "2019-11-23 08:00",
+            "end_time": "2019-12-01 23:00",
+            "apply": [
+                {
+                    "channel": 0,
+                    "type": "one",
+                    "price": {
+                        "default": 100,
+                        "student": 50
+                    },
+                    "url": "https://...",
+                    "qualification": ""
+                },
+                {
+                    "channel": 1,
+                    "type": "all",
+                    "price": {
+                        "default": 400,
+                        "student": 200
+                    },
+                    "url": "https://...",
+                    "qualification": "https://..."
+                }
+            ],
+            "limit": {
+                "gender": "限女",
+                "age": "不限"
+            },
+            "limit_desc": "須上傳登錄成功截圖"
+        }
+        return event_apply_info
+
     # TODO: pagination and filter
     def get_places(self):
         return self.session.query(Place).all()

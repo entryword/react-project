@@ -68,3 +68,20 @@ class BaseSpeakerManager():
     @staticmethod
     def list_speakers():
         raise NotImplementedError()
+
+class BaseApplyManager():
+    @staticmethod
+    def create_event_apply_info(file_path):
+        raise NotImplementedError()
+
+    @staticmethod
+    def update_event_apply_info(event_basic_id, file_path):
+        raise NotImplementedError()
+
+    @staticmethod
+    def delete_event_apply_info(event_basic_id):
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_event_apply_info(event_basic_id):
+        raise NotImplementedError()
