@@ -329,3 +329,66 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
         self.assertEquals(len(rv.json["data"]), 3)
+
+    def test_event_not_exist(self):
+        rv = self.test_client.get("/v1.0/api/apply/1")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 1000)
+
+    def test_routing_not_fount(self):
+        rv = self.test_client.get("/v1.0/api/apply/1")
+        self.assertEquals(rv.status_code, 404)
+        self.assertEquals(rv.json["info"]["code"], 8000)
+    
+    def test_get_event_apply_info(self):
+        price_info = {
+            "default": 100,
+            "student": 50
+        }
+        apply_info_data = [
+            {
+                "channel":0,
+                "type": "one",
+                "price":price_info,
+                "url": "https://tw.pyladies.com/",
+                "qualification": "https://tw.pyladies.com/"
+            },
+            {
+                "channel":1,
+                "type": "all",
+                "price":price_info,
+                "url": "https://tw.pyladies.com/",
+                "qualification": ""
+            }
+        ]
+        limit_detail = {
+            "gender": "限女",
+            "age": "不限"
+        }
+        event_apply = {
+            "event_basic_id":None,
+            "host": "American Innovation Center 美國創新中心",
+            "start_time": "2019-01-23 08:00",
+            "end_time": "2019-01-31 20:00",
+            "apply": apply_info_data,
+            "limit": limit_detail,
+            "limit_desc": "須上傳安裝完成畫面"
+            }
+
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_price(price_info, autocommit=True)
+            manager.create_apply_info(apply_info_data, autocommit=True)
+            manager.create_limit_detail(limit_detail, autocommit=True)
+            manager.create_event_apply(event_apply, autocommit=True)
+            event_apply["event_basic_id"] = 1
+
+        # test
+        rv = self.test_client.get("/v1.0/api/apply/")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEquals(rv.json["data"]["event_apply"]["host"], event_apply["host"])
+        self.assertEquals(rv.json["data"]["event_apply"]["start_time"], event_apply["start_time"])
+        self.assertEquals(rv.json["data"]["event_apply"]["end_time"], event_apply["end_time"])
+        self.assertEquals(len(rv.json["data"]["event_apply"]["apply"]), 2)

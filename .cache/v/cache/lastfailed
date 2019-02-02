@@ -1,0 +1,10 @@
+{
+  "pyladies/tests/test_apply.py": true,
+  "pyladies/tests/test_event_apply_info.py": true,
+  "pyladies/tests/test_event_basic.py": true,
+  "pyladies/tests/test_event_info.py": true,
+  "pyladies/tests/test_place.py": true,
+  "pyladies/tests/test_restful_api.py": true,
+  "pyladies/tests/test_speaker.py": true,
+  "pyladies/tests/test_topic.py": true
+}
