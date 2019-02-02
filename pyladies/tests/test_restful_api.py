@@ -397,6 +397,13 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             self.assertEquals(len(rv.json["data"]["events"]), 2)
             self.assertEquals(rv.json["data"]["events"][0]["event"]["title"], "event 1")
 
+            # test empty parameters
+            rv = self.test_client.get("/v1.0/api/events?keyword=&date=&sort=&order=")
+            self.assertEquals(rv.status_code, 200)
+            self.assertEquals(rv.json["info"]["code"], 0)
+            self.assertEquals(len(rv.json["data"]["events"]), 2)
+            self.assertEquals(rv.json["data"]["events"][0]["event"]["title"], "event 1")
+
             # test order desc
             rv = self.test_client.get("/v1.0/api/events?order=desc")
             self.assertEquals(rv.status_code, 200)

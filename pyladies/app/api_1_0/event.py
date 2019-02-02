@@ -111,10 +111,14 @@ def list_events():
     EVENTLIST_PARAM_ORDER_DEFAULT = "asc"
     EVENTLIST_PARAM_ORDER_OPTIONS = ["asc", "desc"]
 
-    keyword = request.args.get("keyword", EVENTLIST_PARAM_KEYWORD_DEFAULT)
-    date = request.args.get("date", EVENTLIST_PARAM_DATE_DEFAULT)
-    sort = request.args.get("sort", EVENTLIST_PARAM_SORT_DEFAULT)
-    order = request.args.get("order", EVENTLIST_PARAM_ORDER_DEFAULT)
+    keyword = request.args.get("keyword", EVENTLIST_PARAM_KEYWORD_DEFAULT) \
+    or EVENTLIST_PARAM_KEYWORD_DEFAULT
+    date = request.args.get("date", EVENTLIST_PARAM_DATE_DEFAULT) \
+    or EVENTLIST_PARAM_DATE_DEFAULT
+    sort = request.args.get("sort", EVENTLIST_PARAM_SORT_DEFAULT) \
+    or EVENTLIST_PARAM_SORT_DEFAULT
+    order = request.args.get("order", EVENTLIST_PARAM_ORDER_DEFAULT) \
+    or EVENTLIST_PARAM_ORDER_DEFAULT
 
     # ## validate request parameters
     if len(keyword) > EVENTLIST_PARAM_KEYWORD_MAX_LEN:
