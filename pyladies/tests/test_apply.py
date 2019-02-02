@@ -57,6 +57,7 @@ class EventInfoTestCase(unittest.TestCase):
         # test
         manager = apply.Manager()
         manager.create_event_apply_info(input_event_apply_info)
-        result_event_apply_info = manager.get_event_apply_info(input_event_apply_info["event_basic_id"])
+        result_event_apply_info = \
+            manager.get_event_apply_info(input_event_apply_info["event_basic_id"])
         # assertion
         self.assertEquals(result_event_apply_info, input_event_apply_info)

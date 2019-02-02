@@ -71,11 +71,11 @@ class BaseSpeakerManager():
 
 class BaseApplyManager():
     @staticmethod
-    def create_event_apply_info(file_path):
+    def create_event_apply_info(event_apply_info):
         raise NotImplementedError()
 
     @staticmethod
-    def update_event_apply_info(event_basic_id, file_path):
+    def update_event_apply_info(event_basic_id, event_apply_info):
         raise NotImplementedError()
 
     @staticmethod

@@ -21,7 +21,8 @@ class Manager(BaseApplyManager):
                     "url": apply_info["url"],
                     "qualification": apply_info["qualification"]
                 }
-                apply_info_list.append(str(manager.create_apply_info(input_apply_info, autocommit=True)))
+                apply_info_list.append(
+                    str(manager.create_apply_info(input_apply_info, autocommit=True)))
 
             event_apply = {
                 "event_basic_sn": event_apply_info["event_basic_id"],

@@ -80,6 +80,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
             return obj.sn
+        return 0
 
     def create_apply_info(self, info, autocommit=False):
         obj = ApplyInfo(**info)
@@ -89,6 +90,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
             return obj.sn
+        return 0
 
     ########## get
 

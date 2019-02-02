@@ -3,7 +3,6 @@
 import unittest
 
 from app import create_app
-from app.exceptions import PyLadiesException
 from app.sqldb import DBWrapper
 
 
@@ -266,10 +265,7 @@ class EventApplyTestCase(unittest.TestCase):
             self.assertEquals(event_apply_2.event_basic_sn, 129)
             with self.assertRaises(Exception) as context:
                 manager.get_event_apply_by_event_basic(128)
-            self.assertEquals("Unable to perform the action. EventInfo doesn't exist.", str(context.exception))
+            self.assertEquals(
+                "Unable to perform the action. EventInfo doesn't exist.", str(context.exception))
 
             # TODO if delete_apply_info need to update event_apply.apply_info_sn_list
-            # self.assertEquals(apply_info_2.sn, 2)
-            # with self.assertRaises(Exception) as context:
-            #     manager.get_apply_info(1)
-            # self.assertEquals("Unable to perform the action. EventInfo doesn't exist.", str(context.exception))
