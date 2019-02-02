@@ -18,4 +18,3 @@ def validate_time_format(time_str, expected_format, err_message=''):
         datetime.strptime(time_str, expected_format)
     except Exception:
         raise ValueError(err_message)
-
