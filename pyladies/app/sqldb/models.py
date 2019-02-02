@@ -68,9 +68,10 @@ class Speaker(db.Model):
     def __str__(self):
         return ("<Speaker sn: {obj.sn}"
                 ", name: {obj.name}"
+                ", photo: {obj.photo}"
                 ", title: {obj.title}"
-                ", fields: {obj.fields}"
-                ", links: {obj.links}>").format(obj=self)
+                ", intro: {obj.intro}"
+                ", fields: {obj.fields}").format(obj=self)
 
 
 class Link(db.Model):
