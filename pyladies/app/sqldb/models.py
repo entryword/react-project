@@ -68,9 +68,10 @@ class Speaker(db.Model):
     def __str__(self):
         return ("<Speaker sn: {obj.sn}"
                 ", name: {obj.name}"
+                ", photo: {obj.photo}"
                 ", title: {obj.title}"
-                ", fields: {obj.fields}"
-                ", links: {obj.links}>").format(obj=self)
+                ", intro: {obj.intro}"
+                ", fields: {obj.fields}").format(obj=self)
 
 
 class Link(db.Model):
@@ -230,3 +231,56 @@ class EventInfo(db.Model):
                 ", slide_resources: {obj.slide_resources}"
                 ", speakers: {obj.speakers}"
                 ", assistants: {obj.assistants}>").format(obj=self)
+
+
+class EventApply(db.Model):
+    __tablename__ = "event_apply"
+
+    sn = db.Column(db.Integer, primary_key=True)
+    event_basic_sn = db.Column(db.Integer, nullable=False, unique=True)
+    apply_info_sn_list = db.Column(db.String(128), unique=False, nullable=False)
+    host = db.Column(db.String(128), unique=False, nullable=True)
+    start_time = db.Column(db.String(128), unique=False, nullable=True)
+    end_time = db.Column(db.String(128), unique=False, nullable=True)
+    limit_gender = db.Column(db.String(128), nullable=True)
+    limit_age = db.Column(db.String(128), nullable=True)
+    limit_desc = db.Column(db.Text, nullable=True)
+
+    # apply_info = db.relationship('apply_info', backref='event_apply', lazy='dynamic',
+    #                              cascade='all, delete-orphan', passive_deletes=True)
+
+    def __str__(self):
+        return ("<EventApply sn: {obj.sn}"
+                ", event_basic_sn: {obj.event_basic_sn}"
+                ", apply_info_sn_list: {obj.apply_info_sn_list}"
+                ", host: {obj.host}"
+                ", start_time: {obj.start_time}"
+                ", end_time: {obj.end_time}"
+                ", limit_gender: {obj.limit_gender}>"
+                ", limit_age: {obj.limit_age}"
+                ", limit_desc: {obj.limit_desc}").format(obj=self)
+
+
+class ApplyInfo(db.Model):
+    __tablename__ = "apply_info"
+    sn = db.Column(db.Integer, primary_key=True)
+    # event_apply_sn = db.Column(db.Integer,
+    #                            db.ForeignKey("event_apply.sn", ondelete="CASCADE"),
+    #                            nullable=False,
+    #                            unique=False)
+    channel = db.Column(db.Integer, nullable=False)
+    type = db.Column(db.String(10), nullable=False)
+    price_default = db.Column(db.Integer, nullable=False)
+    price_student = db.Column(db.Integer, nullable=False)
+    url = db.Column(db.Text, nullable=False)
+    qualification = db.Column(db.Text, nullable=True)
+
+    def __str__(self):
+        return ("<ApplyInfo sn: {obj.sn}"
+                # ", event_apply_sn: {obj.event_apply_sn}"
+                ", channel: {obj.channel}"
+                ", type: {obj.type}"
+                ", price_default: {obj.price_default}"
+                ", price_student: {obj.price_student}"
+                ", url: {obj.url}"
+                ", qualification: {obj.qualification}>").format(obj=self)
