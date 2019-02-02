@@ -18,10 +18,9 @@ class EventInfoTestCase(unittest.TestCase):
         self.app.db.drop_all()
         self.app_context.pop()
 
-    def test_get_event_apply_info_by_event_basic_id(self):
+    def test_create_and_get_event_apply_info(self):
         # prepare
-        event_basic_id = 128
-        ans_event_apply_info = {
+        input_event_apply_info = {
             "event_basic_id": 128,
             "host": "American Innovation Center 美國創新中心",
             "start_time": "2019-11-23 08:00",
@@ -57,7 +56,7 @@ class EventInfoTestCase(unittest.TestCase):
 
         # test
         manager = apply.Manager()
-        result_event_apply_info = manager.get_event_apply_info(event_basic_id)
-
+        manager.create_event_apply_info(input_event_apply_info)
+        result_event_apply_info = manager.get_event_apply_info(input_event_apply_info["event_basic_id"])
         # assertion
-        self.assertEquals(result_event_apply_info, ans_event_apply_info)
+        self.assertEquals(result_event_apply_info, input_event_apply_info)

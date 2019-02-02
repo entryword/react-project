@@ -8,7 +8,7 @@ from app.exceptions import (
 from .abstract import SQLDatabaseAPI
 from .models import (
     Topic, Speaker, Link, Place, EventBasic,
-    SlideResource, EventInfo
+    SlideResource, EventInfo, EventApply, ApplyInfo
 )
 
 
@@ -72,6 +72,24 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
+    def create_event_apply(self, info, autocommit=False):
+        obj = EventApply(**info)
+
+        self.session.add(obj)
+
+        if autocommit:
+            self.session.commit()
+            return obj.sn
+
+    def create_apply_info(self, info, autocommit=False):
+        obj = ApplyInfo(**info)
+
+        self.session.add(obj)
+
+        if autocommit:
+            self.session.commit()
+            return obj.sn
+
     ########## get
 
     # TODO: pagination and filter
@@ -113,7 +131,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         event_info = self.session.merge(event_info)
         return event_info
 
-    def get_event_apply_info_by_event_basic_id(self, sn):
+    def get_event_apply_by_event_basic_id(self, sn):
         event_apply_info = {
             "event_basic_id": 128,
             "host": "American Innovation Center 美國創新中心",
@@ -148,6 +166,28 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             "limit_desc": "須上傳登錄成功截圖"
         }
         return event_apply_info
+
+    def get_event_apply_by_event_basic(self, event_basic_sn):
+        event_apply = self.session.query(EventApply)\
+            .filter_by(event_basic_sn=event_basic_sn).one_or_none()
+        if not event_apply:
+            raise EVENTINFO_NOT_EXIST
+        event_apply = self.session.merge(event_apply)
+        return event_apply
+
+    def get_event_apply(self, sn):
+        event_apply = self.session.query(EventApply).filter_by(sn=sn).one_or_none()
+        if not event_apply:
+            raise EVENTINFO_NOT_EXIST
+        event_apply = self.session.merge(event_apply)
+        return event_apply
+
+    def get_apply_info(self, sn):
+        apply_info = self.session.query(ApplyInfo).filter_by(sn=sn).one_or_none()
+        if not apply_info:
+            raise EVENTINFO_NOT_EXIST
+        apply_info = self.session.merge(apply_info)
+        return apply_info
 
     # TODO: pagination and filter
     def get_places(self):
@@ -287,6 +327,32 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
+    def update_event_apply(self, sn, info, autocommit=False):
+        event_apply = self.session.query(EventApply).filter_by(sn=sn).one_or_none()
+        if not event_apply:
+            raise EVENTINFO_NOT_EXIST
+        info.pop("sn", None)
+        for key, value in info.items():
+            if hasattr(event_apply, key):
+                setattr(event_apply, key, value)
+
+        self.session.add(event_apply)
+        if autocommit:
+            self.session.commit()
+
+    def update_apply_info(self, sn, info, autocommit=False):
+        apply_info = self.session.query(ApplyInfo).filter_by(sn=sn).one_or_none()
+        if not apply_info:
+            raise EVENTINFO_NOT_EXIST
+        info.pop("sn", None)
+        for key, value in info.items():
+            if hasattr(apply_info, key):
+                setattr(apply_info, key, value)
+
+        self.session.add(apply_info)
+        if autocommit:
+            self.session.commit()
+
     ########## delete
 
     def delete_topic(self, sn, autocommit=False):
@@ -357,6 +423,30 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def delete_slide_resource(self, sn, autocommit=True):
         stmt = text("DELETE FROM slide_resource WHERE sn=:sn").bindparams(sn=sn)
+        self.session.execute(stmt)
+        if autocommit:
+            self.session.commit()
+
+    def delete_event_apply(self, sn, autocommit=False):
+        # event_info = self.session.query(EventInfo).filter_by(sn=sn).one_or_none()
+        # if event_info:
+        #     self.session.delete(event_info)
+
+        #     if autocommit:
+        #         self.session.commit()
+        stmt = text("DELETE FROM event_apply WHERE sn=:sn").bindparams(sn=sn)
+        self.session.execute(stmt)
+        if autocommit:
+            self.session.commit()
+
+    def delete_apply_info(self, sn, autocommit=False):
+        # event_info = self.session.query(EventInfo).filter_by(sn=sn).one_or_none()
+        # if event_info:
+        #     self.session.delete(event_info)
+
+        #     if autocommit:
+        #         self.session.commit()
+        stmt = text("DELETE FROM apply_info WHERE sn=:sn").bindparams(sn=sn)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()
