@@ -6,6 +6,7 @@ import Search from './Search';
 import Calendar from './Calendar';
 import List from './List';
 import Filter from './Filter';
+import FilterList from './FilterList';
 
 import './react-big-calendar.css';
 import './App.scss';
@@ -27,6 +28,7 @@ class App extends Component {
             places: [],
             order: 'asc',
             filters: {},
+            filterReset: false,
         };
         this.queryEvent = {};
     }
@@ -77,6 +79,21 @@ class App extends Component {
         this.setState({
             month: event.target.value,
         });
+    };
+    resetFilter() {
+        this.setState({
+            filterReset: false,
+        });
+    }
+    handleFilterReset = () => {
+        this.setState(
+            {
+                filterReset: true,
+                events: this.queryEvent,
+                filters: {},
+            },
+            this.resetFilter
+        );
     };
     // filter action
     processFilter() {
@@ -169,6 +186,7 @@ class App extends Component {
             order,
             viewOptionOpen,
             filters,
+            filterReset,
         } = this.state;
         return (
             <div>
@@ -188,6 +206,7 @@ class App extends Component {
                         filterOpen={this.state.filterOpen}
                         handleFiler={this.handleFiler}
                         filters={filters}
+                        filterReset={filterReset}
                     />
                     <div className="view-box">
                         <div className="view-label">View As</div>
@@ -208,6 +227,13 @@ class App extends Component {
                     </div>
                 </div>
                 {/* <div>Month: {this.state.month}</div> */}
+                {Object.keys(this.state.filters).length > 0 && (
+                    <FilterList
+                        filters={filters}
+                        definitions={definitions}
+                        handleFilterReset={this.handleFilterReset}
+                    />
+                )}
                 {viewOptionOpen && <Calendar events={events} />}
                 {!viewOptionOpen && (
                     <List

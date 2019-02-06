@@ -53,31 +53,43 @@ class Filter extends Component {
             },
         });
     };
+    resetFilter = definitions => {
+        const state = {};
+        this.filterName.forEach(filter => {
+            state[filter] = {};
+            for (let l in definitions[filter]) {
+                state[filter][l] = false;
+            }
+        });
+        this.setState({
+            ...state,
+        });
+    };
+
+    resetPlaceFilter = places => {
+        const place = {};
+        places.forEach(p => {
+            place[p.name] = false;
+        });
+        this.setState({
+            place,
+        });
+    };
     // 處理 parent 非同步傳來的資訊
     componentDidUpdate(prevProps) {
-        const { definitions, places } = this.props;
+        const { definitions, places, filterReset } = this.props;
         if (definitions !== prevProps.definitions) {
-            const state = {};
-            this.filterName.forEach(filter => {
-                state[filter] = {};
-                for (let l in definitions[filter]) {
-                    state[filter][l] = false;
-                }
-            });
-            this.setState({
-                ...state,
-            });
+            this.resetFilter(definitions);
         }
         if (places !== prevProps.places) {
-            const place = {};
-            places.forEach(p => {
-                place[p.name] = false;
-            });
-            this.setState({
-                place,
-            });
+            this.resetPlaceFilter(places);
         }
-        // console.log(this.state);
+        if (filterReset !== prevProps.filterReset) {
+            if (filterReset) {
+                this.resetFilter(definitions);
+                this.resetPlaceFilter(places);
+            }
+        }
     }
     render() {
         const { definitions, places, filterOpen, handleFiler } = this.props;

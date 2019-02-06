@@ -4,4 +4,6 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 -   移除 `/frontend/eventlist/static/*` 內容
 -   將 `/frontend-react/build/static/*` 搬到 `/frontend/eventlist/static/*`
--   `/frontend/eventlist/index.html` 更新 1 個 `css`, 2 個`js` 檔名
+-   將 `main.xxxxxxx.chunk.css` 改成 `main.css`
+-   將 `1.xxxxxxxx.chunk.js` 改成 `chunk.js`
+-   將 `main.xxxxxxx.chunk.js` 改成 `main.chunk.js`
