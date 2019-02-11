@@ -21,6 +21,7 @@ def get_event(e_id):
 
     return jsonify(data=event_info, info=info)
 
+
 @api.route("/events", methods=["GET"])
 def list_events():
     # event list constants
@@ -71,7 +72,23 @@ def list_events():
 
     data = {
         "events": events,
-        "count": len(events),
+        "count": len(events)
+    }
+    info = {
+        "code": OK.code,
+        "message": OK.message
+    }
+
+    return jsonify(data=data, info=info)
+
+
+@api.route("/events", methods=["GET"])
+def get_events_from_distinct_topics():
+    em = EventManager()
+    events = em.get_events_from_distinct_topics(limit=4)
+
+    data = {
+        "events": events
     }
     info = {
         "code": OK.code,

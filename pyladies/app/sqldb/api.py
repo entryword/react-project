@@ -1,5 +1,7 @@
+from datetime import datetime, timedelta
+
 from sqlalchemy.sql import text, extract
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 
 from app.exceptions import (
     TOPIC_NOT_EXIST, EVENTBASIC_NOT_EXIST,
@@ -96,6 +98,35 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             raise TOPIC_NOT_EXIST
         topic = self.session.merge(topic)
         return topic
+
+    def get_events_from_distinct_topics(self, limit):
+        topic_levels = self.session.query(Topic.level).distinct(Topic.level).all()
+        if not topic_levels:
+            return []
+
+        topic_levels = [row[0] for row in topic_levels]
+        home_event = []
+        current_time = datetime.utcnow() + timedelta(hours=8)
+        for level in topic_levels:
+            query = self.session.query(EventBasic)
+            query = query.filter(EventBasic.topic.has(Topic.level == level))
+            query = query.filter(
+                or_(
+                    EventBasic.date > current_time.strftime("%Y-%m-%d"),
+                    and_(
+                        EventBasic.date == current_time.strftime("%Y-%m-%d"),
+                        EventBasic.start_time > current_time.strftime("%H:%M")
+                    )
+                )
+            )
+            query = query.order_by(EventBasic.date.asc())
+            query = query.order_by(EventBasic.start_time.asc())
+            event_basic = query.first()
+            if event_basic and event_basic.event_info:
+                home_event.append(event_basic)
+
+        home_event.sort(key=lambda e: "{} {}".format(e.date, e.start_time))
+        return home_event[:limit]
 
     def get_event_basics_by_topic(self, topic_sn):
         return self.session.query(EventBasic).filter_by(topic_sn=topic_sn).all()
