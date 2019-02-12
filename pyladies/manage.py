@@ -11,6 +11,8 @@ from app.managers.speaker import Manager as SpeakerManager
 from app.managers.place import Manager as PlaceManager
 from app.managers.apply import Manager as ApplyManager
 
+import json
+
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
@@ -162,15 +164,19 @@ def apply(create, update_sn, delete_sn, get_sn, f):
         if not f:
             print("Please specify the JSON file path by '-f FILE'.")
         else:
-            tm.create_event_apply_info(f)
-            print("Create event apply info successfully.")
+            with open(f) as f:
+                event_apply_info = json.loads(f.read())
+                tm.create_event_apply_info(event_apply_info)
+                print("Create event apply info successfully.")
 
     if update_sn:
         if not f:
             print("Please specify the JSON file path by '-f FILE'.")
         else:
-            tm.update_event_apply_info(update_sn, f)
-            print("Update event (sn={}) apply info successfully.".format(update_sn))
+            with open(f) as f:
+                event_apply_info = json.loads(f.read())
+                tm.update_event_apply_info(update_sn, event_apply_info)
+                print("Update event (sn={}) apply info successfully.".format(update_sn))
 
     if delete_sn:
         tm.delete_event_apply_info(delete_sn)
