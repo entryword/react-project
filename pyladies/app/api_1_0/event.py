@@ -4,9 +4,9 @@ from . import api
 from ..exceptions import (
     OK, EVENTLIST_INVALID_KEYWORD, EVENTLIST_INVALID_DATE,
     EVENTLIST_INVALID_SORT, EVENTLIST_INVALID_ORDER, EVENTLIST_ERROR)
+from ..managers.event import Manager as EventManager
 from ..sqldb import DBWrapper
 from ..utils import HashableDict, validate_time_format
-from ..managers.event import Manager as EventManager
 
 
 @api.route("/event/<int:e_id>", methods=["GET"])
@@ -102,7 +102,7 @@ def get_event(e_id):
 
 @api.route("/events", methods=["GET"])
 def list_events():
-     # ## event list constants
+    # event list constants
     EVENTLIST_PARAM_KEYWORD_DEFAULT = ""
     EVENTLIST_PARAM_KEYWORD_MAX_LEN = 30
     EVENTLIST_PARAM_DATE_DEFAULT = ""
@@ -120,7 +120,7 @@ def list_events():
     order = request.args.get("order", EVENTLIST_PARAM_ORDER_DEFAULT) \
     or EVENTLIST_PARAM_ORDER_DEFAULT
 
-    # ## validate request parameters
+    # validate request parameters
     if len(keyword) > EVENTLIST_PARAM_KEYWORD_MAX_LEN:
         raise EVENTLIST_INVALID_KEYWORD
 
@@ -136,7 +136,7 @@ def list_events():
     if not order in EVENTLIST_PARAM_ORDER_OPTIONS:
         raise EVENTLIST_INVALID_ORDER
 
-    # ## get event list from manager
+    # get event list from manager
     em = EventManager()
     try:
         events = em.search_events(keyword, date, sort, order)
