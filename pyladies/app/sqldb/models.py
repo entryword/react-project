@@ -241,19 +241,17 @@ class EventApply(db.Model):
                                db.ForeignKey("event_basic.sn", ondelete="CASCADE"),
                                nullable=False,
                                unique=True)
-    apply_info = db.Column(types.JSON)
+    apply = db.Column(types.JSON)
     start_time = db.Column(db.String(128), unique=False, nullable=True)
     end_time = db.Column(db.String(128), unique=False, nullable=True)
-    limit_gender = db.Column(db.String(128), nullable=True)
-    limit_age = db.Column(db.String(128), nullable=True)
+    limit = db.Column(types.JSON)
     limit_desc = db.Column(db.Text, nullable=True)
 
     def __str__(self):
         return ("<EventApply sn: {obj.sn}"
                 ", event_basic_sn: {obj.event_basic_sn}"
-                ", apply_info: {obj.apply_info}"
+                ", apply: {obj.apply}"
                 ", start_time: {obj.start_time}"
                 ", end_time: {obj.end_time}"
-                ", limit_gender: {obj.limit_gender}>"
-                ", limit_age: {obj.limit_age}"
+                ", limit: {obj.limit}>"
                 ", limit_desc: {obj.limit_desc}").format(obj=self)

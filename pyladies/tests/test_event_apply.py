@@ -56,15 +56,15 @@ class EventApplyTestCase(unittest.TestCase):
             "qualification": "https://..."
         }
 
-        event_apply = {
+        input_event_apply = {
             "event_basic_sn": None,
-            "apply_info": {
-                "apply": [apply_info_1, apply_info_2]
-            },
+            "apply": [apply_info_1, apply_info_2],
             "start_time": "2019-11-23 08:00",
             "end_time": "2019-12-01 23:00",
-            "limit_gender": "限女",
-            "limit_age": "不限",
+            "limit": {
+                "gender": "限女",
+                "age": "不限"
+            },
             "limit_desc": "須上傳登錄成功截圖"
         }
 
@@ -76,34 +76,16 @@ class EventApplyTestCase(unittest.TestCase):
             event_basic_info["topic_sn"] = topic.sn
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_basic = topic.event_basics[0]
-            event_apply["event_basic_sn"] = event_basic.sn
+            input_event_apply["event_basic_sn"] = event_basic.sn
 
             # test
-            manager.create_event_apply(event_apply, autocommit=True)
+            manager.create_event_apply(input_event_apply, autocommit=True)
             event_apply = manager.get_event_apply_by_event_basic_sn(event_basic.sn)
 
             # test & assertion
             self.assertEquals(event_apply.event_basic_sn, event_basic.sn)
-            self.assertEquals(event_apply.apply_info,
-                              {
-                                  "apply": [{
-                                      "host": "婦女館",
-                                      "channel": 1,
-                                      "type": "all",
-                                      "price_default": 400,
-                                      "price_student": 200,
-                                      "url": "https://...",
-                                      "qualification": "https://..."
-                                  }, {
-                                      "host": "American Innovation Center 美國創新中心",
-                                      "channel": 0,
-                                      "type": "one",
-                                      "price_default": 100,
-                                      "price_student": 50,
-                                      "url": "https://...",
-                                      "qualification": "https://..."
-                                  }]
-                              })
+            self.assertEquals(event_apply.limit, input_event_apply["limit"])
+            self.assertEquals(event_apply.apply, input_event_apply["apply"])
 
     def test_update_event_apply(self):
         topic_info = {
@@ -141,23 +123,25 @@ class EventApplyTestCase(unittest.TestCase):
             "qualification": "https://..."
         }
 
-        event_apply = {
+        input_event_apply = {
             "event_basic_sn": None,
-            "apply_info": {
-                "apply": [apply_info]
-            },
+            "apply": [apply_info],
             "start_time": "2019-11-23 08:00",
             "end_time": "2019-12-01 23:00",
-            "limit_gender": "限女",
-            "limit_age": "不限",
+            "limit": {
+                "gender": "限女",
+                "age": "不限"
+            },
             "limit_desc": "須上傳登錄成功截圖"
         }
 
         update_info = {
             "start_time": "2019-10-23 08:00",
-            "apply_info": {
-                "apply": [apply_info_new]
-            }
+            "apply": [apply_info_new],
+            "limit": {
+                "gender": "不限",
+                "age": "不限"
+            },
         }
 
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -168,50 +152,31 @@ class EventApplyTestCase(unittest.TestCase):
             event_basic_info["topic_sn"] = topic.sn
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_basic = topic.event_basics[0]
-            event_apply["event_basic_sn"] = event_basic.sn
+            input_event_apply["event_basic_sn"] = event_basic.sn
 
-            event_apply_sn = manager.create_event_apply(event_apply, autocommit=True)
+            event_apply_sn = manager.create_event_apply(input_event_apply, autocommit=True)
             event_apply_before = manager.get_event_apply(event_apply_sn)
             start_time_before = event_apply_before.start_time
             event_basic_sn_before = event_apply_before.event_basic_sn
-            apply_info_before = event_apply_before.apply_info
+            apply_info_before = event_apply_before.apply
+            limit_before = event_apply_before.limit
 
             # test
             manager.update_event_apply(event_apply_sn, update_info, autocommit=True)
             event_apply_after = manager.get_event_apply(event_apply_sn)
             start_time_after = event_apply_after.start_time
             event_basic_sn_after = event_apply_after.event_basic_sn
-            apply_info_after = event_apply_after.apply_info
+            apply_info_after = event_apply_after.apply
+            limit_after = event_apply_after.limit
 
             # test & assertion
             self.assertEquals(event_basic_sn_before, event_basic_sn_after)
             self.assertEquals(start_time_before, "2019-11-23 08:00")
             self.assertEquals(start_time_after, "2019-10-23 08:00")
-            self.assertEquals(apply_info_before,
-                              {
-                                  "apply": [{
-                                      "host": "婦女館",
-                                      "channel": 1,
-                                      "type": "all",
-                                      "price_default": 400,
-                                      "price_student": 200,
-                                      "url": "https://...",
-                                      "qualification": "https://..."
-                                  }]
-                              })
-
-            self.assertEquals(apply_info_after,
-                              {
-                                  "apply": [{
-                                      "host": "American Innovation Center 美國創新中心",
-                                      "channel": 0,
-                                      "type": "one",
-                                      "price_default": 100,
-                                      "price_student": 50,
-                                      "url": "https://...",
-                                      "qualification": "https://..."
-                                  }]
-                              })
+            self.assertEquals(apply_info_before, input_event_apply["apply"])
+            self.assertEquals(apply_info_after, update_info["apply"])
+            self.assertEquals(limit_before, input_event_apply["limit"])
+            self.assertEquals(limit_after, update_info["limit"])
 
     def test_delete_event_apply(self):
         topic_info = {
@@ -239,15 +204,15 @@ class EventApplyTestCase(unittest.TestCase):
             "qualification": "https://..."
         }
 
-        event_apply = {
+        input_event_apply = {
             "event_basic_sn": None,
-            "apply_info": {
-                "apply": [apply_info]
-            },
+            "apply": [apply_info],
             "start_time": "2019-11-23 08:00",
             "end_time": "2019-12-01 23:00",
-            "limit_gender": "限女",
-            "limit_age": "不限",
+            "limit": {
+                "gender": "不限",
+                "age": "不限"
+            },
             "limit_desc": "須上傳登錄成功截圖"
         }
 
@@ -259,9 +224,9 @@ class EventApplyTestCase(unittest.TestCase):
             event_basic_info["topic_sn"] = topic.sn
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_basic = topic.event_basics[0]
-            event_apply["event_basic_sn"] = event_basic.sn
+            input_event_apply["event_basic_sn"] = event_basic.sn
 
-            event_apply_sn = manager.create_event_apply(event_apply, autocommit=True)
+            event_apply_sn = manager.create_event_apply(input_event_apply, autocommit=True)
 
             # test
             manager.delete_event_apply(event_apply_sn, autocommit=True)

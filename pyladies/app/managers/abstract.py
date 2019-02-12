@@ -75,13 +75,17 @@ class BaseApplyManager():
         raise NotImplementedError()
 
     @staticmethod
-    def update_event_apply_info(event_basic_id, event_apply_info):
+    def get_event_apply_info_by_event_basic_sn(event_basic_sn):
         raise NotImplementedError()
 
     @staticmethod
-    def delete_event_apply_info(event_basic_id):
+    def get_event_apply_info(event_apply_sn):
         raise NotImplementedError()
 
     @staticmethod
-    def get_event_apply_info(event_basic_id):
+    def update_event_apply_info(event_apply_sn, update_info):
+        raise NotImplementedError()
+
+    @staticmethod
+    def delete_event_apply_info(event_apply_sn):
         raise NotImplementedError()
