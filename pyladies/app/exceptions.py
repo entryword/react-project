@@ -32,6 +32,10 @@ SPEAKER_NOT_EXIST = PyLadiesException(1400, _msg)
 _msg = "Unable to perform the action. Place doesn't exist."
 PLACE_NOT_EXIST = PyLadiesException(1500, _msg)
 
+# [1600~1699] apply
+_msg = "Unable to perform the action. Apply doesn't exist."
+APPLY_NOT_EXIST = PyLadiesException(1600, _msg)
+
 # [8000~8099] routing
 _msg = "Routing Not Found"
 ROUTING_NOT_FOUND = PyLadiesException(8000, _msg)

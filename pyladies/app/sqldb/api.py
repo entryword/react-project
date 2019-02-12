@@ -3,12 +3,12 @@ from sqlalchemy.sql import text
 from app.exceptions import (
     TOPIC_NOT_EXIST, EVENTBASIC_NOT_EXIST,
     EVENTINFO_NOT_EXIST, SPEAKER_NOT_EXIST,
-    PLACE_NOT_EXIST
+    PLACE_NOT_EXIST, APPLY_NOT_EXIST
 )
 from .abstract import SQLDatabaseAPI
 from .models import (
     Topic, Speaker, Link, Place, EventBasic,
-    SlideResource, EventInfo, EventApply, ApplyInfo
+    SlideResource, EventInfo, EventApply
 )
 
 
@@ -74,23 +74,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def create_event_apply(self, info, autocommit=False):
         obj = EventApply(**info)
-
         self.session.add(obj)
-
         if autocommit:
             self.session.commit()
             return obj.sn
-        return 0
+        return None
 
-    def create_apply_info(self, info, autocommit=False):
-        obj = ApplyInfo(**info)
-
-        self.session.add(obj)
-
-        if autocommit:
-            self.session.commit()
-            return obj.sn
-        return 0
 
     ########## get
 
@@ -133,63 +122,20 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         event_info = self.session.merge(event_info)
         return event_info
 
-    def get_event_apply_by_event_basic_id(self, sn):
-        event_apply_info = {
-            "event_basic_id": 128,
-            "host": "American Innovation Center 美國創新中心",
-            "start_time": "2019-11-23 08:00",
-            "end_time": "2019-12-01 23:00",
-            "apply": [
-                {
-                    "channel": 0,
-                    "type": "one",
-                    "price": {
-                        "default": 100,
-                        "student": 50
-                    },
-                    "url": "https://...",
-                    "qualification": ""
-                },
-                {
-                    "channel": 1,
-                    "type": "all",
-                    "price": {
-                        "default": 400,
-                        "student": 200
-                    },
-                    "url": "https://...",
-                    "qualification": "https://..."
-                }
-            ],
-            "limit": {
-                "gender": "限女",
-                "age": "不限"
-            },
-            "limit_desc": "須上傳登錄成功截圖"
-        }
-        return event_apply_info
-
-    def get_event_apply_by_event_basic(self, event_basic_sn):
+    def get_event_apply_by_event_basic_sn(self, event_basic_sn):
         event_apply = self.session.query(EventApply)\
             .filter_by(event_basic_sn=event_basic_sn).one_or_none()
         if not event_apply:
-            raise EVENTINFO_NOT_EXIST
+            raise APPLY_NOT_EXIST
         event_apply = self.session.merge(event_apply)
         return event_apply
 
     def get_event_apply(self, sn):
         event_apply = self.session.query(EventApply).filter_by(sn=sn).one_or_none()
         if not event_apply:
-            raise EVENTINFO_NOT_EXIST
+            raise APPLY_NOT_EXIST
         event_apply = self.session.merge(event_apply)
         return event_apply
-
-    def get_apply_info(self, sn):
-        apply_info = self.session.query(ApplyInfo).filter_by(sn=sn).one_or_none()
-        if not apply_info:
-            raise EVENTINFO_NOT_EXIST
-        apply_info = self.session.merge(apply_info)
-        return apply_info
 
     # TODO: pagination and filter
     def get_places(self):
@@ -342,19 +288,6 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def update_apply_info(self, sn, info, autocommit=False):
-        apply_info = self.session.query(ApplyInfo).filter_by(sn=sn).one_or_none()
-        if not apply_info:
-            raise EVENTINFO_NOT_EXIST
-        info.pop("sn", None)
-        for key, value in info.items():
-            if hasattr(apply_info, key):
-                setattr(apply_info, key, value)
-
-        self.session.add(apply_info)
-        if autocommit:
-            self.session.commit()
-
     ########## delete
 
     def delete_topic(self, sn, autocommit=False):
@@ -430,25 +363,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             self.session.commit()
 
     def delete_event_apply(self, sn, autocommit=False):
-        # event_info = self.session.query(EventInfo).filter_by(sn=sn).one_or_none()
-        # if event_info:
-        #     self.session.delete(event_info)
-
-        #     if autocommit:
-        #         self.session.commit()
         stmt = text("DELETE FROM event_apply WHERE sn=:sn").bindparams(sn=sn)
-        self.session.execute(stmt)
-        if autocommit:
-            self.session.commit()
-
-    def delete_apply_info(self, sn, autocommit=False):
-        # event_info = self.session.query(EventInfo).filter_by(sn=sn).one_or_none()
-        # if event_info:
-        #     self.session.delete(event_info)
-
-        #     if autocommit:
-        #         self.session.commit()
-        stmt = text("DELETE FROM apply_info WHERE sn=:sn").bindparams(sn=sn)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()
