@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -11,7 +12,7 @@ from app.managers.speaker import Manager as SpeakerManager
 from app.managers.place import Manager as PlaceManager
 from app.managers.apply import Manager as ApplyManager
 
-import json
+
 
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
@@ -151,15 +152,17 @@ def place(create, update_sn, delete_sn, f, ls):
     if ls:
         tm.list_places()
 
+
 @manager.option('-c', '--create', action='count', help='create apply info (must be used with -f)')
 @manager.option('-u', '--update', dest='update_sn', metavar='ID', type=int,
                 help='update apply info (must be used with -f)')
-@manager.option('-d', '--delete', dest='delete_sn', metavar='ID', type=int, help='delete apply info')
+@manager.option('-d', '--delete', dest='delete_sn', metavar='ID', type=int,
+                help='delete apply info')
 @manager.option('-g', '--get', dest='get_sn', metavar='ID', type=int, help='get apply info')
 @manager.option('-f', '--file', dest='f', metavar='FILE')
 def apply(create, update_sn, delete_sn, get_sn, f):
     tm = ApplyManager()
-    #filepath should be checked 
+    #filepath should be checked
     if create:
         if not f:
             print("Please specify the JSON file path by '-f FILE'.")
@@ -185,7 +188,6 @@ def apply(create, update_sn, delete_sn, get_sn, f):
     if get_sn:
         event_apply_info = tm.get_event_apply_info(get_sn)
         print(event_apply_info)
-
 
 
 if __name__ == '__main__':
