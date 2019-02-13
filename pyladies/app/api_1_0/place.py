@@ -3,7 +3,6 @@ from flask import current_app, jsonify
 from . import api
 from ..exceptions import OK
 from ..sqldb import DBWrapper
-#from ..utils import HashableDict
 
 
 @api.route("/places/", methods=["GET"])
