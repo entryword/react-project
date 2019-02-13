@@ -15,7 +15,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            query: '',
+            keyword: '',
             year: moment().year(),
             month: moment().month() + 1,
             filterOpen: false,
@@ -67,7 +67,7 @@ class App extends Component {
     }
     handleQueryChange = event => {
         this.setState({
-            query: event.target.value,
+            keyword: event.target.value,
         });
     };
     handleYearChange = event => {
@@ -80,6 +80,7 @@ class App extends Component {
             month: event.target.value,
         });
     };
+    // reset filter
     resetFilter() {
         this.setState({
             filterReset: false,
@@ -129,14 +130,16 @@ class App extends Component {
             events: newEvents,
         });
     };
+    // query
     handleFind = () => {
+        this.handleFilterReset();
         const opt = {
-            query: this.state.query,
+            keyword: this.state.keyword,
             year: this.state.year,
             month: this.state.month,
         };
         console.log(opt);
-        // this.fetchEventsData(opt);
+        //this.fetchEventsData(opt);
     };
     changeViewOption = () => {};
 
@@ -156,10 +159,15 @@ class App extends Component {
         });
     }
     fetchEventsData(opt) {
+        const now = `${moment().year()}-${moment().month() + 1}`;
         const keyword = opt.keyword || '';
-        const date = opt.year && opt.month ? opt.year + opt.month : '';
+        const date = opt.year && opt.month ? opt.year + opt.month : now;
+        const sort = 'date';
         const order = 'asc';
-        //const apiUrl = `/v1.0/api/events?keyword=${keyword}&date=${date}&order=${order}`;
+        const apiUrl2 = encodeURI(
+            `/v1.0/api/events?keyword=${keyword}&date=${date}&order=${order}&sort=${sort}`
+        );
+        console.log(apiUrl2);
         const apiUrl = `./data/events.json`;
         axios.get(apiUrl).then(res => {
             this.queryEvent = res.data.data;
@@ -192,7 +200,7 @@ class App extends Component {
             <div>
                 <div className="list-filter">
                     <Search
-                        query={this.state.query}
+                        keyword={this.state.keyword}
                         month={this.state.month}
                         year={this.state.year}
                         handleQueryChange={this.handleQueryChange}

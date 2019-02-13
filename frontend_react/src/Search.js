@@ -10,7 +10,7 @@ class Search extends Component {
             handleYearChange,
             handleMonthChange,
             handleFind,
-            query,
+            keyword,
             year,
             month,
         } = this.props;
@@ -18,7 +18,7 @@ class Search extends Component {
             <div className="search-box">
                 <div className="search-label">Search</div>
 
-                <Query value={query} onChange={handleQueryChange} />
+                <Query value={keyword} onChange={handleQueryChange} />
                 <div className="search-label-year-month">Year-Month</div>
                 <Year
                     value={year}
