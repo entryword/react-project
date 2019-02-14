@@ -1,0 +1,53 @@
+.event-topic-list{
+    list-style: none;
+    margin-left: 1rem;
+}
+.event-topic-list div.item{
+    margin-bottom: 3rem;
+    /*font-size: 1rem;*/
+    position: relative;
+}
+.event-topic-list div.item:before{
+    content: "";
+    width: 16px;
+    height: 16px;
+    border-radius: 59%;
+    background-color: var(--text-gray-color);
+    position: absolute;
+    top: 10px;
+    left: -12px;
+}
+.event-topic-list div.item:after{
+    content: "";
+    width: 2px;
+    height: 4rem;
+    background-color: var(--text-gray-color);
+    position: absolute;
+    top: 26px;
+    left: -5px;
+}
+.topic-title{
+    color: var(--pyladies-pink);
+    font-size: 0.8rem;
+}
+.topic-title a,
+.topic-title a:hover,
+.topic-title a:focus,
+.topic-title a:active,
+.topic-title a:visited {
+    color: var(--pyladies-pink);
+}
+.event-title{
+    color: var(--pyladies-pink);
+    font-size: 1rem;
+}
+.event-title a,
+.event-title a:hover,
+.event-title a:focus,
+.event-title a:active,
+.event-title a:visited {
+    color: var(--pyladies-pink);
+}
+.topic-time{
+    font-size: 0.8rem;
+}
