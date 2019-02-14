@@ -7,15 +7,15 @@ from ..utils import HashableDict
 from app.managers.event import Manager as EventManager
 
 
+#TODO: else case
 @api.route("/event/<int:e_id>", methods=["GET"])
 def get_event(e_id):
-    if type(e_id) == int:
-        EventService = EventManager()
-        event_basic = EventService.get_event(e_id)
+    event_service = EventManager()
+    event_info = event_service.get_event(e_id)
 
-        info = {
-            "code": OK.code,
-            "message": OK.message
-        }
+    info = {
+        "code": OK.code,
+        "message": OK.message
+    }
 
-        return jsonify(data=event_basic, info=info)
+    return jsonify(data=event_info, info=info)
