@@ -5,7 +5,7 @@ from flask import current_app
 
 from app.sqldb import DBWrapper
 from .abstract import BaseEventManager
-
+from ..utils import HashableDict
 
 # TODO: error handling & input verification
 class Manager(BaseEventManager):
@@ -142,3 +142,90 @@ class Manager(BaseEventManager):
         if current_time >= event_time:
             return 0
         return 1
+
+    @staticmethod
+    def get_event(e_id):
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            event_basic = manager.get_event_basic(e_id)
+
+            place_info = None
+            if event_basic.place:
+                place_info = {
+                    "name": event_basic.place.name,
+                    "addr": event_basic.place.addr,
+                    "map": event_basic.place.map
+                }
+
+            title = None
+            fields = []
+            desc = None
+            speakers = set()
+            assistants = set()
+            slides = set()
+            resources = set()
+            if event_basic.event_info:
+                title = event_basic.event_info.title
+                fields = event_basic.event_info.fields
+                desc = event_basic.event_info.desc
+                if event_basic.event_info.speakers:
+                    for speaker in event_basic.event_info.speakers:
+                        speaker_info = HashableDict({
+                            "id": speaker.sn,
+                            "name": speaker.name,
+                            "photo": speaker.photo
+                        })
+                        speakers.add(speaker_info)
+                if event_basic.event_info.assistants:
+                    for assistant in event_basic.event_info.assistants:
+                        assistant_info = HashableDict({
+                            "id": assistant.sn,
+                            "name": assistant.name,
+                            "photo": assistant.photo
+                        })
+                        assistants.add(assistant_info)
+                if event_basic.event_info.slide_resources:
+                    for data in event_basic.event_info.slide_resources:
+                        if data.type == "slide":
+                            slide_info = HashableDict({
+                                "id": data.sn,
+                                "title": data.title,
+                                "url": data.url
+                                })
+                            slides.add(slide_info)
+                        else:
+                            resource_info = HashableDict({
+                                "id": data.sn,
+                                "title": data.title,
+                                "url": data.url
+                                })
+                            resources.add(resource_info)
+
+            slides = sorted(slides, key=lambda x: x["id"])
+            for slide in slides:
+                del slide["id"]
+            resources = sorted(resources, key=lambda x: x["id"])
+            for resource in resources:
+                del resource["id"]
+            
+            data = {
+                "topic_info": {
+                    "name": event_basic.topic.name,
+                    "id": event_basic.topic.sn
+                },
+                "title": title,
+                "fields": fields,
+                "desc": desc,
+                "level": event_basic.topic.level,
+                "date": event_basic.date,
+                "start_time": event_basic.start_time,
+                "end_time": event_basic.end_time,
+                "place_info": place_info,
+                "host": event_basic.topic.host,
+                "speakers": list(speakers),
+                "assistants": list(assistants),
+                "slides": list(slides),
+                "resources": list(resources)
+            }
+            
+            return data
