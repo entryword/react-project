@@ -241,10 +241,10 @@ class EventApply(db.Model):
                                db.ForeignKey("event_basic.sn", ondelete="CASCADE"),
                                nullable=False,
                                unique=True)
-    apply = db.Column(types.JSON)
+    apply = db.Column(types.JSON, nullable=True)
     start_time = db.Column(db.String(128), unique=False, nullable=True)
     end_time = db.Column(db.String(128), unique=False, nullable=True)
-    limit = db.Column(types.JSON)
+    limit = db.Column(types.JSON, nullable=True)
     limit_desc = db.Column(db.Text, nullable=True)
 
     def __str__(self):

@@ -10,27 +10,25 @@ class Manager(BaseApplyManager):
     def create_event_apply_info(event_apply_info):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            return manager.create_event_apply(event_apply_info["data"], autocommit=True)
+            return manager.create_event_apply(event_apply_info, autocommit=True)
 
     @staticmethod
     def get_event_apply_info_by_event_basic_sn(event_basic_sn):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            event_apply_info = manager.get_event_apply_by_event_basic_sn(event_basic_sn)
-            return {"data": event_apply_info}
+            return manager.get_event_apply_by_event_basic_sn(event_basic_sn)
 
     @staticmethod
     def get_event_apply_info(event_apply_sn):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            event_apply_info = manager.get_event_apply(event_apply_sn)
-            return {"data": event_apply_info}
+            return manager.get_event_apply(event_apply_sn)
 
     @staticmethod
     def update_event_apply_info(event_apply_sn, update_info):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.update_event_apply(event_apply_sn, update_info["data"], autocommit=True)
+            manager.update_event_apply(event_apply_sn, update_info, autocommit=True)
 
     @staticmethod
     def delete_event_apply_info(event_apply_sn):
