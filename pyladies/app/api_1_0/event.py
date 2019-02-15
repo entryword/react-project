@@ -6,8 +6,6 @@ from ..sqldb import DBWrapper
 from ..utils import HashableDict
 from app.managers.event import Manager as EventManager
 
-
-#TODO: else case
 @api.route("/event/<int:e_id>", methods=["GET"])
 def get_event(e_id):
     event_service = EventManager()
