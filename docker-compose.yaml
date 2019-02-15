@@ -52,7 +52,7 @@ services:
     ports:
         - 55688:5000
     volumes:
-      - ./pyladies:/var/www/html/website2018/pyladies
+      - ./:/var/www/html/website2018
     environment:
       - PYTHONPATH=/var/www/html/website2018/pyladies/
       - DEV_DATABASE_URL=mysql+pymysql://root:12345678@mariadb/pyladies

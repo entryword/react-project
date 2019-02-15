@@ -329,3 +329,56 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
         self.assertEquals(len(rv.json["data"]), 3)
+
+    def test_get_event_apply_info_but_event_not_exist(self):
+        rv = self.test_client.get("/v1.0/api/apply/1")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+
+    def test_get_event_apply_info(self):
+        event_apply_info = {
+            "event_basic_sn": None,
+            "start_time": "2019-01-23 08:00",
+            "end_time": "2019-01-31 20:00",
+            "apply": [
+                {
+                    "host": "American Innovation Center 美國創新中心",
+                    "channel": 0,
+                    "type": "one",
+                    "price": {
+                        "default": 100,
+                        "student": 50
+                    },
+                    "url": "https://tw.pyladies.com/",
+                    "qualification": ""
+                },
+                {
+                    "host": "American Innovation Center 美國創新中心",
+                    "channel": 1,
+                    "type": "all",
+                    "price": {
+                        "default": 400,
+                        "student": 200
+                    },
+                    "url": "https://tw.pyladies.com/",
+                    "qualification": "https://tw.pyladies.com/"
+                }
+            ],
+            "limit": {
+                "gender": "限女",
+                "age": "不限"
+            },
+            "limit_desc": "須上傳安裝完成畫面"
+        }
+
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_event_apply_info(event_apply_info, autocommit=True)
+            event_apply_info["event_basic_sn"] = 1
+
+        # test
+        rv = self.test_client.get("/v1.0/api/apply/")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEquals(rv.json["data"]["event_apply_info"], event_apply_info)
