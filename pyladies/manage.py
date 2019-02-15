@@ -13,8 +13,6 @@ from app.managers.place import Manager as PlaceManager
 from app.managers.apply import Manager as ApplyManager
 
 
-
-
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
