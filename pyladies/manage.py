@@ -10,7 +10,7 @@ from app.managers.topic import Manager as TopicManager
 from app.managers.event import Manager as EventManager
 from app.managers.speaker import Manager as SpeakerManager
 from app.managers.place import Manager as PlaceManager
-from app.managers.apply import Manager as ApplyManager
+#from app.managers.apply import Manager as ApplyManager
 
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')

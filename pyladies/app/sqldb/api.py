@@ -24,6 +24,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
+            return obj.sn
+        return None
 
     def create_event_basic(self, info, autocommit=False):
         obj = EventBasic(**info)
@@ -31,6 +33,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
+            return obj.sn
+        return None
 
     def create_event_info(self, info, autocommit=False):
         speaker_sns = info.pop("speaker_sns", [])
@@ -54,6 +58,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
+            return obj.sn
+        return None
 
     def create_place(self, info, autocommit=False):
         obj = Place(**info)
@@ -61,6 +67,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
+            return obj.sn
+        return None
 
     def create_speaker(self, info, autocommit=False):
         links = info.pop("links", [])
@@ -74,6 +82,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
+            return obj.sn
+        return None
 
     ########## get
 
@@ -160,6 +170,13 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def get_event_info(self, sn):
         event_info = self.session.query(EventInfo).filter_by(sn=sn).one_or_none()
+        if not event_info:
+            raise EVENTINFO_NOT_EXIST
+        event_info = self.session.merge(event_info)
+        return event_info
+
+    def get_event_info_by_event_basic_sn(self, event_basic_sn):
+        event_info = self.session.query(EventInfo).filter_by(event_basic_sn=event_basic_sn).one_or_none()
         if not event_info:
             raise EVENTINFO_NOT_EXIST
         event_info = self.session.merge(event_info)

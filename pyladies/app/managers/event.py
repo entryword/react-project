@@ -230,23 +230,29 @@ class Manager(BaseEventManager):
             
             return data
 
+    @staticmethod
     def get_events_from_distinct_topics(limit=4):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             event_basics = manager.get_events_from_distinct_topics(limit)
             events = []
-            for i in event_basics:
-                if i.event_info:
-                    info = {
+            for event_basic in event_basics:
+                event_info = manager.get_event_info_by_event_basic_sn(event_basic.sn)
+                if event_info:
+                    topic = manager.get_topic(event_basic.topic_sn)
+                    info_event = {
                         "topic_info": {
-                            "name": i.topic.name,
-                            "id": i.topic.sn
+                            "name": topic.name,
+                            "id": topic.sn,
                         },
-                        "title": i.event_info.title,
-                        "level": i.topic.level,
-                        "date": i.date,
-                        "start_time": i.start_time,
-                        "end_time": i.end_time,
+                        "event_info": {
+                            "title": event_info.title,
+                            "level": topic.level,
+                            "date": event_basic.date,
+                            "start_time": event_basic.start_time,
+                            "end_time": event_basic.end_time,
+                            "event_basic_id": event_basic.sn
+                        }
                     }
-                    events.append(info)
+                    events.append(info_event)
             return events

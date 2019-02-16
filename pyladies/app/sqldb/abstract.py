@@ -41,6 +41,9 @@ class SQLDatabaseAPI():
     def get_event_info(self, sn):
         raise NotImplementedError()
 
+    def get_event_info_by_event_basic_sn(self, event_basic_sn):
+        raise NotImplementedError()
+
     # def get_slide_resource(self, sn):
     #     raise NotImplementedError()
 

@@ -505,3 +505,189 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.json["data"]["places"][1]["addr"], places[1]["addr"])
         self.assertEquals(rv.json["data"]["places"][1]["map"], places[1]["map"])
         self.assertEquals(len(rv.json["data"]["places"]), 3)
+
+    def test_get_events_from_distinct_topics(self):
+        topic_info_1 = {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        topic_info_2 = {
+            "name": "topic 2",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 2,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        topic_info_3 = {
+            "name": "topic 3",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 3,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        topic_info_4 = {
+            "name": "topic 4",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 4,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        event_basic_info_1 = {
+            "topic_sn": None,
+            "date": "2020-01-01",
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_2 = {
+            "topic_sn": None,
+            "date": "2020-03-08",
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_3 = {
+            "topic_sn": None,
+            "date": "2020-05-25",
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_4 = {
+            "topic_sn": None,
+            "date": "2020-10-30",
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+
+        event_info_1 = {
+            "event_basic_sn": None,
+            "title": "Flask class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        event_info_2 = {
+            "event_basic_sn": None,
+            "title": "Flask class 2",
+            "desc": "This is description of class 2",
+            "fields": [0, 1]
+        }
+        event_info_3 = {
+            "event_basic_sn": None,
+            "title": "Flask class 3",
+            "desc": "This is description of class 3",
+            "fields": [0, 1]
+        }
+        event_info_4 = {
+            "event_basic_sn": None,
+            "title": "Flask class 4",
+            "desc": "This is description of class 4",
+            "fields": [0, 1]
+        }
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+
+            topic_1 = manager.create_topic(topic_info_1, autocommit=True)
+            topic_2 = manager.create_topic(topic_info_2, autocommit=True)
+            topic_3 = manager.create_topic(topic_info_3, autocommit=True)
+            topic_4 = manager.create_topic(topic_info_4, autocommit=True)
+
+            event_basic_info_1["topic_sn"] = topic_1
+            event_basic_info_2["topic_sn"] = topic_2
+            event_basic_info_3["topic_sn"] = topic_3
+            event_basic_info_4["topic_sn"] = topic_4
+
+            # event_basic_sn = topic_1.event_basics[0].sn
+            # print ("event_basic_sn %s" % event_basic_sn)
+
+            event_basic_1_id = manager.create_event_basic(event_basic_info_1, autocommit=True)
+            event_basic_2_id = manager.create_event_basic(event_basic_info_2, autocommit=True)
+            event_basic_3_id = manager.create_event_basic(event_basic_info_3, autocommit=True)
+            event_basic_4_id = manager.create_event_basic(event_basic_info_4, autocommit=True)
+
+            event_info_1["event_basic_sn"] = event_basic_1_id
+            event_info_2["event_basic_sn"] = event_basic_2_id
+            event_info_3["event_basic_sn"] = event_basic_3_id
+            event_info_4["event_basic_sn"] = event_basic_4_id
+
+            manager.create_event_info(event_info_1, autocommit=True)
+            manager.create_event_info(event_info_2, autocommit=True)
+            manager.create_event_info(event_info_3, autocommit=True)
+            manager.create_event_info(event_info_4, autocommit=True)
+
+            event_basic_info_1["topic_sn"] = topic_1
+            event_basic_info_2["topic_sn"] = topic_2
+            event_basic_info_3["topic_sn"] = topic_3
+            event_basic_info_4["topic_sn"] = topic_4
+
+
+        # test ＆ assertion
+        rv = self.test_client.get("/v1.0/api/events/distinct_topic_events")
+
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+        ans_1 = {
+                        "topic_info": {
+                            "name": topic_info_1["name"],
+                            "id": topic_1,
+                        },
+                        "event_info": {
+                            "title": event_info_1["title"],
+                            "level": topic_info_1["level"],
+                            "date": event_basic_info_1["date"],
+                            "start_time": event_basic_info_1["start_time"],
+                            "end_time": event_basic_info_1["end_time"],
+                            "event_basic_id": event_basic_1_id
+                        }
+        }
+        ans_2 = {
+                        "topic_info": {
+                            "name": topic_info_2["name"],
+                            "id": topic_2,
+                        },
+                        "event_info": {
+                            "title": event_info_2["title"],
+                            "level": topic_info_2["level"],
+                            "date": event_basic_info_2["date"],
+                            "start_time": event_basic_info_2["start_time"],
+                            "end_time": event_basic_info_2["end_time"],
+                            "event_basic_id": event_basic_2_id
+                        }
+        }
+        ans_3 = {
+                        "topic_info": {
+                            "name": topic_info_3["name"],
+                            "id": topic_3,
+                        },
+                        "event_info": {
+                            "title": event_info_3["title"],
+                            "level": topic_info_3["level"],
+                            "date": event_basic_info_3["date"],
+                            "start_time": event_basic_info_3["start_time"],
+                            "end_time": event_basic_info_3["end_time"],
+                            "event_basic_id": event_basic_3_id
+                        }
+        }
+        ans_4 = {
+                        "topic_info": {
+                            "name": topic_info_4["name"],
+                            "id": topic_4,
+                        },
+                        "event_info": {
+                            "title": event_info_4["title"],
+                            "level": topic_info_4["level"],
+                            "date": event_basic_info_4["date"],
+                            "start_time": event_basic_info_4["start_time"],
+                            "end_time": event_basic_info_4["end_time"],
+                            "event_basic_id": event_basic_4_id
+                        }
+        }
+        self.assertEquals(rv.json["data"]["events"][0], ans_1)
+        self.assertEquals(rv.json["data"]["events"][1], ans_2)
+        self.assertEquals(rv.json["data"]["events"][2], ans_3)
+        self.assertEquals(rv.json["data"]["events"][3], ans_4)
