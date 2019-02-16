@@ -435,6 +435,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(len(rv.json["data"]["status"]), 2)
         self.assertEquals(len(rv.json["data"]["weekday"]), 7)
         self.assertEquals(len(rv.json["data"]["time"]), 3)
+        self.assertEquals(len(rv.json["data"]["channel"]), 2)
+        self.assertEquals(len(rv.json["data"]["type"]), 2)
 
     def test_get_definition(self):
         rv = self.test_client.get("/v1.0/api/definition/field")
@@ -472,6 +474,16 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.json["info"]["code"], 0)
         self.assertEquals(len(rv.json["data"]), 3)
 
+        rv = self.test_client.get("/v1.0/api/definition/channel")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEquals(len(rv.json["data"]), 2)
+
+        rv = self.test_client.get("/v1.0/api/definition/type")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEquals(len(rv.json["data"]), 2)
+
     def test_get_places(self):
         places = [
             {
@@ -498,10 +510,151 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 manager.create_place(place, autocommit=True)
 
         # test
-        rv = self.test_client.get("/v1.0/api/places/")
+        rv = self.test_client.get("/v1.0/api/places")
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
         self.assertEquals(rv.json["data"]["places"][1]["name"], places[1]["name"])
         self.assertEquals(rv.json["data"]["places"][1]["addr"], places[1]["addr"])
         self.assertEquals(rv.json["data"]["places"][1]["map"], places[1]["map"])
         self.assertEquals(len(rv.json["data"]["places"]), 3)
+
+    def test_get_event_apply_info(self):
+        topic_info = {
+            "name": "Flask",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        event_basic_info = {
+            "topic_sn": None,
+            "date": "2017-01-01",
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+
+        apply_info_1 = {
+            "host": "婦女館",
+            "channel": 1,
+            "type": "all",
+            "price_default": 400,
+            "price_student": 200,
+            "url": "https://...",
+            "qualification": "https://..."
+        }
+
+        apply_info_2 = {
+            "host": "American Innovation Center 美國創新中心",
+            "channel": 0,
+            "type": "one",
+            "price_default": 100,
+            "price_student": 50,
+            "url": "https://...",
+            "qualification": "https://..."
+        }
+
+        input_event_apply = {
+            "event_basic_sn": None,
+            "apply": [apply_info_1, apply_info_2],
+            "start_time": "2019-11-23 08:00",
+            "end_time": "2019-12-01 23:00",
+            "limit": {
+                "gender": "限女",
+                "age": "不限"
+            },
+            "limit_desc": "須上傳登錄成功截圖"
+        }
+
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+            topic = manager.get_topic_by_name(topic_info["name"])
+            event_basic_info["topic_sn"] = topic.sn
+            manager.create_event_basic(event_basic_info, autocommit=True)
+            event_basic = topic.event_basics[0]
+            input_event_apply["event_basic_sn"] = event_basic.sn
+            event_apply_sn = manager.create_event_apply(input_event_apply, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/v1.0/api/apply_info/" + str(event_apply_sn))
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEquals(rv.json["data"], input_event_apply)
+
+    def test_get_event_apply_info_by_event_basic_sn(self):
+        topic_info = {
+            "name": "Flask",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        event_basic_info = {
+            "topic_sn": None,
+            "date": "2017-01-01",
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+
+        apply_info_1 = {
+            "host": "婦女館",
+            "channel": 1,
+            "type": "all",
+            "price_default": 400,
+            "price_student": 200,
+            "url": "https://...",
+            "qualification": "https://..."
+        }
+
+        apply_info_2 = {
+            "host": "American Innovation Center 美國創新中心",
+            "channel": 0,
+            "type": "one",
+            "price_default": 100,
+            "price_student": 50,
+            "url": "https://...",
+            "qualification": "https://..."
+        }
+
+        input_event_apply = {
+            "event_basic_sn": None,
+            "apply": [apply_info_1, apply_info_2],
+            "start_time": "2019-11-23 08:00",
+            "end_time": "2019-12-01 23:00",
+            "limit": {
+                "gender": "限女",
+                "age": "不限"
+            },
+            "limit_desc": "須上傳登錄成功截圖"
+        }
+
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+            topic = manager.get_topic_by_name(topic_info["name"])
+            event_basic_info["topic_sn"] = topic.sn
+            manager.create_event_basic(event_basic_info, autocommit=True)
+            event_basic = topic.event_basics[0]
+            input_event_apply["event_basic_sn"] = event_basic.sn
+            manager.create_event_apply(input_event_apply, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/v1.0/api/event/"
+                                  + str(input_event_apply["event_basic_sn"])+ "/apply_info")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEquals(rv.json["data"], input_event_apply)
+
+    def test_get_event_apply_info_but_event_not_exist(self):
+        rv = self.test_client.get("/v1.0/api/apply_info/0")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 1600)
+
+    def test_get_event_apply_info_by_event_basic_sn_but_event_not_exist(self):
+        rv = self.test_client.get("/v1.0/api/event/0/apply_info")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 1600)
