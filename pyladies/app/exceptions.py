@@ -16,6 +16,14 @@ TOPIC_NOT_EXIST = PyLadiesException(1000, _msg)
 _msg = "Unable to perform the action. EventBasic doesn't exist."
 EVENTBASIC_NOT_EXIST = PyLadiesException(1100, _msg)
 
+_invalid_msg = "Invalid parameter '%s' to perform the action."
+_msg = "Unable to perform the action."
+EVENTLIST_INVALID_KEYWORD = PyLadiesException(1150, _invalid_msg % "keyword")
+EVENTLIST_INVALID_DATE = PyLadiesException(1151, _invalid_msg % "date")
+EVENTLIST_INVALID_SORT = PyLadiesException(1152, _invalid_msg % "sort")
+EVENTLIST_INVALID_ORDER = PyLadiesException(1153, _invalid_msg % "order")
+EVENTLIST_ERROR = PyLadiesException(1154, _msg)
+
 # [1200~1299] event info
 _msg = "Unable to perform the action. EventInfo doesn't exist."
 EVENTINFO_NOT_EXIST = PyLadiesException(1200, _msg)

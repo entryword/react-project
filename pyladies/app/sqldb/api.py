@@ -1,4 +1,5 @@
-from sqlalchemy.sql import text
+from sqlalchemy.sql import text, extract
+from sqlalchemy import or_
 
 from app.exceptions import (
     TOPIC_NOT_EXIST, EVENTBASIC_NOT_EXIST,
@@ -107,6 +108,26 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def get_event_basics_by_topic(self, topic_sn):
         return self.session.query(EventBasic).filter_by(topic_sn=topic_sn).all()
+
+    def search_event_basics(self, keyword, date):
+
+        # filter EventBasic date by specific year and month
+        q = self.session.query(EventBasic)
+        if date:
+            date_splits = date.split('-')
+            year = date_splits[0]
+            month = date_splits[1]
+            q = q.filter(
+                extract('year', EventBasic.date) == year,
+                extract('month', EventBasic.date) == month)
+
+        # filter EventInfo title or Topic name by keyword
+        key = "%" + keyword + "%"
+        return q.filter(
+            or_(
+                EventBasic.event_info.has(EventInfo.title.like(key)),
+                EventBasic.topic.has(Topic.name.like(key))
+            )).all()
 
     def get_event_basic(self, sn):
         event_basic = self.session.query(EventBasic).filter_by(sn=sn).one_or_none()
