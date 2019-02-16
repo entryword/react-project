@@ -506,11 +506,6 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.json["data"]["places"][1]["map"], places[1]["map"])
         self.assertEquals(len(rv.json["data"]["places"]), 3)
 
-    # def test_get_event_apply_info_but_event_not_exist(self):
-    #     rv = self.test_client.get("/v1.0/api/apply/1")
-    #     self.assertEquals(rv.status_code, 200)
-    #     self.assertEquals(rv.json["info"]["code"], 0)
-
     def test_get_event_apply_info(self):
         topic_info = {
             "name": "Flask",
@@ -641,3 +636,13 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
         self.assertEquals(rv.json["data"], input_event_apply)
+
+    def test_get_event_apply_info_but_event_not_exist(self):
+        rv = self.test_client.get("/v1.0/api/apply_info/0")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 1600)
+
+    def test_get_event_apply_info_by_event_basic_sn_but_event_not_exist(self):
+        rv = self.test_client.get("/v1.0/api/event/0/apply_info")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 1600)
