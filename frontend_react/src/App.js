@@ -138,20 +138,33 @@ class App extends Component {
             year: this.state.year,
             month: this.state.month,
         };
-        console.log(opt);
-        //this.fetchEventsData(opt);
+        this.fetchEventsData(opt);
     };
     changeViewOption = () => {};
 
+    handleCalendarDate = date => {
+        const year = moment(date).year();
+        const month = moment(date).month() + 1;
+        this.fetchEventsData({
+            keyword: this.state.keyword,
+            year,
+            month,
+        });
+        this.setState({
+            year,
+            month,
+        });
+    };
+
     componentDidMount() {
-        this.fetchData({});
+        this.fetchData();
         this.fetchEventsData({});
         this.fetchPlacesData();
     }
 
     fetchData() {
-        // const apiUrl = `/v1.0/api/definitions`;
-        const apiUrl = `./data/definitions.json`;
+        const apiUrl = `/v1.0/api/definitions`;
+        // const apiUrl = `./data/definitions.json`;
         axios.get(apiUrl).then(res => {
             this.setState({
                 definitions: res.data.data,
@@ -161,24 +174,30 @@ class App extends Component {
     fetchEventsData(opt) {
         const now = `${moment().year()}-${moment().month() + 1}`;
         const keyword = opt.keyword || '';
-        const date = opt.year && opt.month ? opt.year + opt.month : now;
+        const date = opt.year && opt.month ? `${opt.year}-${opt.month}` : now;
         const sort = 'date';
         const order = 'asc';
-        const apiUrl2 = encodeURI(
-            `/v1.0/api/events?keyword=${keyword}&date=${date}&order=${order}&sort=${sort}`
-        );
-        console.log(apiUrl2);
-        const apiUrl = `./data/events.json`;
-        axios.get(apiUrl).then(res => {
-            this.queryEvent = res.data.data;
-            this.setState({
-                events: res.data.data,
+        // const apiUrl = `./data/events.json`;
+        const apiUrl = '/v1.0/api/events';
+        axios
+            .get(apiUrl, {
+                params: {
+                    keyword,
+                    date,
+                    order,
+                    sort,
+                },
+            })
+            .then(res => {
+                this.queryEvent = res.data.data;
+                this.setState({
+                    events: res.data.data,
+                });
             });
-        });
     }
-    async fetchPlacesData() {
-        //const apiUrl = `/v1.0/api/places`;
-        const apiUrl = `./data/places.json`;
+    fetchPlacesData() {
+        const apiUrl = `/v1.0/api/places`;
+        // const apiUrl = `./data/places.json`;
         axios.get(apiUrl).then(res => {
             this.setState({
                 places: res.data.data.places,
@@ -234,7 +253,6 @@ class App extends Component {
                         </div>
                     </div>
                 </div>
-                {/* <div>Month: {this.state.month}</div> */}
                 {Object.keys(this.state.filters).length > 0 && (
                     <FilterList
                         filters={filters}
@@ -242,7 +260,14 @@ class App extends Component {
                         handleFilterReset={this.handleFilterReset}
                     />
                 )}
-                {viewOptionOpen && <Calendar events={events} />}
+                {viewOptionOpen && (
+                    <Calendar
+                        handleCalendarDate={date => {
+                            this.handleCalendarDate(date);
+                        }}
+                        events={events}
+                    />
+                )}
                 {!viewOptionOpen && (
                     <List
                         events={events}
