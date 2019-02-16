@@ -22,7 +22,7 @@ class Calendar extends Component {
             date: item.event.date,
             start_time: item.event.start_time,
             end_time: item.event.end_time,
-            fields: item.event.fields,
+            field: item.event.field,
             place_info: item.event.place_info,
             status: item.event.status,
             time: item.event.time,
@@ -68,7 +68,16 @@ class Calendar extends Component {
                                     <i className="fa fa-times" />
                                 </button>
                             </h3>
-                            <h4>{item.event.title}</h4>
+                            <h4>
+                                <a
+                                    href={`/events/event.html?id=${
+                                        item.event.id
+                                    }`}
+                                    rel="noopener noreferrer"
+                                    target="_blank">
+                                    {item.event.title}
+                                </a>
+                            </h4>
                             <p className="modal-date">
                                 {item.event.date} {item.event.start_time}~
                                 {item.event.end_time}
