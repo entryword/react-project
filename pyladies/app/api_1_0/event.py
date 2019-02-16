@@ -82,7 +82,7 @@ def list_events():
     return jsonify(data=data, info=info)
 
 
-@api.route("/events/distinct_topic_events", methods=["GET"])
+@api.route("/events_from_distinct_topics", methods=["GET"])
 def get_events_from_distinct_topics():
     em = EventManager()
     events = em.get_events_from_distinct_topics(4)

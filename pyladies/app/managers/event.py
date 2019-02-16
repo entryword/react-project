@@ -237,17 +237,15 @@ class Manager(BaseEventManager):
             event_basics = manager.get_events_from_distinct_topics(limit)
             events = []
             for event_basic in event_basics:
-                event_info = manager.get_event_info_by_event_basic_sn(event_basic.sn)
-                if event_info:
-                    topic = manager.get_topic(event_basic.topic_sn)
+                if event_basic.event_info:
                     info_event = {
                         "topic_info": {
-                            "name": topic.name,
-                            "id": topic.sn,
+                            "name": event_basic.topic.name,
+                            "id": event_basic.topic.sn,
                         },
                         "event_info": {
-                            "title": event_info.title,
-                            "level": topic.level,
+                            "title": event_basic.event_info.title,
+                            "level": event_basic.topic.level,
                             "date": event_basic.date,
                             "start_time": event_basic.start_time,
                             "end_time": event_basic.end_time,
