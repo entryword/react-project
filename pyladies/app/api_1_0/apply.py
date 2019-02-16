@@ -5,7 +5,6 @@ from . import api
 from ..exceptions import OK
 
 
-
 @api.route("/apply_info/<int:event_apply_sn>", methods=["GET"])
 def get_event_apply_info(event_apply_sn):
     manager = apply.Manager()
