@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script
+            async
+            src="https://www.googletagmanager.com/gtag/js?id=UA-45593621-3"
+        ></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+
+            gtag('config', 'UA-45593621-3');
+        </script>
+        <title>Event List 活動列表</title>
+        <link rel="shortcut icon" href="./images/favicon.ico" />
+        <link rel="stylesheet" href="./sources/all.min.css" />
+        <link rel="stylesheet" href="./sources/bootstrap.min.css" />
+        <link rel="stylesheet" href="./style/style.css" />
+    </head>
+    <body>
+        <nav class="navbar navbar-light top-nav sticky-top">
+            <h1 class="page-title color-pink">Event List 活動列表</h1>
+            <a href="http://tw.pyladies.com/" class="navbar-brand"></a>
+            <h1 class="mobile-page-title color-pink">活動列表</h1>
+            <div class="menu" for="menu-control-top">
+                <span class="menu-line"></span> <span class="menu-line"></span>
+                <a class="menu-wording menu-wording-close" href="#footer"
+                    >Menu</a
+                >
+            </div>
+        </nav>
+        <div class="side-bar">
+            <input type="checkbox" class="menu-control" id="menu-control" />
+            <label class="menu" for="menu-control">
+                <span class="menu-line"></span> <span class="menu-line"></span>
+                <span class="menu-wording menu-wording-close">Menu</span>
+                <span class="menu-wording menu-wording-open">Close</span>
+            </label>
+            <div class="menu-content menu-content-side-bar"></div>
+        </div>
+        <div id="modal"></div>
+        <div id="root"></div>
+    </body>
+    <footer class="footer" id="footer"></footer>
+    <script src="./template.js"></script>
+</html>
