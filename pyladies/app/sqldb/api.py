@@ -6,12 +6,12 @@ from sqlalchemy import or_, and_
 from app.exceptions import (
     TOPIC_NOT_EXIST, EVENTBASIC_NOT_EXIST,
     EVENTINFO_NOT_EXIST, SPEAKER_NOT_EXIST,
-    PLACE_NOT_EXIST
+    PLACE_NOT_EXIST, APPLY_NOT_EXIST
 )
 from .abstract import SQLDatabaseAPI
 from .models import (
     Topic, Speaker, Link, Place, EventBasic,
-    SlideResource, EventInfo
+    SlideResource, EventInfo, EventApply
 )
 
 
@@ -84,6 +84,15 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             self.session.commit()
             return obj.sn
         return None
+
+    def create_event_apply(self, info, autocommit=False):
+        obj = EventApply(**info)
+        self.session.add(obj)
+        if autocommit:
+            self.session.commit()
+            return obj.sn
+        return None
+
 
     ########## get
 
@@ -175,12 +184,20 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         event_info = self.session.merge(event_info)
         return event_info
 
-    def get_event_info_by_event_basic_sn(self, event_basic_sn):
-        event_info = self.session.query(EventInfo).filter_by(event_basic_sn=event_basic_sn).one_or_none()
-        if not event_info:
-            raise EVENTINFO_NOT_EXIST
-        event_info = self.session.merge(event_info)
-        return event_info
+    def get_event_apply_by_event_basic_sn(self, event_basic_sn):
+        event_apply = self.session.query(EventApply)\
+            .filter_by(event_basic_sn=event_basic_sn).one_or_none()
+        if not event_apply:
+            raise APPLY_NOT_EXIST
+        event_apply = self.session.merge(event_apply)
+        return event_apply
+
+    def get_event_apply(self, sn):
+        event_apply = self.session.query(EventApply).filter_by(sn=sn).one_or_none()
+        if not event_apply:
+            raise APPLY_NOT_EXIST
+        event_apply = self.session.merge(event_apply)
+        return event_apply
 
     # TODO: pagination and filter
     def get_places(self):
@@ -320,6 +337,19 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
+    def update_event_apply(self, sn, info, autocommit=False):
+        event_apply = self.session.query(EventApply).filter_by(sn=sn).one_or_none()
+        if not event_apply:
+            raise EVENTINFO_NOT_EXIST
+        info.pop("sn", None)
+        for key, value in info.items():
+            if hasattr(event_apply, key):
+                setattr(event_apply, key, value)
+
+        self.session.add(event_apply)
+        if autocommit:
+            self.session.commit()
+
     ########## delete
 
     def delete_topic(self, sn, autocommit=False):
@@ -390,6 +420,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def delete_slide_resource(self, sn, autocommit=True):
         stmt = text("DELETE FROM slide_resource WHERE sn=:sn").bindparams(sn=sn)
+        self.session.execute(stmt)
+        if autocommit:
+            self.session.commit()
+
+    def delete_event_apply(self, sn, autocommit=False):
+        stmt = text("DELETE FROM event_apply WHERE sn=:sn").bindparams(sn=sn)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()

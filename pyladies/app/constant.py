@@ -55,6 +55,16 @@ TIME_1_0 = {
     2: "晚上 (17:00-23:59)"
 }
 
+CHANNEL_1_0 = {
+    0: "Meetup",
+    1: "Accupass"
+}
+
+TYPE_1_0 = {
+    "one": "每次分開報名",
+    "all": "一次報名整系列"
+}
+
 DEFINITION_1_0 = {
     "field": FIELD_1_0,
     "freq": FREQ_1_0,
@@ -62,5 +72,7 @@ DEFINITION_1_0 = {
     "host": HOST_1_0,
     "status": STATUS_1_0,
     "weekday": WEEKDAY_1_0,
-    "time": TIME_1_0
+    "time": TIME_1_0,
+    "channel": CHANNEL_1_0,
+    "type": TYPE_1_0
 }

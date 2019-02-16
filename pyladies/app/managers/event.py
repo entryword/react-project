@@ -85,6 +85,7 @@ class Manager(BaseEventManager):
                     # "host": event_basic.topic.host,
                     # "freq": event_basic.topic.freq,
                     # "fields": event_basic.topic.fields,
+                    "id": event_basic.topic_sn,
                 }
 
                 place_info = None
@@ -102,7 +103,7 @@ class Manager(BaseEventManager):
                     "start_time": event_basic.start_time,
                     "end_time": event_basic.end_time,
                     # "desc": event_basic.event_info.desc,
-                    "fields": event_basic.event_info.fields,
+                    "field": event_basic.event_info.fields,
                     "weekday": Manager._get_weekday(event_basic.date),
                     "time": Manager._get_time(event_basic.start_time),
                     "status": Manager._get_status(event_basic.date, event_basic.start_time),
