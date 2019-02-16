@@ -52,7 +52,6 @@ class Calendar extends Component {
             : [];
         const { defaultDate, selectedId } = this.state;
         const localizer = BigCalendar.momentLocalizer(moment);
-        console.log(defaultDate);
         const EventComponent = item => {
             return (
                 <div className="eventCell">
