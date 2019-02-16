@@ -435,6 +435,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(len(rv.json["data"]["status"]), 2)
         self.assertEquals(len(rv.json["data"]["weekday"]), 7)
         self.assertEquals(len(rv.json["data"]["time"]), 3)
+        self.assertEquals(len(rv.json["data"]["channel"]), 2)
+        self.assertEquals(len(rv.json["data"]["type"]), 2)
 
     def test_get_definition(self):
         rv = self.test_client.get("/v1.0/api/definition/field")
@@ -472,6 +474,16 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.json["info"]["code"], 0)
         self.assertEquals(len(rv.json["data"]), 3)
 
+        rv = self.test_client.get("/v1.0/api/definition/channel")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEquals(len(rv.json["data"]), 2)
+
+        rv = self.test_client.get("/v1.0/api/definition/type")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEquals(len(rv.json["data"]), 2)
+
     def test_get_places(self):
         places = [
             {
@@ -498,7 +510,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 manager.create_place(place, autocommit=True)
 
         # test
-        rv = self.test_client.get("/v1.0/api/places/")
+        rv = self.test_client.get("/v1.0/api/places")
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
         self.assertEquals(rv.json["data"]["places"][1]["name"], places[1]["name"])
