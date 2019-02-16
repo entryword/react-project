@@ -165,8 +165,8 @@ def apply(create, update_sn, delete_sn, get_sn, f):
         if not f:
             print("Please specify the JSON file path by '-f FILE'.")
         else:
-            with open(f) as f:
-                event_apply_info = json.loads(f.read())
+            with open(f) as file:
+                event_apply_info = json.loads(file.read())
                 tm.create_event_apply_info(event_apply_info)
                 print("Create event apply info successfully.")
 
@@ -174,8 +174,8 @@ def apply(create, update_sn, delete_sn, get_sn, f):
         if not f:
             print("Please specify the JSON file path by '-f FILE'.")
         else:
-            with open(f) as f:
-                event_apply_info = json.loads(f.read())
+            with open(f) as file:
+                event_apply_info = json.loads(file.read())
                 tm.update_event_apply_info(update_sn, event_apply_info)
                 print("Update event (sn={}) apply info successfully.".format(update_sn))
 

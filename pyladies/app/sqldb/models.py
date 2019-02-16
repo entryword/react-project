@@ -68,9 +68,10 @@ class Speaker(db.Model):
     def __str__(self):
         return ("<Speaker sn: {obj.sn}"
                 ", name: {obj.name}"
+                ", photo: {obj.photo}"
                 ", title: {obj.title}"
-                ", fields: {obj.fields}"
-                ", links: {obj.links}>").format(obj=self)
+                ", intro: {obj.intro}"
+                ", fields: {obj.fields}").format(obj=self)
 
 
 class Link(db.Model):
@@ -230,3 +231,27 @@ class EventInfo(db.Model):
                 ", slide_resources: {obj.slide_resources}"
                 ", speakers: {obj.speakers}"
                 ", assistants: {obj.assistants}>").format(obj=self)
+
+
+class EventApply(db.Model):
+    __tablename__ = "event_apply"
+
+    sn = db.Column(db.Integer, primary_key=True)
+    event_basic_sn = db.Column(db.Integer,
+                               db.ForeignKey("event_basic.sn", ondelete="CASCADE"),
+                               nullable=False,
+                               unique=True)
+    apply = db.Column(types.JSON, nullable=True)
+    start_time = db.Column(db.String(128), unique=False, nullable=True)
+    end_time = db.Column(db.String(128), unique=False, nullable=True)
+    limit = db.Column(types.JSON, nullable=True)
+    limit_desc = db.Column(db.Text, nullable=True)
+
+    def __str__(self):
+        return ("<EventApply sn: {obj.sn}"
+                ", event_basic_sn: {obj.event_basic_sn}"
+                ", apply: {obj.apply}"
+                ", start_time: {obj.start_time}"
+                ", end_time: {obj.end_time}"
+                ", limit: {obj.limit}>"
+                ", limit_desc: {obj.limit_desc}").format(obj=self)
