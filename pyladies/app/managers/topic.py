@@ -47,7 +47,7 @@ class Manager(BaseTopicManager):
                 topics = manager.get_topics_by_keyword(key)
                 for i in topics:
                     print(i)
-    
+
     @staticmethod
     def get_topic(t_id):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:

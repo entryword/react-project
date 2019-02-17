@@ -208,7 +208,7 @@ class Manager(BaseEventManager):
             resources = sorted(resources, key=lambda x: x["id"])
             for resource in resources:
                 del resource["id"]
-            
+
             data = {
                 "topic_info": {
                     "name": event_basic.topic.name,
@@ -228,7 +228,6 @@ class Manager(BaseEventManager):
                 "slides": list(slides),
                 "resources": list(resources)
             }
-            
             return data
 
     @staticmethod
