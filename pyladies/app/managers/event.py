@@ -208,7 +208,7 @@ class Manager(BaseEventManager):
             resources = sorted(resources, key=lambda x: x["id"])
             for resource in resources:
                 del resource["id"]
-            
+
             data = {
                 "topic_info": {
                     "name": event_basic.topic.name,
@@ -228,5 +228,29 @@ class Manager(BaseEventManager):
                 "slides": list(slides),
                 "resources": list(resources)
             }
-            
             return data
+
+    @staticmethod
+    def get_events_from_distinct_topics(limit=4):
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            event_basics = manager.get_events_from_distinct_topics(limit)
+            events = []
+            for event_basic in event_basics:
+                if event_basic.event_info:
+                    info_event = {
+                        "topic_info": {
+                            "name": event_basic.topic.name,
+                            "id": event_basic.topic.sn,
+                        },
+                        "event_info": {
+                            "title": event_basic.event_info.title,
+                            "level": event_basic.topic.level,
+                            "date": event_basic.date,
+                            "start_time": event_basic.start_time,
+                            "end_time": event_basic.end_time,
+                            "event_basic_id": event_basic.sn
+                        }
+                    }
+                    events.append(info_event)
+            return events
