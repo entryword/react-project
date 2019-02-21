@@ -91,14 +91,13 @@
         if(tw_pyladies.path === 'topic'){
             url = `/v1.0/api/topic/${id}`;
         }else if(tw_pyladies.path === 'top'){
-            return axios.get('../fakedata/top_info.json');
+            url = `/v1.0/api/events`;
         }else if(tw_pyladies.path === 'signup'){
-            return axios.get('../fakedata/event_signup.json')
+            url = `/v1.0/api/event/${id}/apply_info`;
         }else{
             url = `/v1.0/api/event/${id}`;
         }
-        return axios.get('../fakedata/event137.json')
-        // return axios.get(url);
+        return axios.get(url);
     }
     axios.all([getDefinition(), getEvent()])
         .then(axios.spread(function (definition, event) {
@@ -117,14 +116,14 @@
             }
         }))
         .catch(function (error) {
-            // window.location = '/error/error.html';
+            window.location = '/error/error.html';
         });
 
     // template
     function topTemplating(definition, data) {
         //data processing
         data.events.forEach(event=>{
-            event.day = days[new Date(event.date).getUTCDay()];
+            event.day = days[new Date(event.event_info.date).getUTCDay()];
         })
         // template blocks
         const blocks = ['event'];
@@ -164,17 +163,17 @@
     function signupTemplating(definition, data) {
         //data processing
         data.start_day = days[new Date(data.start_time).getUTCDay()];
-        data.start_date = data.start_time.split(" ")[0]
-        data.start_time = data.start_time.split(" ")[1]
+        data.start_date = data.start_time.split(" ")[0];
+        data.start_time = data.start_time.split(" ")[1];
 
         data.end_day = days[new Date(data.end_time).getUTCDay()];
-        data.end_date = data.end_time.split(" ")[0]
-        data.end_time = data.end_time.split(" ")[1]
+        data.end_date = data.end_time.split(" ")[0];
+        data.end_time = data.end_time.split(" ")[1];
         data.apply.forEach(a=>{
-            a.eventId = (a.channel == 0)? "meetup":"accupass";
-            a.channelName = (a.channel == 0)? "Meetup":"Accupass";
+            a.eventId = definition.channel[a.channel];
+            a.channelName = definition.channel[a.channel];
             a.channelNum = a.channel+1;
-            a.type = (a.type == "one")? "每次分開報名":"一次報名整系列";
+            a.type = definition.type[a.type];
         })
         const blocks = ['event-menu-list', 'event-body'];
         // template blocks

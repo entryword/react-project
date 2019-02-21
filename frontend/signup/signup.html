@@ -66,19 +66,20 @@
     {{#each apply}}
     <div id="{{this.eventId}}-session" class="event-session {{this.eventId}}-session">
         <h3>管道{{this.channelNum}}-{{this.channelName}}</h3>
-        <h4>負責單位：{{../host}}</h4>
+        <h4>負責單位：{{this.host}}</h4>
         <ul>
             <li>報名方式：{{this.type}}</li>
             <li>報名費用：一般人{{this.price.default}}元，學生{{this.price.student}}元</li>
             <li>報名時間：{{../start_date}} ({{../start_day}}) {{../start_time}} ~ {{../end_date}} ({{../end_day}}) {{../end_time}}</li>
-            <li>報名網址：<a href={{this.url}} target="_blank">按此報名</a></li>
-            <li>報名步驟：<a href={{this.eventId}}.html target="_blank">{{this.channelName}}教學</a></li>
+            <li>報名網址：<a class="pink-link" href={{this.url}} target="_blank">按此報名</a></li>
+            <li>報名步驟：<a class="pink-link" href={{this.eventId}}.html target="_blank">{{this.channelName}}教學</a></li>
             <li>報名對象：
                 <ul>
                     <li>性別：{{../limit.gender}}</li>
                     <li>年齡：{{../limit.age}}</li>
                 </ul>
             </li>
+            <li>報名資格：{{../limit_desc}}</li>
         </ul>
     </div>
     {{/each}}
