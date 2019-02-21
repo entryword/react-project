@@ -770,11 +770,6 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager.create_event_info(event_info_3, autocommit=True)
             manager.create_event_info(event_info_4, autocommit=True)
 
-            event_basic_info_1["topic_sn"] = topic_1
-            event_basic_info_2["topic_sn"] = topic_2
-            event_basic_info_3["topic_sn"] = topic_3
-            event_basic_info_4["topic_sn"] = topic_4
-
         # test ＆ assertion
         rv = self.test_client.get("/v1.0/api/events_from_distinct_topics")
 
