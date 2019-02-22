@@ -48,7 +48,7 @@
         let result = "";
         if(Date.parse(date) > Date.parse(new Date())){
             eventId  = Handlebars.Utils.escapeExpression(eventId);
-            result = new Handlebars.SafeString(`<a class="sign-up-btn" href="/signup/${eventId}.html">按此報名</a>`);
+            result = new Handlebars.SafeString(`<a class="sign-up-btn" href="/signup/signup.html?id=${eventId}">按此報名</a>`);
         }
         return result;
     });
@@ -64,6 +64,10 @@
         // return !results ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         if(window.location.pathname.indexOf('topic')>=0){
             return 'topic';
+        }else if (window.location.pathname == "/"){
+            return 'top';
+        }else if (window.location.pathname.indexOf('signup')>=0){
+            return 'signup';
         }else{
             return 'event';
         }
@@ -86,27 +90,45 @@
             url;
         if(tw_pyladies.path === 'topic'){
             url = `/v1.0/api/topic/${id}`;
+        }else if(tw_pyladies.path === 'top'){
+            url = `/v1.0/api/events`;
+        }else if(tw_pyladies.path === 'signup'){
+            url = `/v1.0/api/event/${id}/apply_info`;
         }else{
             url = `/v1.0/api/event/${id}`;
         }
-
         return axios.get(url);
     }
     axios.all([getDefinition(), getEvent()])
         .then(axios.spread(function (definition, event) {
             if(tw_pyladies.path === 'event'){
                 eventTemplating(definition.data.data, event.data.data);
+            }else if(tw_pyladies.path === 'top'){
+                topTemplating(definition.data.data, event.data.data);
+            }else if(tw_pyladies.path === 'signup'){
+                signupTemplating(definition.data.data, event.data.data)
             }else{
                 topicTemplating(definition.data.data, event.data.data);
             }
             // template 完成後再處理 scroll 位置
-            tw_pyladies.goScroll();
+            if(tw_pyladies.goScroll){
+                tw_pyladies.goScroll();
+            }
         }))
         .catch(function (error) {
             window.location = '/error/error.html';
         });
 
     // template
+    function topTemplating(definition, data) {
+        //data processing
+        data.events.forEach(event=>{
+            event.day = days[new Date(event.event_info.date).getUTCDay()];
+        })
+        // template blocks
+        const blocks = ['event'];
+        renderHtml(blocks, data);
+    }
     function eventTemplating(definition, data) {
         let place = '';
         if(data.place_info.name.toLowerCase().indexOf('aic')>=0){
@@ -136,6 +158,25 @@
         })
         // template blocks
         const blocks = ['event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
+        renderHtml(blocks, data);
+    }
+    function signupTemplating(definition, data) {
+        //data processing
+        data.start_day = days[new Date(data.start_time).getUTCDay()];
+        data.start_date = data.start_time.split(" ")[0];
+        data.start_time = data.start_time.split(" ")[1];
+
+        data.end_day = days[new Date(data.end_time).getUTCDay()];
+        data.end_date = data.end_time.split(" ")[0];
+        data.end_time = data.end_time.split(" ")[1];
+        data.apply.forEach(a=>{
+            a.eventId = definition.channel[a.channel];
+            a.channelName = definition.channel[a.channel];
+            a.channelNum = a.channel+1;
+            a.type = definition.type[a.type];
+        })
+        const blocks = ['event-menu-list', 'event-body'];
+        // template blocks
         renderHtml(blocks, data);
     }
 

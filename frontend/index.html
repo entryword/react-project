@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="./images/favicon.ico">
     <link rel="stylesheet" href="./sources/all.min.css">
     <link rel="stylesheet" href="./sources/bootstrap.min.css">
-    <link rel="stylesheet" href="./style/style.css">
+    <link rel="stylesheet" href="./style/top.css">
 </head>
 <body>
     <nav class="navbar navbar-light top-nav sticky-top">
@@ -29,61 +29,55 @@
             <a class="menu-wording menu-wording-close" href="#footer">Menu</a>
         </div>
     </nav>
-    <div class="event-container">
-        <div class="event-menu" style="">
-            <img class="cover_img" src="images/header.jpg" width="100%">
-            <div class="event-menu-header topic-menu-header menu-header">
-                <div style="position:absolute; top:20%; margin-top:0px; margin-left:3%;">
-                    <p class="lead2"><font color="black">與所有女性朋友一起打造一個<br>開放、平等、分享學習Python的環境</font></p>
-                </div>
-            </div>
+    <img class="cover_img" src="images/header.jpg" width="100%">
+    <div class="menu-header">
+        <div style="position:absolute; top:20%; margin-top:0px; margin-left:3%;">
+            <p class="lead2"><font color="black">與所有女性朋友一起打造一個<br>開放、平等、分享學習Python的環境</font></p>
         </div>
-        <br>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <h2 class="section-heading">Activities</h2>
-                    <hr class="primary">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-4 col-md-4 text-center">
-                    <a href="events/topic.html?id=46" target="_blank">
-                        <div class="service-box">
-                            <i class="fa fa-3x fa-rocket" style="color:#F05F40"></i>
-                            <br><br>
-                            <h5>Python 入門/應用</h5>
-                            <p class="text-muted">給初學者的妳</p>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4 col-md-4 text-center">
-                    <a href="events/topic.html?id=47" target="_blank">
-                        <div class="service-box">
-                            <i class="fa fa-3x fa-book" style="color:#F05F40"></i>
-                            <br><br>
-                            <h5>讀書會/業界經驗分享</h5>
-                            <p class="text-muted">給想深入的妳</p>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-lg-4 col-md-4 text-center">
-                    <a href="events/topic.html?id=45" target="_blank">
-                        <div class="service-box">
-                            <i class="fa fa-3x fa-laptop" style="color:#F05F40"></i>
-                            <br><br>
-                            <h5>Workshop</h5>
-                            <p class="text-muted">給想實戰的妳</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <br>
     </div>
-
+    <div class="side-bar sticky">
+        <input type="checkbox" class="menu-control" id="menu-control">
+        <label class="menu" for="menu-control">
+            <span class="menu-line"></span>
+            <span class="menu-line"></span>
+            <span class="menu-wording menu-wording-close">Menu</span>
+            <span class="menu-wording menu-wording-open">Close</span>
+        </label>
+        <div class="menu-content menu-content-side-bar"></div>
+    </div>
+    <br>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <h2 class="section-heading">即將到來的活動</h2>
+                <small class="float-right float-sm-right"><a class="pink-link" href="./eventlist/">所有活動</a></small>
+                <hr class="primary">
+            </div>
+        </div>
+        <div id="event">
+        </div>
+    </div>
+    <br>
     <footer class="footer" id="footer"></footer>
     <script src="./scripts/template.js"></script>
+    <script src="./sources/axios.min.js"></script>
+    <script src="./sources/handlebars.min.js"></script>
+    <!--Template 時間場地-->
+    <script id="event-template" type="text/x-handlebars-template">
+        <div class="event-topic-list row">
+            {{#each events}}
+            <div class="col-lg-3 col-md-6 item">
+                <div class="topic-title">
+                    <a class="pink-link" href="/events/topic.html?id={{this.topic_info.id}}" target="_blank">{{this.topic_info.name}}</a></div>
+                <div class="event-title">
+                    <a class="pink-link" href="/events/event.html?id={{this.event_info.event_basic_id}}" target="_blank">{{this.event_info.title}}</a></div>
+                <div class="topic-time">{{this.event_info.date}} ({{this.day}})</div>
+            </div>
+            {{/each}}
+        </div>
+    </script>
+    <script>let tw_pyladies = {};</script>
+    <script src="./scripts/event.js"></script>
 </body>
 </html>
                                                     
