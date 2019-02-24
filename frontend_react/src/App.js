@@ -266,6 +266,8 @@ class App extends Component {
                             this.handleCalendarDate(date);
                         }}
                         events={events}
+                        month={this.state.month}
+                        year={this.state.year}
                     />
                 )}
                 {!viewOptionOpen && (
