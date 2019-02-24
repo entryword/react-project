@@ -91,7 +91,7 @@
         if(tw_pyladies.path === 'topic'){
             url = `/v1.0/api/topic/${id}`;
         }else if(tw_pyladies.path === 'top'){
-            url = `/v1.0/api/events`;
+            url = `/v1.0/api/events_from_distinct_topics`;
         }else if(tw_pyladies.path === 'signup'){
             url = `/v1.0/api/event/${id}/apply_info`;
         }else{
