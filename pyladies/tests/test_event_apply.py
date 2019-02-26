@@ -40,8 +40,10 @@ class EventApplyTestCase(unittest.TestCase):
             "host": "婦女館",
             "channel": 1,
             "type": "all",
-            "price_default": 400,
-            "price_student": 200,
+            "price": {
+                "default": 400,
+                "student": 200
+            },
             "url": "https://...",
             "qualification": "https://..."
         }
@@ -50,8 +52,10 @@ class EventApplyTestCase(unittest.TestCase):
             "host": "American Innovation Center 美國創新中心",
             "channel": 0,
             "type": "one",
-            "price_default": 100,
-            "price_student": 50,
+            "price": {
+                "default": 100,
+                "student": 50
+            },
             "url": "https://...",
             "qualification": "https://..."
         }
@@ -107,8 +111,10 @@ class EventApplyTestCase(unittest.TestCase):
             "host": "婦女館",
             "channel": 1,
             "type": "all",
-            "price_default": 400,
-            "price_student": 200,
+            "price": {
+                "default": 400,
+                "student": 200
+            },
             "url": "https://...",
             "qualification": "https://..."
         }
@@ -117,8 +123,10 @@ class EventApplyTestCase(unittest.TestCase):
             "host": "American Innovation Center 美國創新中心",
             "channel": 0,
             "type": "one",
-            "price_default": 100,
-            "price_student": 50,
+            "price": {
+                "default": 100,
+                "student": 50
+            },
             "url": "https://...",
             "qualification": "https://..."
         }
@@ -198,8 +206,10 @@ class EventApplyTestCase(unittest.TestCase):
             "host": "婦女館",
             "channel": 1,
             "type": "all",
-            "price_default": 400,
-            "price_student": 200,
+            "price": {
+                "default": 400,
+                "student": 200
+            },
             "url": "https://...",
             "qualification": "https://..."
         }
