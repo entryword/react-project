@@ -57,14 +57,14 @@
 <!--Template 報名資訊-->
 <script id="event-menu-list-template" type="text/x-handlebars-template">
     {{#each apply}}
-    <li class="event-menu-item" id="{{eventId}}">
+    <li class="event-menu-item" id="channel-{{this.channelIndex}}">
         管道{{this.channelIndex}}
     </li>
     {{/each}}
 </script>
 <script id="event-body-template" type="text/x-handlebars-template">
     {{#each apply}}
-    <div id="{{this.eventId}}-session" class="event-session {{this.eventId}}-session">
+    <div id="channel-{{this.channelIndex}}-session" class="event-session channel-{{this.channelIndex}}-session">
         <h3>管道{{this.channelIndex}}-{{this.channelName}}</h3>
         <h4>負責單位：{{this.host}}</h4>
         <ul>
