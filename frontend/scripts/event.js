@@ -162,6 +162,7 @@
     }
     function signupTemplating(definition, data) {
         //data processing
+        const channel_urls = ['meetup.html', 'accupass.html'];
         data.start_day = days[new Date(data.start_time).getUTCDay()];
         data.start_date = data.start_time.split(" ")[0];
         data.start_time = data.start_time.split(" ")[1];
@@ -174,7 +175,7 @@
             a.channelName = definition.channel[a.channel];
             a.channelNum = a.channel+1;
             a.channelIndex = index +1;
-            a.url = a.url.toLowerCase();
+            a.channelUrl = channel_urls[a.channel];
             a.type = definition.type[a.type];
         })
         const blocks = ['event-menu-list', 'event-body'];
