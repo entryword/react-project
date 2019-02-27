@@ -58,14 +58,14 @@
 <script id="event-menu-list-template" type="text/x-handlebars-template">
     {{#each apply}}
     <li class="event-menu-item" id="{{eventId}}">
-        管道{{this.channelNum}}
+        管道{{this.index}}
     </li>
     {{/each}}
 </script>
 <script id="event-body-template" type="text/x-handlebars-template">
     {{#each apply}}
     <div id="{{this.eventId}}-session" class="event-session {{this.eventId}}-session">
-        <h3>管道{{this.channelNum}}-{{this.channelName}}</h3>
+        <h3>管道{{this.index}}-{{this.channelName}}</h3>
         <h4>負責單位：{{this.host}}</h4>
         <ul>
             <li>報名方式：{{this.type}}</li>
