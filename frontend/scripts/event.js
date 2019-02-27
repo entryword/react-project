@@ -169,10 +169,12 @@
         data.end_day = days[new Date(data.end_time).getUTCDay()];
         data.end_date = data.end_time.split(" ")[0];
         data.end_time = data.end_time.split(" ")[1];
-        data.apply.forEach(a=>{
+        data.apply.forEach((a, index)=>{
             a.eventId = definition.channel[a.channel];
             a.channelName = definition.channel[a.channel];
             a.channelNum = a.channel+1;
+            a.channelIndex = index +1;
+            a.url = a.url.toLowerCase();
             a.type = definition.type[a.type];
         })
         const blocks = ['event-menu-list', 'event-body'];
