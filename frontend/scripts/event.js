@@ -176,7 +176,6 @@
             a.channelNum = a.channel+1;
             a.channelIndex = index +1;
             a.channelUrl = channel_urls[a.channel];
-            a.url = a.url;
             a.type = definition.type[a.type];
         })
         const blocks = ['event-menu-list', 'event-body'];
