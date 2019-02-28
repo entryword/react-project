@@ -51,6 +51,15 @@ class App extends Component {
                         processFilters[key].indexOf(
                             event.event.place_info.name
                         ) >= 0;
+                } else if (key === 'level') {
+                    filterResult =
+                        filterResult ||
+                        processFilters[key].indexOf(event.topic[key] + '') >= 0;
+                } else if (key === 'field') {
+                    const filtered = processFilters[key].filter(k => {
+                        return event.event[key].indexOf(parseInt(k, 10)) >= 0;
+                    });
+                    filterResult = filterResult || filtered.length > 0;
                 } else {
                     filterResult =
                         filterResult ||
