@@ -14,14 +14,14 @@ class List extends Component {
                     <span className="time-order" onClick={handleOrder}>
                         {order === 'asc' && (
                             <React.Fragment>
-                                <span>開始時間新到舊</span>
-                                <i className="fa fa-caret-down" />
+                                <span>開始日期 過去到未來</span>
+                                <i className="fa fa-caret-up" />
                             </React.Fragment>
                         )}
                         {order === 'desc' && (
                             <React.Fragment>
-                                <span>開始時間舊到新</span>
-                                <i className="fa fa-caret-up" />
+                                <span>開始日期 未來到過去</span>
+                                <i className="fa fa-caret-down" />
                             </React.Fragment>
                         )}
                     </span>
