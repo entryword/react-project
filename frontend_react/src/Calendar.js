@@ -9,7 +9,6 @@ import CalendarToolbar from './CalendarToolbar';
 class Calendar extends Component {
     state = {
         defaultDate: moment().toDate(),
-        date: moment().toDate(),
         selectedId: 0,
     };
     processEventList = dataList => {
@@ -47,22 +46,12 @@ class Calendar extends Component {
         this.props.handleCalendarDate(moment(date).format('YYYY-M'));
     };
 
-    componentWillUpdate(prevProps) {
-        if (prevProps.events !== this.props.events) {
-            const date = moment(
-                `${this.props.year}-${this.props.month}`
-            ).toDate();
-            this.setState({
-                date: date,
-            });
-        }
-    }
-
     render() {
         const eventsList = this.props.events
             ? this.processEventList(this.props.events.events)
             : [];
-        const { defaultDate, selectedId, date } = this.state;
+        const { defaultDate, selectedId } = this.state;
+        const date = moment(`${this.props.year}-${this.props.month}`).toDate();
         const localizer = BigCalendar.momentLocalizer(moment);
         const EventComponent = item => {
             return (

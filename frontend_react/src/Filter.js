@@ -285,6 +285,7 @@ class Filter extends Component {
                         </div>
                     </div>
                     <div className="filter-column">
+                        {/* 隱藏 place filter 
                         <div className="filter-item">
                             <h4
                                 onClick={() => {
@@ -324,7 +325,7 @@ class Filter extends Component {
                                         </div>
                                     ))}
                             </div>
-                        </div>
+                        </div> */}
                         <div className="filter-item">
                             <h4
                                 onClick={() => {
