@@ -141,7 +141,8 @@ class App extends Component {
     };
     // query
     handleFind = () => {
-        this.handleFilterReset();
+        // 把 filter reset
+        // this.handleFilterReset();
         const opt = {
             keyword: this.state.keyword,
             year: this.state.year,
@@ -188,6 +189,7 @@ class App extends Component {
         const order = 'asc';
         // const apiUrl = `./data/events.json`;
         const apiUrl = '/v1.0/api/events';
+        // 取得資料 setState走完，跑 filter處理資料
         axios
             .get(apiUrl, {
                 params: {
@@ -202,7 +204,7 @@ class App extends Component {
                 this.setState({
                     events: res.data.data,
                 });
-            });
+            }, this.processFilter);
     }
     fetchPlacesData() {
         const apiUrl = `/v1.0/api/places`;
