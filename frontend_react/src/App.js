@@ -173,7 +173,8 @@ class App extends Component {
     }
 
     fetchData() {
-        const apiUrl = `/v1.0/api/definitions`;
+        const apiUrl = '/v1.0/api/definitions';
+        // const apiUrl = `http://localhost:5555/v1.0/api/definitions`;
         // const apiUrl = `./data/definitions.json`;
         axios.get(apiUrl).then(res => {
             this.setState({
@@ -187,8 +188,9 @@ class App extends Component {
         const date = opt.year && opt.month ? `${opt.year}-${opt.month}` : now;
         const sort = 'date';
         const order = 'asc';
-        // const apiUrl = `./data/events.json`;
         const apiUrl = '/v1.0/api/events';
+        // const apiUrl = 'http://localhost:5555/v1.0/api/events';
+        // const apiUrl = `./data/events.json`;
         // 取得資料 setState走完，跑 filter處理資料
         axios
             .get(apiUrl, {
@@ -200,14 +202,21 @@ class App extends Component {
                 },
             })
             .then(res => {
+                // 儲存最原始資料，還沒經過 filter 處理
                 this.queryEvent = res.data.data;
-                this.setState({
-                    events: res.data.data,
-                });
-            }, this.processFilter);
+                // 判斷是否需要 filter 處理資料
+                if (Object.keys(this.state.filters).length > 0) {
+                    this.filterEvents(this.queryEvent, this.state.filters);
+                } else {
+                    this.setState({
+                        events: res.data.data,
+                    });
+                }
+            });
     }
     fetchPlacesData() {
-        const apiUrl = `/v1.0/api/places`;
+        const apiUrl = '/v1.0/api/places';
+        // const apiUrl = `http://localhost:5555/v1.0/api/places`;
         // const apiUrl = `./data/places.json`;
         axios.get(apiUrl).then(res => {
             this.setState({
