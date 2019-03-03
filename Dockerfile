@@ -1,10 +1,10 @@
-FROM python:3.6.7-stretch
+FROM python:3.5-stretch
 
 RUN apt-get update && apt-get install -y \
 		default-libmysqlclient-dev build-essential \
 		libssl-dev libffi-dev python3-dev python3-pip && \
 	apt-get clean && \
-	cp /usr/local/lib/python3.6/configparser.py /usr/local/lib/python3.6/ConfigParser.py
+	cp /usr/local/lib/python3.5/configparser.py /usr/local/lib/python3.5/ConfigParser.py
 
 COPY ./pyladies/requirements.txt /tmp/requirements.txt
 RUN pip3 install -r /tmp/requirements.txt && \
