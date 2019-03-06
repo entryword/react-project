@@ -16,7 +16,9 @@
         fixedMenuOffset = -50;
         fixedItemOffset = -1 * (eventMenu.height + 50);
         timeOffset -= 20;
-        timeDurationOffset = document.querySelector(".event-menu-header").getBoundingClientRect().height + 60;
+        if(document.querySelector(".event-menu-header")){
+            timeDurationOffset = document.querySelector(".event-menu-header").getBoundingClientRect().height + 60;
+        }
         anchorMenuOffset = 154;
     }
     // ScrollMagic

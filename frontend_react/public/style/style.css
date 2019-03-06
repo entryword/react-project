@@ -1,0 +1,419 @@
+:root {
+    --footer-text-color: #f7f7f7;
+    --pyladies-pink: #f95f62;
+    --dark-gray-background: #47525e;
+    --text-gray-color: #868686;
+}
+html,
+body {
+    font-size: 21px;
+    line-height: 1.6rem;
+}
+html {
+    scroll-behavior: smooth;
+}
+/* utility */
+.color-pink {
+    color: var(--pyladies-pink);
+}
+.color-gray {
+    color: var(--text-gray-color);
+}
+.pink-link,
+.pink-link:hover,
+.pink-link:focus,
+.pink-link:active,
+.pink-link:visited {
+    color: var(--pyladies-pink);
+}
+/*覆寫 bootstrap*/
+hr {
+    margin: 2rem 0;
+}
+blockquote {
+    border-left: 3px solid rgba(0, 0, 0, 0.84);
+    padding-left: 20px;
+    margin-left: -23px;
+    padding-bottom: 2px;
+}
+/*避免網址文字過長 導致破版*/
+a,
+p {
+    word-wrap: break-word;
+}
+/* -------- */
+/* 最上方title */
+.page-title {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 2em;
+}
+
+.top-nav .mobile-page-title {
+    display: none;
+}
+.top-header {
+    font-size: 1.6rem;
+}
+.second-header {
+    font-size: 1.2rem;
+}
+.top-nav {
+    z-index: 2;
+    background: #fff;
+    margin-right: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.top-nav .navbar-brand {
+    width: 100px;
+    height: 100px;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-right: 0;
+    text-align: center;
+    color: var(--pyladies-pink);
+    background: url(./images/logos/pyladiestw-text-2line.svg) center center
+        no-repeat;
+    background-size: 90%;
+}
+/* menu */
+.menu {
+    text-align: center;
+    margin-top: 10vh;
+    position: relative;
+    display: block;
+    cursor: pointer;
+    z-index: 2000;
+}
+.menu-wording {
+    color: #fff;
+    font-size: 1.5em;
+}
+.menu-line {
+    display: block;
+    width: 50px;
+    height: 5px;
+    margin: 15px auto 10px;
+    background-color: #fff;
+    transform-origin: center;
+    transition: all 0.2s ease-in-out;
+    transform: translateY(0) rotate(0deg);
+}
+.menu-control {
+    position: absolute;
+    top: 15vh;
+    left: 5rem;
+    opacity: 0;
+}
+.menu-wording-close {
+    display: block;
+}
+.menu-wording-open {
+    display: none;
+}
+.menu-control:checked ~ .menu .menu-wording-close {
+    display: none;
+}
+.menu-control:checked ~ .menu .menu-wording-open {
+    display: block;
+}
+.menu-control:checked ~ .menu .menu-line {
+    transition: all 0.2s ease-in-out;
+    transform-origin: center;
+    transform: translateY(10px) rotate(45deg);
+}
+.menu-control:checked ~ .menu .menu-line:nth-child(2) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+.menu-control ~ .menu-content {
+    transition: all 0.2s ease-in-out;
+    transform: translateX(100vw);
+}
+.menu-control:checked ~ .menu-content {
+    transform: translateX(0);
+}
+.menu-content {
+    z-index: 1030;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--pyladies-pink);
+    display: flex;
+}
+.menu-item {
+    width: calc((100vw - 100px) / 2);
+    overflow-y: auto;
+    padding: 20px 0;
+}
+.menu-item a {
+    display: block;
+    margin: 10px 0;
+    color: var(--footer-text-color);
+}
+.menu-item span {
+    display: block;
+    margin: 10px 0;
+    color: #fd9193;
+}
+.menu-item a:hover {
+    color: var(--footer-text-color);
+}
+.menu-icons-logo img {
+    display: block;
+    margin: 10px auto;
+}
+.menu-logo-image {
+    width: 150px;
+    height: auto;
+}
+.menu-logo-tagline {
+    width: 120px;
+    height: auto;
+}
+.menu-icons-social {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 20px;
+}
+.menu-icons-social a {
+    display: inline-block;
+    font-size: 60px;
+    height: auto;
+    margin: 10px;
+    text-align: center;
+}
+.menu-icons-social a.socal-image img {
+    width: 60px;
+}
+.menu-icons {
+    background-color: var(--dark-gray-background);
+}
+.menu-navigation-session h5 {
+    font-size: 1rem;
+}
+.menu-navigation-session {
+    color: var(--footer-text-color);
+    margin-bottom: 10px;
+    text-align: center;
+}
+/* header 下方 title */
+.mobile-title {
+    display: none;
+}
+.side-bar {
+    width: 100px;
+    height: 100vh;
+    position: fixed;
+    right: 0;
+    background-color: var(--pyladies-pink);
+    z-index: 10;
+}
+.col-md-4,
+.col-md-8,
+.col-md-12 {
+    position: static;
+}
+/* footer */
+.footer {
+    background-color: var(--dark-gray-background);
+    padding: 50px 20px;
+    position: relative;
+    font-size: 0.8rem;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+}
+.footer-logo {
+    text-align: center;
+}
+.footer-logo-image {
+    width: 150px;
+    height: auto;
+}
+.footer-logo-tagline {
+    width: 120px;
+    height: auto;
+}
+.footer h5 {
+    font-size: 1rem;
+}
+.footer .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.footer-session {
+    color: var(--footer-text-color);
+    flex: 1 0 120px;
+    margin-bottom: 20px;
+}
+.footer-session span {
+    display: block;
+    margin: 10px 0;
+    color: #ccc;
+}
+
+.footer-session a {
+    display: block;
+    margin: 10px 0;
+    color: var(--footer-text-color);
+}
+.footer-session a:hover {
+    color: var(--footer-text-color);
+}
+.footer-session .social a {
+    display: inline-block;
+    font-size: 28px;
+    width: 25px;
+    height: auto;
+    margin: 0 5px;
+}
+
+/* list ol */
+.bulletin li {
+    line-height: 2rem;
+}
+/* faq dl */
+.question-title {
+    font-size: 1.5rem;
+}
+.question-answer {
+    margin-bottom: 1.5rem;
+    line-height: 2rem;
+}
+.top-header a.signup-btn,
+.top-header a.signup-btn:hover,
+.top-header a.signup-btn:focus,
+.top-header a.signup-btn:active,
+.top-header a.signup-btn:visited {
+    font-size: 0.8rem;
+    color: #fff;
+    text-decoration: none;
+    background-color: var(--pyladies-pink);
+    line-height: 1rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 5px;
+    float: right;
+}
+/* 小螢幕 */
+@media only screen and (max-width: 720px) {
+    .side-bar {
+        display: none;
+    }
+    .top-nav {
+        display: flex;
+        margin-bottom: 20px;
+        padding-left: 0;
+    }
+    .top-nav .page-title {
+        display: none;
+    }
+    .top-nav .mobile-page-title {
+        display: block;
+        text-align: center;
+        font-size: 1.5em;
+        margin: 0 auto;
+    }
+    .top-nav .navbar-brand {
+        display: none;
+    }
+    .top-nav .menu {
+        order: 3;
+        background-color: var(--pyladies-pink);
+        text-align: center;
+        margin-top: 0;
+        width: 50px;
+        height: 50px;
+        padding-top: 5px;
+        position: relative;
+    }
+    .top-nav .menu-wording:hover,
+    .top-nav .menu-wording:focus,
+    .top-nav .menu-wording:active,
+    .top-nav .menu-wording:visited {
+        text-decoration: none;
+        color: #fff;
+    }
+    .menu-content {
+        flex-direction: column;
+    }
+    .menu-item {
+        width: 100vw;
+    }
+    .menu-icons {
+        padding: 10px 0 0 10px;
+        flex: 1 1 350px;
+    }
+    .menu-navgation {
+        flex: 1 1 auto;
+    }
+    .menu-icons-logo img {
+        display: inline-block;
+        margin: 0;
+    }
+    .menu-logo-image {
+        width: 100px;
+    }
+    .menu-logo-tagline {
+        width: 80px;
+    }
+    .menu-icons-social {
+        grid-template-columns: 1fr 1fr 1fr;
+        margin: 0;
+    }
+    .menu-icons-social a,
+    .menu-icons-social a.socal-image img {
+        font-size: 32px;
+        width: 32px;
+        margin: 10px auto;
+        display: block;
+    }
+    .menu-wording {
+        font-size: 0.8rem;
+    }
+    .menu-line {
+        display: block;
+        width: 30px;
+        height: 2px;
+        margin: 6px auto 0;
+        background-color: #fff;
+    }
+    .mobile-title {
+        display: block;
+        font-size: 1.5rem;
+    }
+    .bulletin li {
+        margin-bottom: 1rem;
+        line-height: 2rem;
+    }
+    .footer {
+        grid-template-columns: 1fr;
+        grid-row-gap: 20px;
+    }
+    /*faq*/
+    .question-title {
+        font-size: 1.2rem;
+    }
+    .top-header {
+        font-size: 1.2rem;
+    }
+}
+/* 大螢幕 */
+@media only screen and (min-width: 721px) {
+    .container-with-menu {
+        padding-right: 100px;
+        min-height: calc(100vh - 465px);
+    }
+    .top-nav {
+        background: #fff;
+    }
+    .top-nav .menu {
+        display: none;
+    }
+}

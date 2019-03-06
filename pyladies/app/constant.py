@@ -34,9 +34,45 @@ HOST_1_0 = {
     2: "PyLadies 受邀"
 }
 
+STATUS_1_0 = {
+    0: "已結束",
+    1: "未來活動"
+}
+
+WEEKDAY_1_0 = {
+    0: "Sunday",
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday"
+}
+
+TIME_1_0 = {
+    0: "上午 (00:00-11:59)",
+    1: "下午 (12:00-16:59)",
+    2: "晚上 (17:00-23:59)"
+}
+
+CHANNEL_1_0 = {
+    0: "Meetup",
+    1: "Accupass"
+}
+
+TYPE_1_0 = {
+    "one": "每次分開報名",
+    "all": "一次報名整系列"
+}
+
 DEFINITION_1_0 = {
     "field": FIELD_1_0,
     "freq": FREQ_1_0,
     "level": LEVEL_1_0,
-    "host": HOST_1_0
+    "host": HOST_1_0,
+    "status": STATUS_1_0,
+    "weekday": WEEKDAY_1_0,
+    "time": TIME_1_0,
+    "channel": CHANNEL_1_0,
+    "type": TYPE_1_0
 }

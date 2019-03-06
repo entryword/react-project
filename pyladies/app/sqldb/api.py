@@ -1,14 +1,17 @@
-from sqlalchemy.sql import text
+from datetime import datetime, timedelta
+
+from sqlalchemy.sql import text, extract
+from sqlalchemy import or_, and_
 
 from app.exceptions import (
     TOPIC_NOT_EXIST, EVENTBASIC_NOT_EXIST,
     EVENTINFO_NOT_EXIST, SPEAKER_NOT_EXIST,
-    PLACE_NOT_EXIST
+    PLACE_NOT_EXIST, APPLY_NOT_EXIST
 )
 from .abstract import SQLDatabaseAPI
 from .models import (
     Topic, Speaker, Link, Place, EventBasic,
-    SlideResource, EventInfo
+    SlideResource, EventInfo, EventApply
 )
 
 
@@ -21,6 +24,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
+            return obj.sn
+        return None
 
     def create_event_basic(self, info, autocommit=False):
         obj = EventBasic(**info)
@@ -28,6 +33,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
+            return obj.sn
+        return None
 
     def create_event_info(self, info, autocommit=False):
         speaker_sns = info.pop("speaker_sns", [])
@@ -51,6 +58,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
+            return obj.sn
+        return None
 
     def create_place(self, info, autocommit=False):
         obj = Place(**info)
@@ -58,6 +67,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
+            return obj.sn
+        return None
 
     def create_speaker(self, info, autocommit=False):
         links = info.pop("links", [])
@@ -71,6 +82,17 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
+            return obj.sn
+        return None
+
+    def create_event_apply(self, info, autocommit=False):
+        obj = EventApply(**info)
+        self.session.add(obj)
+        if autocommit:
+            self.session.commit()
+            return obj.sn
+        return None
+
 
     ########## get
 
@@ -96,8 +118,57 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         topic = self.session.merge(topic)
         return topic
 
+    def get_events_from_distinct_topics(self, limit):
+        topic_levels = self.session.query(Topic.level).distinct(Topic.level).all()
+        if not topic_levels:
+            return []
+
+        topic_levels = [row[0] for row in topic_levels]
+        home_event = []
+        current_time = datetime.utcnow() + timedelta(hours=8)
+        for level in topic_levels:
+            query = self.session.query(EventBasic)
+            query = query.filter(EventBasic.topic.has(Topic.level == level))
+            query = query.filter(
+                or_(
+                    EventBasic.date > current_time.strftime("%Y-%m-%d"),
+                    and_(
+                        EventBasic.date == current_time.strftime("%Y-%m-%d"),
+                        EventBasic.start_time > current_time.strftime("%H:%M")
+                    )
+                )
+            )
+            query = query.order_by(EventBasic.date.asc())
+            query = query.order_by(EventBasic.start_time.asc())
+            event_basic = query.first()
+            if event_basic and event_basic.event_info:
+                home_event.append(event_basic)
+
+        home_event.sort(key=lambda e: "{} {}".format(e.date, e.start_time))
+        return home_event[:limit]
+
     def get_event_basics_by_topic(self, topic_sn):
         return self.session.query(EventBasic).filter_by(topic_sn=topic_sn).all()
+
+    def search_event_basics(self, keyword, date):
+
+        # filter EventBasic date by specific year and month
+        q = self.session.query(EventBasic)
+        if date:
+            date_splits = date.split('-')
+            year = date_splits[0]
+            month = date_splits[1]
+            q = q.filter(
+                extract('year', EventBasic.date) == year,
+                extract('month', EventBasic.date) == month)
+
+        # filter EventInfo title or Topic name by keyword
+        key = "%" + keyword + "%"
+        return q.filter(
+            or_(
+                EventBasic.event_info.has(EventInfo.title.like(key)),
+                EventBasic.topic.has(Topic.name.like(key))
+            )).all()
 
     def get_event_basic(self, sn):
         event_basic = self.session.query(EventBasic).filter_by(sn=sn).one_or_none()
@@ -112,6 +183,21 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             raise EVENTINFO_NOT_EXIST
         event_info = self.session.merge(event_info)
         return event_info
+
+    def get_event_apply_by_event_basic_sn(self, event_basic_sn):
+        event_apply = self.session.query(EventApply)\
+            .filter_by(event_basic_sn=event_basic_sn).one_or_none()
+        if not event_apply:
+            raise APPLY_NOT_EXIST
+        event_apply = self.session.merge(event_apply)
+        return event_apply
+
+    def get_event_apply(self, sn):
+        event_apply = self.session.query(EventApply).filter_by(sn=sn).one_or_none()
+        if not event_apply:
+            raise APPLY_NOT_EXIST
+        event_apply = self.session.merge(event_apply)
+        return event_apply
 
     # TODO: pagination and filter
     def get_places(self):
@@ -251,6 +337,19 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
+    def update_event_apply(self, sn, info, autocommit=False):
+        event_apply = self.session.query(EventApply).filter_by(sn=sn).one_or_none()
+        if not event_apply:
+            raise EVENTINFO_NOT_EXIST
+        info.pop("sn", None)
+        for key, value in info.items():
+            if hasattr(event_apply, key):
+                setattr(event_apply, key, value)
+
+        self.session.add(event_apply)
+        if autocommit:
+            self.session.commit()
+
     ########## delete
 
     def delete_topic(self, sn, autocommit=False):
@@ -321,6 +420,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def delete_slide_resource(self, sn, autocommit=True):
         stmt = text("DELETE FROM slide_resource WHERE sn=:sn").bindparams(sn=sn)
+        self.session.execute(stmt)
+        if autocommit:
+            self.session.commit()
+
+    def delete_event_apply(self, sn, autocommit=False):
+        stmt = text("DELETE FROM event_apply WHERE sn=:sn").bindparams(sn=sn)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()

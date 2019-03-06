@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en">
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-45593621-3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-45593621-3');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>報名資訊</title>
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../sources/all.min.css">
+    <link rel="stylesheet" href="../sources/bootstrap.min.css">
+    <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/event.css">
+</head>
+<body>
+<nav class="navbar navbar-light top-nav sticky-top">
+    <h1 class="page-title color-pink">Signup Info. 報名資訊</h1>
+    <a href="http://tw.pyladies.com/" class="navbar-brand"></a>
+    <h1 class="mobile-page-title color-pink">Signup Info. 報名資訊</h1>
+    <div class="menu" for="menu-control-top">
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <a class="menu-wording menu-wording-close" href="#footer">Menu</a>
+    </div>
+</nav>
+<div class="side-bar">
+    <input type="checkbox" class="menu-control" id="menu-control">
+    <label class="menu" for="menu-control">
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="menu-wording menu-wording-close">Menu</span>
+        <span class="menu-wording menu-wording-open">Close</span>
+    </label>
+    <div class="menu-content menu-content-side-bar"></div>
+</div>
+<div class="event-container container-with-menu">
+    <div class="event-menu">
+        <ul class="event-menu-list" id="event-menu-list">
+        </ul>
+    </div>
+    <div class="event-body" id="event-body">
+    </div>
+</div>
+<footer class="footer" id="footer"></footer>
+<script src="../scripts/template.js"></script>
+<script src="../sources/ScrollMagic.min.js"></script>
+<script src="../sources/axios.min.js"></script>
+<script src="../sources/handlebars.min.js"></script>
+<!--Template 報名資訊-->
+<script id="event-menu-list-template" type="text/x-handlebars-template">
+    {{#each apply}}
+    <li class="event-menu-item" id="channel-{{this.channelIndex}}">
+        管道{{this.channelIndex}}
+    </li>
+    {{/each}}
+</script>
+<script id="event-body-template" type="text/x-handlebars-template">
+    {{#each apply}}
+    <div id="channel-{{this.channelIndex}}-session" class="event-session channel-{{this.channelIndex}}-session">
+        <h3>管道{{this.channelIndex}}-{{this.channelName}}</h3>
+        <h4>負責單位：{{this.host}}</h4>
+        <ul>
+            <li>報名方式：{{this.type}}</li>
+            <li>報名費用：一般人{{this.price.default}}元，學生{{this.price.student}}元</li>
+            <li>報名時間：{{../start_date}} ({{../start_day}}) {{../start_time}} ~ {{../end_date}} ({{../end_day}}) {{../end_time}}</li>
+            <li>報名網址：<a class="pink-link" href={{this.url}} target="_blank">按此報名</a></li>
+            <li>報名步驟：<a class="pink-link" href={{this.channelUrl}} target="_blank">{{this.channelName}}教學</a></li>
+            <li>報名對象：
+                <ul>
+                    <li>性別：{{../limit.gender}}</li>
+                    <li>年齡：{{../limit.age}}</li>
+                </ul>
+            </li>
+            <li>報名資格：{{../limit_desc}}</li>
+        </ul>
+    </div>
+    {{/each}}
+</script>
+<script>let tw_pyladies = {};</script>
+<script src="../scripts/scroll.js"></script>
+<script src="../scripts/event.js"></script>
+</body>
+</html>
