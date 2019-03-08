@@ -71,6 +71,7 @@ services:
     volumes:
       - ./frontend:/var/www/html/website2018/frontend
       - ./nginx_web.conf:/etc/nginx/nginx.conf
+      - ./nginx_log:/var/log/nginx
     restart: always
     command: [nginx-debug, '-g', 'daemon off;']
 
