@@ -16,7 +16,9 @@ def create_app(config_name):
 
     # blueprint registration
     from .api_1_0 import api as api_1_0_blueprint
+    from .cms import api as cms_api_blueprint
     app.register_blueprint(api_1_0_blueprint, url_prefix='/v1.0/api')
+    app.register_blueprint(cms_api_blueprint, url_prefix='/cms/api')
 
     app.register_error_handler(404, handle_not_found_error)
     app.register_error_handler(PyLadiesException, handle_pyladies_error)
