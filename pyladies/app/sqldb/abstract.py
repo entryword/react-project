@@ -38,6 +38,9 @@ class SQLDatabaseAPI():
     # def get_event_basics(self):
     #     raise NotImplementedError()
 
+    def get_events(self):
+        raise NotImplementedError()
+
     def get_event_basic(self, sn):
         raise NotImplementedError()
 

@@ -835,3 +835,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.json["data"]["events"][1], ans_2)
         self.assertEquals(rv.json["data"]["events"][2], ans_3)
         self.assertEquals(rv.json["data"]["events"][3], ans_4)
+
+    def test_get_events(self):
+        rv = self.test_client.get("/cms/api/events")
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)

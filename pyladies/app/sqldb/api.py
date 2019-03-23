@@ -170,6 +170,9 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
                 EventBasic.topic.has(Topic.name.like(key))
             )).all()
 
+    def get_event_basics(self):
+        return self.session.query(EventBasic).all()
+
     def get_event_basic(self, sn):
         event_basic = self.session.query(EventBasic).filter_by(sn=sn).one_or_none()
         if not event_basic:

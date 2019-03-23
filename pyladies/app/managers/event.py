@@ -254,3 +254,36 @@ class Manager(BaseEventManager):
                     }
                     events.append(info_event)
             return events
+
+    @staticmethod
+    def get_events():
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            event_basics = manager.get_event_basics()
+            events = []
+            for event_basic in event_basics:
+                data = {
+                    "id": event_basic.sn,
+                    "title": event_basic.event_info.title,
+                    "topic": {
+                        "name": event_basic.topic.name
+                    },
+                    "place": {
+                        "name": event_basic.place.name
+                    },
+                    "date": event_basic.date,
+                    "start_time": event_basic.start_time,
+                    "end_time": event_basic.end_time
+                }
+                if event_basic.apply:
+                    data["event_apply_exist"] = 1
+                else:
+                    data["event_apply_exist"] = 0
+
+                if event_basic.event_info.speakers:
+                    data["speaker_exist"] = 1
+                else:
+                    data["speaker_exist"] = 0
+
+                events.append(data)
+            return events
