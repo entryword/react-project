@@ -15,4 +15,3 @@ def get_topic(t_id):
     }
 
     return jsonify(data=topic, info=info)
-    
