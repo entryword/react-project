@@ -835,3 +835,71 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.json["data"]["events"][1], ans_2)
         self.assertEquals(rv.json["data"]["events"][2], ans_3)
         self.assertEquals(rv.json["data"]["events"][3], ans_4)
+
+    def test_post_topic_with_event(self):
+        place_info = {
+            "name": "place 1",
+            "addr": "台北市信義區光復南路133號",
+            "map": "http://abc.com/map.html"
+        }
+        speaker_info = {
+            "name": "speaker 1",
+            "photo": "https://pyladies.marsw.tw/img/speaker_1_photo.png",
+            "title": "Senior Engineer",
+            "major_related": True,
+            "intro": "",
+            "fields": [3]
+        }
+        assistant_info = {
+            "name": "speaker 2",
+            "photo": "https://pyladies.marsw.tw/img/speaker_2_photo.png",
+            "title": "Engineer",
+            "major_related": True,
+            "intro": "",
+            "fields": [3]
+        }
+
+        topic_info = {
+            "name": "Flask",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+
+
+
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+            manager.create_place(place_info, autocommit=True)
+            manager.create_speaker(speaker_info, autocommit=True)
+            manager.create_speaker(assistant_info, autocommit=True)
+
+        # test
+        rv = self.test_client.post(
+            "/v1.0/api/event",
+            headers={"X-My-Header": "Header"},
+            data=json.dumps(
+                {
+                    "data": {
+                        "title": "XXXX",
+                        "topic_id": 1,
+                        "start_date": "2019-03-09",
+                        "start_time": "14:00",
+                        "end_date": "2019-03-09",
+                        "end_time": "17:00",
+                        "place_id": 1,
+                        "desc": "XXXX",
+                        "speaker_ids": [1],
+                        "assistant_ids": [2],
+                        "field_ids": [1, 2],
+                    }
+                }
+            ),
+            content_type="application/json",
+        )
+        self.assertEquals(rv.status_code, 200)
+        self.assertEquals(rv.json["info"]["code"], 0)

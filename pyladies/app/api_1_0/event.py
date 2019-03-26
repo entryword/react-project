@@ -21,6 +21,42 @@ def get_event(e_id):
 
     return jsonify(data=event_info, info=info)
 
+@api.route("/event", methods=["POST"])
+def createEvent():
+    request_data = request.get_json()
+
+    data = request_data["data"]
+    event_basic = {
+        "topic_sn": data["topic_id"],
+        "date": data["start_date"],
+        "start_time": data["start_time"],
+        "end_time": data["end_time"],
+        "place_sn": data["place_id"],
+    }
+
+    
+    with DBWrapper(self.app.db.engine.url).session() as db_sess:
+        manager = self.app.db_api_class(db_sess)
+        event_basic_newid = manager.create_event_basic(event_basic, autocommit=True)
+
+    event_info_info = {
+        "event_basic_sn": event_basic_newid,
+        "title": data["title"],
+        "desc": data["desc"],
+        "fields": data["field_ids"],
+        "speaker_sns":data["speaker_ids"],
+        "assistant_sns":data["assistant_ids"],
+
+    }
+    with DBWrapper(self.app.db.engine.url).session() as db_sess:
+        manager = self.app.db_api_class(db_sess)
+        manager.create_event_info(event_info_info, autocommit=True)
+
+    res ={"data":{"id":event_basic_newid},"info":{"code":0,"message":"Perform the action successfully."}}
+
+    return jsonify(res)
+
+
 
 @api.route("/events", methods=["GET"])
 def list_events():
