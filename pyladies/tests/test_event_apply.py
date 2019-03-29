@@ -18,29 +18,23 @@ class TestEventApply:
         self.app_context.pop()
 
     def test_create_event_apply(self, make_test_data):
-        event_basic_info_number = 1
-        event_apply_number = 2
-        test_data = make_test_data(event_basic_info_number, event_apply_number)
-        print(test_data)
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            manager.create_topic(test_data['topic_info'], autocommit=True)
-            topic = manager.get_topic_by_name(test_data['topic_info']["name"])
-            for i in range(event_basic_info_number):
-                test_data['event_basic_info'][0]["topic_sn"] = topic.sn
-            manager.create_event_basic(test_data['event_basic_info'][0], autocommit=True)
-            event_basic = topic.event_basics[0]
-            test_data['event_apply'][0]["event_basic_sn"] = event_basic.sn
+            test_data = make_test_data(manager, topic_info_number=1,
+                                       event_basic_number=1, event_info_number=1,
+                                       event_apply_number=1, channel_number=[2])
+            print(test_data)
+            event_basic_sn = test_data[0]['event_list'][0]['event_info'][0]['event_basic_sn']
 
             # test
-            manager.create_event_apply(test_data['event_apply'][0], autocommit=True)
-            event_apply = manager.get_event_apply_by_event_basic_sn(event_basic.sn)
+            manager.create_event_apply(test_data[0]['event_list'][0]['event_apply'][0], autocommit=True)
+            event_apply = manager.get_event_apply_by_event_basic_sn(event_basic_sn)
 
             # test & assertion
-            assert event_apply.event_basic_sn == event_basic.sn
-            assert event_apply.limit == test_data['event_apply'][0]["limit"]
-            assert event_apply.apply == test_data['event_apply'][0]["apply"]
+            assert event_apply.event_basic_sn == event_basic_sn
+            assert event_apply.limit == test_data[0]['event_list'][0]['event_apply'][0]["limit"]
+            assert event_apply.apply == test_data[0]['event_list'][0]['event_apply'][0]["apply"]
     #
     # def test_update_event_apply(self):
     #     topic_info = {
