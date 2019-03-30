@@ -3,6 +3,7 @@ from app import create_app
 from app.exceptions import PyLadiesException
 from app.exceptions import APPLY_NOT_EXIST
 from app.sqldb import DBWrapper
+from tests import conftest
 
 
 class TestEventApply:
@@ -23,18 +24,18 @@ class TestEventApply:
             manager = self.app.db_api_class(db_sess)
             test_data = make_test_data(manager, topic_info_number=1,
                                        event_basic_number=1, event_info_number=1,
-                                       event_apply_number=1, channel_number=[2])
-            print(test_data)
+                                       event_apply_number=0, channel_number=[0])
             event_basic_sn = test_data[0]['event_list'][0]['event_info'][0]['event_basic_sn']
+            event_apply_data = conftest.get_event_apply(event_basic_sn, channel_number=2)
 
             # test
-            manager.create_event_apply(test_data[0]['event_list'][0]['event_apply'][0], autocommit=True)
+            manager.create_event_apply(event_apply_data, autocommit=True)
             event_apply = manager.get_event_apply_by_event_basic_sn(event_basic_sn)
 
             # test & assertion
             assert event_apply.event_basic_sn == event_basic_sn
-            assert event_apply.limit == test_data[0]['event_list'][0]['event_apply'][0]["limit"]
-            assert event_apply.apply == test_data[0]['event_list'][0]['event_apply'][0]["apply"]
+            assert event_apply.limit == event_apply_data["limit"]
+            assert event_apply.apply == event_apply_data["apply"]
     #
     # def test_update_event_apply(self):
     #     topic_info = {

@@ -67,28 +67,28 @@ def make_test_data():
     def _make_test_data(manager, topic_info_number,
                         event_basic_number, event_info_number, event_apply_number, channel_number):
         test_data_list = []
-        for topic_sn in range(1, topic_info_number+1):
+        for topic_sn in range(topic_info_number):
             test_data = {
                 'topic_info': get_topic_info(),
                 'event_list': []
             }
             manager.create_topic(test_data['topic_info'], autocommit=True)
-
-            for event_basic_sn in range(1, event_basic_number+1):
+            topic = manager.get_topic_by_name(test_data['topic_info']["name"])
+            for event_basic_sn in range(event_basic_number):
                 event = {
-                    'event_basic': get_event_basic(topic_sn),
+                    'event_basic': get_event_basic(topic.sn),
                     'event_info': [],
                     'event_apply': []
                 }
                 manager.create_event_basic(event['event_basic'], autocommit=True)
-
+                event_basic = topic.event_basics[0]
                 for i in range(event_info_number):
-                    event_info = get_event_info(event_basic_sn)
+                    event_info = get_event_info(event_basic.sn)
                     event['event_info'].append(event_info)
                     manager.create_event_info(event_info, autocommit=True)
 
                 for i in range(event_apply_number):
-                    event_apply = get_event_apply(event_basic_sn, channel_number[i])
+                    event_apply = get_event_apply(event_basic.sn, channel_number[i])
                     event['event_apply'].append(event_apply)
                     manager.create_event_apply(event_apply, autocommit=True)
 
