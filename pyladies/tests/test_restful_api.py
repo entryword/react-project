@@ -538,8 +538,10 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "host": "婦女館",
             "channel": 1,
             "type": "all",
-            "price_default": 400,
-            "price_student": 200,
+            "start_time": "2019-11-23 08:00",
+            "end_time": "2019-12-01 23:00",
+            "price": "一般人400元，學生200元",
+            "limit": "限女",
             "url": "https://...",
             "qualification": "https://..."
         }
@@ -548,22 +550,17 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "host": "American Innovation Center 美國創新中心",
             "channel": 0,
             "type": "one",
-            "price_default": 100,
-            "price_student": 50,
+            "start_time": "2019-11-23 08:00",
+            "end_time": "2019-12-01 23:00",
+            "price": "一般人100元，學生50元",
+            "limit": "限女",
             "url": "https://...",
             "qualification": "https://..."
         }
 
         input_event_apply = {
             "event_basic_sn": None,
-            "apply": [apply_info_1, apply_info_2],
-            "start_time": "2019-11-23 08:00",
-            "end_time": "2019-12-01 23:00",
-            "limit": {
-                "gender": "限女",
-                "age": "不限"
-            },
-            "limit_desc": "須上傳登錄成功截圖"
+            "apply": [apply_info_1, apply_info_2]
         }
 
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -603,8 +600,10 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "host": "婦女館",
             "channel": 1,
             "type": "all",
-            "price_default": 400,
-            "price_student": 200,
+            "start_time": "2019-11-23 08:00",
+            "end_time": "2019-12-01 23:00",
+            "price": "一般人400元，學生200元",
+            "limit": "限女",
             "url": "https://...",
             "qualification": "https://..."
         }
@@ -613,22 +612,17 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "host": "American Innovation Center 美國創新中心",
             "channel": 0,
             "type": "one",
-            "price_default": 100,
-            "price_student": 50,
+            "start_time": "2019-11-23 08:00",
+            "end_time": "2019-12-01 23:00",
+            "price": "一般人100元，學生50元",
+            "limit": "限女",
             "url": "https://...",
             "qualification": "https://..."
         }
 
         input_event_apply = {
             "event_basic_sn": None,
-            "apply": [apply_info_1, apply_info_2],
-            "start_time": "2019-11-23 08:00",
-            "end_time": "2019-12-01 23:00",
-            "limit": {
-                "gender": "限女",
-                "age": "不限"
-            },
-            "limit_desc": "須上傳登錄成功截圖"
+            "apply": [apply_info_1, apply_info_2]
         }
 
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
