@@ -256,8 +256,7 @@ class EventApply(db.Model):
                 ", limit: {obj.limit}>"
                 ", limit_desc: {obj.limit_desc}").format(obj=self)
 
-class Slide(object):
-    """docstring for Slide"""
+class Slide(db.Model):
     __tablename__ = "slide"
 
     sn    = db.Column(db.Integer, primary_key=True)
@@ -266,7 +265,7 @@ class Slide(object):
     url   = db.Column(db.String(1024), nullable=False)
 
     def __str__(self):
-        return ("<Slide sn {obj.sn}"
+        return ("<Slide sn: {obj.sn}"
                 ", title: {obj.title}"
                 ", type: {obj.type}"
                 ", url: {obj.url}>").format(obj=self)
