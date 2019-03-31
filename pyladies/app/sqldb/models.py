@@ -248,3 +248,38 @@ class EventApply(db.Model):
         return ("<EventApply sn: {obj.sn}"
                 ", event_basic_sn: {obj.event_basic_sn}"
                 ", apply: {obj.apply}").format(obj=self)
+                ", start_time: {obj.start_time}"
+                ", end_time: {obj.end_time}"
+                ", limit: {obj.limit}>"
+                ", limit_desc: {obj.limit_desc}").format(obj=self)
+
+class Slide(object):
+    """docstring for Slide"""
+    __tablename__ = "slide"
+
+    sn    = db.Column(db.Integer, primary_key=True)
+    type  = db.Column(db.String(128), nullable=False)
+    title = db.Column(db.String(128), nullable=False)
+    url   = db.Column(db.String(1024), nullable=False)
+
+    def __str__(self):
+        return ("<Slide sn {obj.sn}"
+                ", title: {obj.title}"
+                ", type: {obj.type}"
+                ", url: {obj.url}>").format(obj=self)
+
+event_slide = db.Table(
+    'event_slide',
+    db.Column(
+        'event_info_sn',
+        db.Integer,
+        db.ForeignKey('event_info.sn', ondelete="CASCADE"),
+        primary_key=True
+    ),
+    db.Column(
+        'slide_sn',
+        db.Integer,
+        db.ForeignKey('slide.sn', ondelete="CASCADE"),
+        primary_key=True
+    )
+)
