@@ -189,9 +189,6 @@ class SlideResource(db.Model):
     __tablename__ = "slide_resource"
 
     sn = db.Column(db.Integer, primary_key=True)
-    event_info_sn = db.Column(db.Integer,
-                              db.ForeignKey("event_info.sn", ondelete="CASCADE"),
-                              nullable=False)
     type = db.Column(db.String(128), nullable=False)
     title = db.Column(db.String(128), nullable=False)
     url = db.Column(db.String(1024), nullable=False)
@@ -201,6 +198,21 @@ class SlideResource(db.Model):
                 ", title: {obj.title}"
                 ", type: {obj.type}>").format(obj=self)
 
+event_slide = db.Table(
+    'event_slide',
+    db.Column(
+        'event_info_sn',
+        db.Integer,
+        db.ForeignKey('event_info.sn', ondelete="CASCADE"),
+        primary_key=True
+    ),
+    db.Column(
+        'slide_sn',
+        db.Integer,
+        db.ForeignKey('slide_resource.sn', ondelete="CASCADE"),
+        primary_key=True
+    )
+)
 
 class EventInfo(db.Model):
     __tablename__ = "event_info"
@@ -216,7 +228,9 @@ class EventInfo(db.Model):
 
     event_basic = db.relationship("EventBasic",
                                   backref=db.backref("event_info", uselist=False))
-    slide_resources = db.relationship("SlideResource", uselist=True)
+    slide_resources = db.relationship("SlideResource", 
+                                      secondary=event_slide, 
+                                      uselist=True)
     speakers = db.relationship("Speaker",
                                secondary=event_info_to_speaker,
                                uselist=True)
