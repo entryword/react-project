@@ -380,7 +380,7 @@ a,p{
     .container-with-menu{
         padding-right: 100px;
         min-height: calc(100vh - 465px);
-        max-width: calc(100vh - 80px);
+        /*max-width: calc(100vh - 80px);*/
     }
     .top-nav{
         background: #fff;
