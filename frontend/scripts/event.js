@@ -96,7 +96,7 @@
             url = `/v1.0/api/events_from_distinct_topics`;
         }else if(tw_pyladies.path === 'signup'){
             // url = `../fakedata/apply_info.json`;
-            url = `/v1.0/api/apply_info/${id}`;
+            url = `/v1.0/api/event/${id}/apply_info`;
         }else{
             url = `/v1.0/api/event/${id}`;
         }
