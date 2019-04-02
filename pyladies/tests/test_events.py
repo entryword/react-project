@@ -1,5 +1,5 @@
 # coding=UTF-8
-
+from datetime import datetime, timedelta
 import unittest
 
 from app import create_app
@@ -315,7 +315,226 @@ class EventsTestCase(unittest.TestCase):
             event_basics = manager.search_event_basics(keyword, date)
             self.assertEquals(len(event_basics), 0)
 
-    def test_get_events_from_distinct_topics(self):
+    def test_get_no_event_from_one_topic_because_of_no_event_basic(self):
+        topic_info = {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+
+            # test
+            test_events_from_distinct_topic = manager.get_events_from_distinct_topics(limit=4)
+
+            # assertion
+            self.assertEqual(len(test_events_from_distinct_topic), 0)
+
+    def test_get_no_event_from_one_topic_because_of_no_event_info(self):
+        def _get_future_date(interval=1):
+            future_time = datetime.utcnow() + timedelta(days=interval, hours=8)
+            return future_time.strftime("%Y-%m-%d")
+
+        topic_info = {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+
+        event_basic_info = {
+            "topic_sn": None,
+            "date": _get_future_date(1),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+
+            topic = manager.get_topic_by_name(topic_info["name"])
+            event_basic_info["topic_sn"] = topic.sn
+            manager.create_event_basic(event_basic_info, autocommit=True)
+
+            # test
+            test_events_from_distinct_topic = manager.get_events_from_distinct_topics(limit=4)
+
+            # assertion
+            self.assertEqual(len(test_events_from_distinct_topic), 0)
+
+    def test_get_no_event_from_one_topic_because_of_past_event(self):
+        def _get_past_date(interval=1):
+            past_time = datetime.utcnow() + timedelta(days=interval*(-1), hours=8)
+            return past_time.strftime("%Y-%m-%d")
+
+        topic_info = {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+
+        event_basic_info = {
+            "topic_sn": None,
+            "date": _get_past_date(1),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+
+        event_info_info = {
+            "event_basic_sn": None,
+            "title": "A class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+
+            topic = manager.get_topic_by_name(topic_info["name"])
+            event_basic_info["topic_sn"] = topic.sn
+            manager.create_event_basic(event_basic_info, autocommit=True)
+
+            event_info_info["event_basic_sn"] = topic.event_basics[0].sn
+            manager.create_event_info(event_info_info, autocommit=True)
+
+            # test
+            test_events_from_distinct_topic = manager.get_events_from_distinct_topics(limit=4)
+
+            # assertion
+            self.assertEqual(len(test_events_from_distinct_topic), 0)
+
+    def test_get_event_from_one_topic_with_only_one_future_event(self):
+        def _get_future_date(interval=1):
+            future_time = datetime.utcnow() + timedelta(days=interval, hours=8)
+            return future_time.strftime("%Y-%m-%d")
+
+        topic_info = {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+
+        event_basic_info = {
+            "topic_sn": None,
+            "date": _get_future_date(1),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+
+        event_info_info = {
+            "event_basic_sn": None,
+            "title": "A class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+
+            topic = manager.get_topic_by_name(topic_info["name"])
+            event_basic_info["topic_sn"] = topic.sn
+            manager.create_event_basic(event_basic_info, autocommit=True)
+
+            event_info_info["event_basic_sn"] = topic.event_basics[0].sn
+            manager.create_event_info(event_info_info, autocommit=True)
+
+            # test
+            test_events_from_distinct_topic = manager.get_events_from_distinct_topics(limit=4)
+
+            # assertion
+            self.assertEqual(len(test_events_from_distinct_topic), 1)
+            self.assertEqual(test_events_from_distinct_topic[0].date,
+                             event_basic_info["date"])
+
+    def test_get_event_from_one_topic_with_multiple_future_events(self):
+        def _get_future_date(interval=1):
+            future_time = datetime.utcnow() + timedelta(days=interval, hours=8)
+            return future_time.strftime("%Y-%m-%d")
+
+        topic_info = {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+
+        event_basic_info_1 = {
+            "topic_sn": None,
+            "date": _get_future_date(1),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_2 = {
+            "topic_sn": None,
+            "date": _get_future_date(2),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+
+        event_info_info_1 = {
+            "event_basic_sn": None,
+            "title": "A class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        event_info_info_2 = {
+            "event_basic_sn": None,
+            "title": "B class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+
+            topic = manager.get_topic_by_name(topic_info["name"])
+            event_basic_info_1["topic_sn"] = topic.sn
+            event_basic_info_2["topic_sn"] = topic.sn
+            manager.create_event_basic(event_basic_info_1, autocommit=True)
+            manager.create_event_basic(event_basic_info_2, autocommit=True)
+
+            event_info_info_1["event_basic_sn"] = topic.event_basics[0].sn
+            event_info_info_2["event_basic_sn"] = topic.event_basics[1].sn
+            manager.create_event_info(event_info_info_1, autocommit=True)
+            manager.create_event_info(event_info_info_2, autocommit=True)
+
+            # test
+            test_events_from_distinct_topic = manager.get_events_from_distinct_topics(limit=4)
+
+            # assertion
+            self.assertEqual(len(test_events_from_distinct_topic), 1)
+            self.assertEqual(test_events_from_distinct_topic[0].date,
+                             event_basic_info_1["date"])
+
+    def test_get_events_from_four_distinct_level_topics(self):
+        def _get_future_date(interval=1):
+            future_time = datetime.utcnow() + timedelta(days=interval, hours=8)
+            return future_time.strftime("%Y-%m-%d")
+
         topic_info_1 = {
             "name": "topic 1",
             "desc": "This is description",
@@ -348,146 +567,382 @@ class EventsTestCase(unittest.TestCase):
             "host": 0,
             "fields": [0, 1, 2]
         }
+
         event_basic_info_1 = {
             "topic_sn": None,
-            "date": "2020-01-01",
+            "date": _get_future_date(1),
             "start_time": "14:00",
             "end_time": "16:00"
         }
         event_basic_info_2 = {
             "topic_sn": None,
-            "date": "2020-03-08",
+            "date": _get_future_date(2),
             "start_time": "14:00",
             "end_time": "16:00"
         }
         event_basic_info_3 = {
             "topic_sn": None,
-            "date": "2020-05-25",
+            "date": _get_future_date(3),
             "start_time": "14:00",
             "end_time": "16:00"
         }
         event_basic_info_4 = {
             "topic_sn": None,
-            "date": "2020-10-30",
+            "date": _get_future_date(4),
             "start_time": "14:00",
             "end_time": "16:00"
         }
 
-        event_info_1 = {
+        event_info_info_1 = {
             "event_basic_sn": None,
-            "title": "Flask class 1",
+            "title": "A class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1]
         }
-        event_info_2 = {
+        event_info_info_2 = {
             "event_basic_sn": None,
-            "title": "Flask class 2",
-            "desc": "This is description of class 2",
+            "title": "B class 1",
+            "desc": "This is description of class 1",
             "fields": [0, 1]
         }
-        event_info_3 = {
+        event_info_info_3 = {
             "event_basic_sn": None,
-            "title": "Flask class 3",
-            "desc": "This is description of class 3",
+            "title": "C class 1",
+            "desc": "This is description of class 1",
             "fields": [0, 1]
         }
-        event_info_4 = {
+        event_info_info_4 = {
             "event_basic_sn": None,
-            "title": "Flask class 4",
-            "desc": "This is description of class 4",
+            "title": "D class 1",
+            "desc": "This is description of class 1",
             "fields": [0, 1]
         }
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info_1, autocommit=True)
+            manager.create_topic(topic_info_2, autocommit=True)
+            manager.create_topic(topic_info_3, autocommit=True)
+            manager.create_topic(topic_info_4, autocommit=True)
 
-            topic_1 = manager.create_topic(topic_info_1, autocommit=True)
-            topic_2 = manager.create_topic(topic_info_2, autocommit=True)
-            topic_3 = manager.create_topic(topic_info_3, autocommit=True)
-            topic_4 = manager.create_topic(topic_info_4, autocommit=True)
+            topic_1 = manager.get_topic_by_name(topic_info_1["name"])
+            topic_2 = manager.get_topic_by_name(topic_info_2["name"])
+            topic_3 = manager.get_topic_by_name(topic_info_3["name"])
+            topic_4 = manager.get_topic_by_name(topic_info_4["name"])
+            event_basic_info_1["topic_sn"] = topic_1.sn
+            event_basic_info_2["topic_sn"] = topic_2.sn
+            event_basic_info_3["topic_sn"] = topic_3.sn
+            event_basic_info_4["topic_sn"] = topic_4.sn
+            manager.create_event_basic(event_basic_info_1, autocommit=True)
+            manager.create_event_basic(event_basic_info_2, autocommit=True)
+            manager.create_event_basic(event_basic_info_3, autocommit=True)
+            manager.create_event_basic(event_basic_info_4, autocommit=True)
 
-            event_basic_info_1["topic_sn"] = topic_1
-            event_basic_info_2["topic_sn"] = topic_2
-            event_basic_info_3["topic_sn"] = topic_3
-            event_basic_info_4["topic_sn"] = topic_4
+            event_info_info_1["event_basic_sn"] = topic_1.event_basics[0].sn
+            event_info_info_2["event_basic_sn"] = topic_2.event_basics[0].sn
+            event_info_info_3["event_basic_sn"] = topic_3.event_basics[0].sn
+            event_info_info_4["event_basic_sn"] = topic_4.event_basics[0].sn
+            manager.create_event_info(event_info_info_1, autocommit=True)
+            manager.create_event_info(event_info_info_2, autocommit=True)
+            manager.create_event_info(event_info_info_3, autocommit=True)
+            manager.create_event_info(event_info_info_4, autocommit=True)
 
-            event_basic_1_id = manager.create_event_basic(event_basic_info_1, autocommit=True)
-            event_basic_2_id = manager.create_event_basic(event_basic_info_2, autocommit=True)
-            event_basic_3_id = manager.create_event_basic(event_basic_info_3, autocommit=True)
-            event_basic_4_id = manager.create_event_basic(event_basic_info_4, autocommit=True)
+            # test
+            test_events_from_distinct_topic = manager.get_events_from_distinct_topics(limit=4)
 
-            event_info_1["event_basic_sn"] = event_basic_1_id
-            event_info_2["event_basic_sn"] = event_basic_2_id
-            event_info_3["event_basic_sn"] = event_basic_3_id
-            event_info_4["event_basic_sn"] = event_basic_4_id
+            # assertion
+            self.assertEqual(len(test_events_from_distinct_topic), 4)
+            self.assertEqual(test_events_from_distinct_topic[0].date,
+                             event_basic_info_1["date"])
+            self.assertEqual(test_events_from_distinct_topic[1].date,
+                             event_basic_info_2["date"])
+            self.assertEqual(test_events_from_distinct_topic[2].date,
+                             event_basic_info_3["date"])
+            self.assertEqual(test_events_from_distinct_topic[3].date,
+                             event_basic_info_4["date"])
 
-            manager.create_event_info(event_info_1, autocommit=True)
-            manager.create_event_info(event_info_2, autocommit=True)
-            manager.create_event_info(event_info_3, autocommit=True)
-            manager.create_event_info(event_info_4, autocommit=True)
+    def test_get_events_from_five_distinct_level_topics(self):
+        def _get_future_date(interval=1):
+            future_time = datetime.utcnow() + timedelta(days=interval, hours=8)
+            return future_time.strftime("%Y-%m-%d")
 
-        # test ＆ assertion
-        rv = self.test_client.get("/v1.0/api/events_from_distinct_topics")
-
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        ans_1 = {
-            "topic_info": {
-                "name": topic_info_1["name"],
-                "id": topic_1,
-            },
-            "event_info": {
-                "title": event_info_1["title"],
-                "level": topic_info_1["level"],
-                "date": event_basic_info_1["date"],
-                "start_time": event_basic_info_1["start_time"],
-                "end_time": event_basic_info_1["end_time"],
-                "event_basic_id": event_basic_1_id
-            }
+        topic_info_1 = {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
         }
-        ans_2 = {
-            "topic_info": {
-                "name": topic_info_2["name"],
-                "id": topic_2,
-            },
-            "event_info": {
-                "title": event_info_2["title"],
-                "level": topic_info_2["level"],
-                "date": event_basic_info_2["date"],
-                "start_time": event_basic_info_2["start_time"],
-                "end_time": event_basic_info_2["end_time"],
-                "event_basic_id": event_basic_2_id
-            }
+        topic_info_2 = {
+            "name": "topic 2",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 2,
+            "host": 0,
+            "fields": [0, 1, 2]
         }
-        ans_3 = {
-            "topic_info": {
-                "name": topic_info_3["name"],
-                "id": topic_3,
-            },
-            "event_info": {
-                "title": event_info_3["title"],
-                "level": topic_info_3["level"],
-                "date": event_basic_info_3["date"],
-                "start_time": event_basic_info_3["start_time"],
-                "end_time": event_basic_info_3["end_time"],
-                "event_basic_id": event_basic_3_id
-            }
+        topic_info_3 = {
+            "name": "topic 3",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 3,
+            "host": 0,
+            "fields": [0, 1, 2]
         }
-        ans_4 = {
-            "topic_info": {
-                "name": topic_info_4["name"],
-                "id": topic_4,
-            },
-            "event_info": {
-                "title": event_info_4["title"],
-                "level": topic_info_4["level"],
-                "date": event_basic_info_4["date"],
-                "start_time": event_basic_info_4["start_time"],
-                "end_time": event_basic_info_4["end_time"],
-                "event_basic_id": event_basic_4_id
-            }
+        topic_info_4 = {
+            "name": "topic 4",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 4,
+            "host": 0,
+            "fields": [0, 1, 2]
         }
-        self.assertEquals(rv.json["data"]["events"][0], ans_1)
-        self.assertEquals(rv.json["data"]["events"][1], ans_2)
-        self.assertEquals(rv.json["data"]["events"][2], ans_3)
-        self.assertEquals(rv.json["data"]["events"][3], ans_4)
+        topic_info_5 = {
+            "name": "topic 5",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 5,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+
+        event_basic_info_1 = {
+            "topic_sn": None,
+            "date": _get_future_date(1),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_2 = {
+            "topic_sn": None,
+            "date": _get_future_date(2),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_3 = {
+            "topic_sn": None,
+            "date": _get_future_date(3),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_4 = {
+            "topic_sn": None,
+            "date": _get_future_date(4),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_5 = {
+            "topic_sn": None,
+            "date": _get_future_date(5),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+
+        event_info_info_1 = {
+            "event_basic_sn": None,
+            "title": "A class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        event_info_info_2 = {
+            "event_basic_sn": None,
+            "title": "B class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        event_info_info_3 = {
+            "event_basic_sn": None,
+            "title": "C class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        event_info_info_4 = {
+            "event_basic_sn": None,
+            "title": "D class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        event_info_info_5 = {
+            "event_basic_sn": None,
+            "title": "E class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info_1, autocommit=True)
+            manager.create_topic(topic_info_2, autocommit=True)
+            manager.create_topic(topic_info_3, autocommit=True)
+            manager.create_topic(topic_info_4, autocommit=True)
+            manager.create_topic(topic_info_5, autocommit=True)
+
+            topic_1 = manager.get_topic_by_name(topic_info_1["name"])
+            topic_2 = manager.get_topic_by_name(topic_info_2["name"])
+            topic_3 = manager.get_topic_by_name(topic_info_3["name"])
+            topic_4 = manager.get_topic_by_name(topic_info_4["name"])
+            topic_5 = manager.get_topic_by_name(topic_info_5["name"])
+            event_basic_info_1["topic_sn"] = topic_1.sn
+            event_basic_info_2["topic_sn"] = topic_2.sn
+            event_basic_info_3["topic_sn"] = topic_3.sn
+            event_basic_info_4["topic_sn"] = topic_4.sn
+            event_basic_info_5["topic_sn"] = topic_5.sn
+            manager.create_event_basic(event_basic_info_1, autocommit=True)
+            manager.create_event_basic(event_basic_info_2, autocommit=True)
+            manager.create_event_basic(event_basic_info_3, autocommit=True)
+            manager.create_event_basic(event_basic_info_4, autocommit=True)
+            manager.create_event_basic(event_basic_info_5, autocommit=True)
+
+            event_info_info_1["event_basic_sn"] = topic_1.event_basics[0].sn
+            event_info_info_2["event_basic_sn"] = topic_2.event_basics[0].sn
+            event_info_info_3["event_basic_sn"] = topic_3.event_basics[0].sn
+            event_info_info_4["event_basic_sn"] = topic_4.event_basics[0].sn
+            event_info_info_5["event_basic_sn"] = topic_5.event_basics[0].sn
+            manager.create_event_info(event_info_info_1, autocommit=True)
+            manager.create_event_info(event_info_info_2, autocommit=True)
+            manager.create_event_info(event_info_info_3, autocommit=True)
+            manager.create_event_info(event_info_info_4, autocommit=True)
+            manager.create_event_info(event_info_info_5, autocommit=True)
+
+            # test
+            test_events_from_distinct_topic = manager.get_events_from_distinct_topics(limit=4)
+
+            # assertion
+            self.assertEqual(len(test_events_from_distinct_topic), 4)
+            self.assertEqual(test_events_from_distinct_topic[0].date,
+                             event_basic_info_1["date"])
+            self.assertEqual(test_events_from_distinct_topic[1].date,
+                             event_basic_info_2["date"])
+            self.assertEqual(test_events_from_distinct_topic[2].date,
+                             event_basic_info_3["date"])
+            self.assertEqual(test_events_from_distinct_topic[3].date,
+                             event_basic_info_4["date"])
+
+    def test_get_events_from_four_topics_but_two_are_same_level(self):
+        def _get_future_date(interval=1):
+            future_time = datetime.utcnow() + timedelta(days=interval, hours=8)
+            return future_time.strftime("%Y-%m-%d")
+
+        topic_info_1 = {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        topic_info_2 = {
+            "name": "topic 2",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 2,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        topic_info_3 = {
+            "name": "topic 3",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 3,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        topic_info_4 = {
+            "name": "topic 4",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 3,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+
+        event_basic_info_1 = {
+            "topic_sn": None,
+            "date": _get_future_date(1),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_2 = {
+            "topic_sn": None,
+            "date": _get_future_date(2),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_3 = {
+            "topic_sn": None,
+            "date": _get_future_date(3),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_4 = {
+            "topic_sn": None,
+            "date": _get_future_date(4),
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+
+        event_info_info_1 = {
+            "event_basic_sn": None,
+            "title": "A class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        event_info_info_2 = {
+            "event_basic_sn": None,
+            "title": "B class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        event_info_info_3 = {
+            "event_basic_sn": None,
+            "title": "C class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        event_info_info_4 = {
+            "event_basic_sn": None,
+            "title": "D class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info_1, autocommit=True)
+            manager.create_topic(topic_info_2, autocommit=True)
+            manager.create_topic(topic_info_3, autocommit=True)
+            manager.create_topic(topic_info_4, autocommit=True)
+
+            topic_1 = manager.get_topic_by_name(topic_info_1["name"])
+            topic_2 = manager.get_topic_by_name(topic_info_2["name"])
+            topic_3 = manager.get_topic_by_name(topic_info_3["name"])
+            topic_4 = manager.get_topic_by_name(topic_info_4["name"])
+            event_basic_info_1["topic_sn"] = topic_1.sn
+            event_basic_info_2["topic_sn"] = topic_2.sn
+            event_basic_info_3["topic_sn"] = topic_3.sn
+            event_basic_info_4["topic_sn"] = topic_4.sn
+            manager.create_event_basic(event_basic_info_1, autocommit=True)
+            manager.create_event_basic(event_basic_info_2, autocommit=True)
+            manager.create_event_basic(event_basic_info_3, autocommit=True)
+            manager.create_event_basic(event_basic_info_4, autocommit=True)
+
+            event_info_info_1["event_basic_sn"] = topic_1.event_basics[0].sn
+            event_info_info_2["event_basic_sn"] = topic_2.event_basics[0].sn
+            event_info_info_3["event_basic_sn"] = topic_3.event_basics[0].sn
+            event_info_info_4["event_basic_sn"] = topic_4.event_basics[0].sn
+            manager.create_event_info(event_info_info_1, autocommit=True)
+            manager.create_event_info(event_info_info_2, autocommit=True)
+            manager.create_event_info(event_info_info_3, autocommit=True)
+            manager.create_event_info(event_info_info_4, autocommit=True)
+
+            # test
+            test_events_from_distinct_topic = manager.get_events_from_distinct_topics(limit=4)
+
+            # assertion
+            self.assertEqual(len(test_events_from_distinct_topic), 3)
+            self.assertEqual(test_events_from_distinct_topic[0].date,
+                             event_basic_info_1["date"])
+            self.assertEqual(test_events_from_distinct_topic[1].date,
+                             event_basic_info_2["date"])
+            self.assertEqual(test_events_from_distinct_topic[2].date,
+                             event_basic_info_3["date"])
