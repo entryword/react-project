@@ -36,6 +36,26 @@ def topic_infos(request):
     return _get_topic_info(length=topic_length)
 
 
+@pytest.fixture()
+def event_basic_info(request):
+    topic_sn = None
+    if hasattr(request, 'param'):
+        topic_sn = request.param
+    return {
+        "topic_sn": topic_sn,
+        "date": "2017-01-01",
+        "start_time": "14:00",
+        "end_time": "16:00"
+    }
+
+@pytest.fixture()
+def place_info():
+    return {
+        "name": "place 1",
+        "addr": "台北市信義區光復南路133號",
+        "map": "http://abc.com/map.html"
+    }
+
 def get_event_basic(topic_sn):
     return {
         "topic_sn": topic_sn,
