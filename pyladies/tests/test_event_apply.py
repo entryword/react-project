@@ -21,49 +21,11 @@ class TestEventApply:
         self.app.db.drop_all()
         self.app_context.pop()
 
-    def test_create_event_apply(self):
-        topic_info = {
-            "name": "Flask",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
-        event_basic_info = {
-            "topic_sn": None,
-            "date": "2017-01-01",
-            "start_time": "14:00",
-            "end_time": "16:00"
-        }
-
-        apply_info_1 = {
-            "host": "婦女館",
-            "channel": 1,
-            "type": "all",
-            "start_time": "2019-11-23 08:00",
-            "end_time": "2019-12-01 23:00",
-            "price": u"一般人400元，學生200元",
-            "limit": u"限女",
-            "url": "https://...",
-            "qualification": "https://..."
-        }
-
-        apply_info_2 = {
-            "host": "American Innovation Center 美國創新中心",
-            "channel": 0,
-            "type": "one",
-            "start_time": "2019-11-23 08:00",
-            "end_time": "2019-12-01 23:00",
-            "price": u"一般人100元，學生50元",
-            "limit": u"限女",
-            "url": "https://...",
-            "qualification": "https://..."
-        }
-
+    @pytest.mark.parametrize('apply_infos', [2], indirect=True)
+    def test_create_event_apply(self, topic_info, event_basic_info, apply_infos):
         input_event_apply = {
             "event_basic_sn": None,
-            "apply": [apply_info_1, apply_info_2]
+            "apply": apply_infos
         }
 
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -84,65 +46,16 @@ class TestEventApply:
             assert event_apply.event_basic_sn == event_basic.sn
             assert event_apply.apply == input_event_apply["apply"]
 
-    def test_update_event_apply(self):
-        topic_info = {
-            "name": "Flask",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
-        event_basic_info = {
-            "topic_sn": None,
-            "date": "2017-01-01",
-            "start_time": "14:00",
-            "end_time": "16:00"
-        }
-
-        apply_info = {
-            "host": "婦女館",
-            "channel": 1,
-            "type": "all",
-            "price": {
-                "default": 400,
-                "student": 200
-            },
-            "url": "https://...",
-            "qualification": "https://..."
-        }
-
-        apply_info_new = {
-            "host": "American Innovation Center 美國創新中心",
-            "channel": 0,
-            "type": "one",
-            "price": {
-                "default": 100,
-                "student": 50
-            },
-            "url": "https://...",
-            "qualification": "https://..."
-        }
-
+    @pytest.mark.parametrize('apply_infos', [2], indirect=True)
+    def test_update_event_apply(self, topic_info, event_basic_info, apply_infos):
+        apply_info = apply_infos[0]
+        apply_info_2 = apply_infos[1]
         input_event_apply = {
             "event_basic_sn": None,
-            "apply": [apply_info],
-            "start_time": "2019-11-23 08:00",
-            "end_time": "2019-12-01 23:00",
-            "limit": {
-                "gender": "限女",
-                "age": "不限"
-            },
-            "limit_desc": "須上傳登錄成功截圖"
+            "apply": [apply_info]
         }
-
-        update_info = {
-            "start_time": "2019-10-23 08:00",
-            "apply": [apply_info_new],
-            "limit": {
-                "gender": "不限",
-                "age": "不限"
-            },
+        input_event_apply_2 = {
+            "apply": [apply_info_2]
         }
 
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -157,66 +70,24 @@ class TestEventApply:
 
             event_apply_sn = manager.create_event_apply(input_event_apply, autocommit=True)
             event_apply_before = manager.get_event_apply(event_apply_sn)
-            start_time_before = event_apply_before.start_time
             event_basic_sn_before = event_apply_before.event_basic_sn
             apply_info_before = event_apply_before.apply
-            limit_before = event_apply_before.limit
 
             # test
-            manager.update_event_apply(event_apply_sn, update_info, autocommit=True)
+            manager.update_event_apply(event_apply_sn, input_event_apply_2, autocommit=True)
             event_apply_after = manager.get_event_apply(event_apply_sn)
-            start_time_after = event_apply_after.start_time
             event_basic_sn_after = event_apply_after.event_basic_sn
             apply_info_after = event_apply_after.apply
-            limit_after = event_apply_after.limit
 
             # test & assertion
             assert event_basic_sn_before == event_basic_sn_after
-            assert start_time_before == "2019-11-23 08:00"
-            assert start_time_after == "2019-10-23 08:00"
             assert apply_info_before == input_event_apply["apply"]
-            assert apply_info_after == update_info["apply"]
-            assert limit_before == input_event_apply["limit"]
-            assert limit_after == update_info["limit"]
+            assert apply_info_after == input_event_apply_2["apply"]
 
-    def test_delete_event_apply(self):
-        topic_info = {
-            "name": "Flask",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
-        event_basic_info = {
-            "topic_sn": None,
-            "date": "2017-01-01",
-            "start_time": "14:00",
-            "end_time": "16:00"
-        }
-
-        apply_info = {
-            "host": "婦女館",
-            "channel": 1,
-            "type": "all",
-            "price": {
-                "default": 400,
-                "student": 200
-            },
-            "url": "https://...",
-            "qualification": "https://..."
-        }
-
+    def test_delete_event_apply(self, topic_info, event_basic_info, apply_info):
         input_event_apply = {
             "event_basic_sn": None,
-            "apply": [apply_info],
-            "start_time": "2019-11-23 08:00",
-            "end_time": "2019-12-01 23:00",
-            "limit": {
-                "gender": "不限",
-                "age": "不限"
-            },
-            "limit_desc": "須上傳登錄成功截圖"
+            "apply": [apply_info]
         }
 
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -239,6 +110,7 @@ class TestEventApply:
                 manager.get_event_apply(event_apply_sn)
             assert cm.value == APPLY_NOT_EXIST
 
+    # written by Coco, commented by Huiyu 2019.04.04
     # def test_create_event_apply(self, make_test_data):
     #     with DBWrapper(self.app.db.engine.url).session() as db_sess:
     #         # preparation

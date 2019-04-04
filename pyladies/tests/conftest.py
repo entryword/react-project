@@ -1,16 +1,8 @@
 from random import randint
 import pytest
 
-def _get_topic_info(length=1):
-    if length == 1:
-        return {
-            "name": "topic 1",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
+# topc_info
+def _get_topic_infos(length=1):
     topics = []
     for i in range(length):
         topic_idx = i + 1
@@ -26,21 +18,18 @@ def _get_topic_info(length=1):
 
 @pytest.fixture()
 def topic_info():
-    return _get_topic_info()
+    topic_infos = _get_topic_infos(length=1)
+    return topic_infos[0]
 
 @pytest.fixture()
 def topic_infos(request):
-    topic_length = 1
+    length = 1
     if hasattr(request, 'param'):
-        topic_length = request.param
-    return _get_topic_info(length=topic_length)
+        length = request.param
+    return _get_topic_infos(length)
 
-
-@pytest.fixture()
-def event_basic_info(request):
-    topic_sn = None
-    if hasattr(request, 'param'):
-        topic_sn = request.param
+# event_basic_info
+def _get_event_basic_info(topic_sn=None):
     return {
         "topic_sn": topic_sn,
         "date": "2017-01-01",
@@ -48,6 +37,14 @@ def event_basic_info(request):
         "end_time": "16:00"
     }
 
+@pytest.fixture()
+def event_basic_info(request):
+    topic_sn = None
+    if hasattr(request, 'param'):
+        topic_sn = request.param
+    return _get_event_basic_info(topic_sn)
+
+# place_info
 @pytest.fixture()
 def place_info():
     return {
@@ -56,13 +53,48 @@ def place_info():
         "map": "http://abc.com/map.html"
     }
 
-def get_event_basic(topic_sn):
-    return {
-        "topic_sn": topic_sn,
-        "date": "2017-01-01",
-        "start_time": "14:00",
-        "end_time": "16:00"
-    }
+# apply_info
+def _get_apply_infos(length):
+    # note: this version only return 1 or 2 apply_infos
+    apply_infos = [{
+        "host": "婦女館",
+        "channel": 1,
+        "type": "all",
+        "start_time": "2019-11-23 08:00",
+        "end_time": "2019-12-01 23:00",
+        "price": u"一般人400元，學生200元",
+        "limit": u"限女",
+        "url": "https://...",
+        "qualification": "https://..."
+    }]
+
+    if length == 1:
+        return apply_infos
+
+    apply_infos.append({
+        "host": "American Innovation Center 美國創新中心",
+        "channel": 0,
+        "type": "one",
+        "start_time": "2019-10-23 08:00",
+        "end_time": "2019-12-01 23:00",
+        "price": u"一般人100元，學生50元",
+        "limit": u"限女",
+        "url": "https://...",
+        "qualification": "https://..."
+    })
+    return apply_infos
+
+@pytest.fixture()
+def apply_info():
+    apply_infos = _get_apply_infos(length=1)
+    return apply_infos[0]
+
+@pytest.fixture()
+def apply_infos(request):
+    length = 1
+    if hasattr(request, 'param'):
+        length = request.param
+    return _get_apply_infos(length)
 
 
 def get_event_info(event_basic_sn):
@@ -72,7 +104,6 @@ def get_event_info(event_basic_sn):
         "desc": "This is description of class 1",
         "fields": [0, 1]
     }
-
 
 def get_apply_info(channel):
     return {
@@ -113,14 +144,14 @@ def make_test_data():
         test_data_list = []
         for _ in range(topic_info_number):
             test_data = {
-                'topic_info': _get_topic_info(),
+                'topic_info': _get_topic_infos(length=1),
                 'event_list': []
             }
             manager.create_topic(test_data['topic_info'], autocommit=True)
             topic = manager.get_topic_by_name(test_data['topic_info']["name"])
             for _ in range(event_basic_number):
                 event = {
-                    'event_basic': get_event_basic(topic.sn),
+                    'event_basic': _get_event_basic_info(topic.sn),
                     'event_info': [],
                     'event_apply': []
                 }
