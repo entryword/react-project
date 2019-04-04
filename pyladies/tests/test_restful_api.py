@@ -928,12 +928,27 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             place = manager.get_place_by_name(place_info["name"])
             postdata["data"]["topic_id"] = topic.sn
             postdata["data"]["place_id"] = place.sn
-        # test
+
+        # post test
         rv = self.test_client.post(
-            "/v1.0/api/event",
+            "/cms/api/event",
             headers={"Content-Type": "application/json"},
             data=json.dumps(postdata),
             content_type="application/json",
         )
+        # api assertion
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEquals(rv.json["data"]["id"], 1)
+        event_basic_sn =  rv.json["data"]["id"]
+
+        # event assertion
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            event_basic = manager.get_event_basic(event_basic_sn)
+            self.assertEquals(event_basic.topic.name, topic_info["name"])
+            self.assertEquals(event_basic.place.name, place_info["name"])
+            self.assertEquals(event_basic.place.map, place_info["map"])
+            self.assertEquals(event_basic.date, postdata["data"]["start_date"])
+            self.assertEquals(event_basic.start_time, postdata["data"]["start_time"])
+            self.assertEquals(event_basic.end_time, postdata["data"]["end_time"])
