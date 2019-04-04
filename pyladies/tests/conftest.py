@@ -1,15 +1,40 @@
 import pytest
+from random import randint
 
+def _get_topic_info(length=1):
+    if length == 1:
+        return {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+    topics = []
+    for i in range(length):
+        topic_idx = i + 1
+        topics.append({
+            "name": "topic %s" % topic_idx,
+            "desc": "This is description %s" % topic_idx,
+            "freq": randint(0, 3),
+            "level": randint(0, 3),
+            "host": randint(0, 3),
+            "fields": [ i + 1 for i in range(randint(1, 4)) ]
+        })
+    return topics
 
-def get_topic_info():
-    return {
-        "name": "Flask",
-        "desc": "This is description",
-        "freq": 0,
-        "level": 1,
-        "host": 0,
-        "fields": [0, 1, 2]
-    }
+@pytest.fixture()
+def topic_info():
+    return _get_topic_info()
+
+@pytest.fixture()
+def topic_infos(request):
+    if not hasattr(request, 'param'):
+        topic_length = 1
+    else:
+        topic_length = request.param[0]
+    return _get_topic_info(length=topic_length)
 
 
 def get_event_basic(topic_sn):
@@ -69,7 +94,7 @@ def make_test_data():
         test_data_list = []
         for topic_sn in range(topic_info_number):
             test_data = {
-                'topic_info': get_topic_info(),
+                'topic_info': _get_topic_info(),
                 'event_list': []
             }
             manager.create_topic(test_data['topic_info'], autocommit=True)
