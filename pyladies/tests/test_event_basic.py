@@ -214,7 +214,6 @@ class TestEventBasic:
             self.assert_exception(cm.value, EVENTBASIC_NOT_EXIST)
 
     def test_get_event_basics_by_topic(self, topic_info, event_basic_info):
-        event_basic_info_1 = event_basic_info.copy()
         event_basic_info_2 = event_basic_info.copy()
         event_basic_info_2.update({
             "date": "2017-01-08",
@@ -226,12 +225,12 @@ class TestEventBasic:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info_1["topic_sn"] = topic.sn
+            event_basic_info["topic_sn"] = topic.sn
             event_basic_info_2["topic_sn"] = topic.sn
-            manager.create_event_basic(event_basic_info_1, autocommit=True)
+            manager.create_event_basic(event_basic_info, autocommit=True)
             manager.create_event_basic(event_basic_info_2, autocommit=True)
 
             # test & assertion
             assert len(topic.event_basics) == 2
-            self.assert_event_basic_info(topic.event_basics[0], event_basic_info_1)
+            self.assert_event_basic_info(topic.event_basics[0], event_basic_info)
             self.assert_event_basic_info(topic.event_basics[1], event_basic_info_2)
