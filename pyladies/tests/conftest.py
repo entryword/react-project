@@ -18,8 +18,8 @@ def _get_topic_infos(length=1):
 
 @pytest.fixture()
 def topic_info():
-    topic_infos = _get_topic_infos(length=1)
-    return topic_infos[0]
+    topics = _get_topic_infos(length=1)
+    return topics[0]
 
 @pytest.fixture()
 def topic_infos(request):
@@ -56,7 +56,7 @@ def place_info():
 # apply_info
 def _get_apply_infos(length):
     # note: this version only return 1 or 2 apply_infos
-    apply_infos = [{
+    applies = [{
         "host": "婦女館",
         "channel": 1,
         "type": "all",
@@ -69,9 +69,9 @@ def _get_apply_infos(length):
     }]
 
     if length == 1:
-        return apply_infos
+        return applies
 
-    apply_infos.append({
+    applies.append({
         "host": "American Innovation Center 美國創新中心",
         "channel": 0,
         "type": "one",
@@ -82,12 +82,12 @@ def _get_apply_infos(length):
         "url": "https://...",
         "qualification": "https://..."
     })
-    return apply_infos
+    return applies
 
 @pytest.fixture()
 def apply_info():
-    apply_infos = _get_apply_infos(length=1)
-    return apply_infos[0]
+    applies = _get_apply_infos(length=1)
+    return applies[0]
 
 @pytest.fixture()
 def apply_infos(request):
@@ -143,8 +143,9 @@ def make_test_data():
                         event_basic_number, event_info_number, event_apply_number, channel_number):
         test_data_list = []
         for _ in range(topic_info_number):
+            topics = _get_topic_infos(length=1)
             test_data = {
-                'topic_info': _get_topic_infos(length=1),
+                'topic_info': topics[0],
                 'event_list': []
             }
             manager.create_topic(test_data['topic_info'], autocommit=True)
