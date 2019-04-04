@@ -50,11 +50,11 @@ class EventBasicTestCase(unittest.TestCase):
             # assertion
             event_basic_sn = topic.event_basics[0].sn
             event_basic = manager.get_event_basic(event_basic_sn)
-            self.assertEquals(event_basic.topic.name, topic_info["name"])
-            self.assertEquals(event_basic.place, None)
-            self.assertEquals(event_basic.date, event_basic_info["date"])
-            self.assertEquals(event_basic.start_time, event_basic_info["start_time"])
-            self.assertEquals(event_basic.end_time, event_basic_info["end_time"])
+            self.assertEqual(event_basic.topic.name, topic_info["name"])
+            self.assertEqual(event_basic.place, None)
+            self.assertEqual(event_basic.date, event_basic_info["date"])
+            self.assertEqual(event_basic.start_time, event_basic_info["start_time"])
+            self.assertEqual(event_basic.end_time, event_basic_info["end_time"])
 
     def test_create_event_basic_with_place(self):
         topic_info = {
@@ -92,12 +92,12 @@ class EventBasicTestCase(unittest.TestCase):
             # assertion
             event_basic_sn = topic.event_basics[0].sn
             event_basic = manager.get_event_basic(event_basic_sn)
-            self.assertEquals(event_basic.topic.name, topic_info["name"])
-            self.assertEquals(event_basic.place.name, place_info["name"])
-            self.assertEquals(event_basic.place.map, place_info["map"])
-            self.assertEquals(event_basic.date, event_basic_info["date"])
-            self.assertEquals(event_basic.start_time, event_basic_info["start_time"])
-            self.assertEquals(event_basic.end_time, event_basic_info["end_time"])
+            self.assertEqual(event_basic.topic.name, topic_info["name"])
+            self.assertEqual(event_basic.place.name, place_info["name"])
+            self.assertEqual(event_basic.place.map, place_info["map"])
+            self.assertEqual(event_basic.date, event_basic_info["date"])
+            self.assertEqual(event_basic.start_time, event_basic_info["start_time"])
+            self.assertEqual(event_basic.end_time, event_basic_info["end_time"])
 
     def test_create_event_basic_with_not_existed_topic(self):
         event_basic_info = {
@@ -160,11 +160,11 @@ class EventBasicTestCase(unittest.TestCase):
             # assertion
             event_basic_sn = topic.event_basics[0].sn
             event_basic = manager.get_event_basic(event_basic_sn)
-            self.assertEquals(event_basic.date, new_event_basic_info["date"])
-            self.assertEquals(event_basic.start_time, new_event_basic_info["start_time"])
-            self.assertEquals(event_basic.end_time, new_event_basic_info["end_time"])
-            self.assertEquals(event_basic.place.name, place_info["name"])
-            self.assertEquals(event_basic.place.map, place_info["map"])
+            self.assertEqual(event_basic.date, new_event_basic_info["date"])
+            self.assertEqual(event_basic.start_time, new_event_basic_info["start_time"])
+            self.assertEqual(event_basic.end_time, new_event_basic_info["end_time"])
+            self.assertEqual(event_basic.place.name, place_info["name"])
+            self.assertEqual(event_basic.place.map, place_info["map"])
 
     def test_change_place(self):
         topic_info = {
@@ -218,15 +218,15 @@ class EventBasicTestCase(unittest.TestCase):
             # assertion 1
             event_basic_sn = topic.event_basics[0].sn
             event_basic = manager.get_event_basic(event_basic_sn)
-            self.assertEquals(event_basic.date, new_event_basic_info["date"])
-            self.assertEquals(event_basic.start_time, new_event_basic_info["start_time"])
-            self.assertEquals(event_basic.end_time, new_event_basic_info["end_time"])
-            self.assertEquals(event_basic.place.name, new_place_info["name"])
-            self.assertEquals(event_basic.place.map, new_place_info["map"])
+            self.assertEqual(event_basic.date, new_event_basic_info["date"])
+            self.assertEqual(event_basic.start_time, new_event_basic_info["start_time"])
+            self.assertEqual(event_basic.end_time, new_event_basic_info["end_time"])
+            self.assertEqual(event_basic.place.name, new_place_info["name"])
+            self.assertEqual(event_basic.place.map, new_place_info["map"])
 
             # assertion 2
             row_count = db_sess.execute("SELECT COUNT(*) FROM place").scalar()
-            self.assertEquals(row_count, 2)
+            self.assertEqual(row_count, 2)
 
     def test_delete_event_basic(self):
         topic_info = {
@@ -258,7 +258,7 @@ class EventBasicTestCase(unittest.TestCase):
             # assertion
             with self.assertRaises(PyLadiesException) as cm:
                 manager.get_event_basic(event_basic_sn)
-            self.assertEquals(cm.exception, EVENTBASIC_NOT_EXIST)
+            self.assertEqual(cm.exception, EVENTBASIC_NOT_EXIST)
 
     def test_delete_topic(self):
         topic_info = {
@@ -288,7 +288,7 @@ class EventBasicTestCase(unittest.TestCase):
             # assertion
             with self.assertRaises(PyLadiesException) as cm:
                 manager.get_event_basic(1)
-            self.assertEquals(cm.exception, EVENTBASIC_NOT_EXIST)
+            self.assertEqual(cm.exception, EVENTBASIC_NOT_EXIST)
 
     def test_get_event_basic_by_sn(self):
         topic_info = {
@@ -316,13 +316,13 @@ class EventBasicTestCase(unittest.TestCase):
 
             # test & assertion 1
             event_basic = manager.get_event_basic(event_basic_sn)
-            self.assertEquals(event_basic.date, event_basic_info["date"])
+            self.assertEqual(event_basic.date, event_basic_info["date"])
 
             # test & assertion 2
             with self.assertRaises(PyLadiesException) as cm:
                 not_exist_event_basic_sn = event_basic_sn + 1
                 manager.get_event_basic(not_exist_event_basic_sn)
-            self.assertEquals(cm.exception, EVENTBASIC_NOT_EXIST)
+            self.assertEqual(cm.exception, EVENTBASIC_NOT_EXIST)
 
     def test_get_event_basics_by_topic(self):
         topic_info = {
@@ -356,6 +356,6 @@ class EventBasicTestCase(unittest.TestCase):
             manager.create_event_basic(event_basic_info_2, autocommit=True)
 
             # test & assertion
-            self.assertEquals(len(topic.event_basics), 2)
-            self.assertEquals(topic.event_basics[0].date, event_basic_info_1["date"])
-            self.assertEquals(topic.event_basics[1].date, event_basic_info_2["date"])
+            self.assertEqual(len(topic.event_basics), 2)
+            self.assertEqual(topic.event_basics[0].date, event_basic_info_1["date"])
+            self.assertEqual(topic.event_basics[1].date, event_basic_info_2["date"])

@@ -90,38 +90,38 @@ class EventsTestCase(unittest.TestCase):
             # test keyword empty
             keyword = ''
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 2)
+            self.assertEqual(len(event_basics), 2)
 
             # test keyword event
             keyword = 'event'
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 2)
+            self.assertEqual(len(event_basics), 2)
 
             # test keyword event 1
             keyword = 'event 1'
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 1)
-            self.assertEquals(event_basics[0].event_info.title, "event 1")
+            self.assertEqual(len(event_basics), 1)
+            self.assertEqual(event_basics[0].event_info.title, "event 1")
 
             # test keyword topic
             keyword = 'topic'
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 2)
+            self.assertEqual(len(event_basics), 2)
 
             # test keyword topic 1
             keyword = 'topic 1'
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 2)
+            self.assertEqual(len(event_basics), 2)
 
             # test keyword topic 2
             keyword = 'topic 2'
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 0)
+            self.assertEqual(len(event_basics), 0)
 
             # test keyword abc
             keyword = 'abc'
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 0)
+            self.assertEqual(len(event_basics), 0)
 
     def test_search_events_with_date(self):
         topics = [
@@ -208,20 +208,20 @@ class EventsTestCase(unittest.TestCase):
             # test date empty
             date = ''
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 3)
+            self.assertEqual(len(event_basics), 3)
 
             # test date 2019-01
             date = '2019-01'
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 1)
-            self.assertEquals(event_basics[0].event_info.title, "event 1")
+            self.assertEqual(len(event_basics), 1)
+            self.assertEqual(event_basics[0].event_info.title, "event 1")
 
             # test date 2019-02
             date = '2019-02'
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 2)
-            self.assertEquals(event_basics[0].event_info.title, "event 2")
-            self.assertEquals(event_basics[1].event_info.title, "event 3")
+            self.assertEqual(len(event_basics), 2)
+            self.assertEqual(event_basics[0].event_info.title, "event 2")
+            self.assertEqual(event_basics[1].event_info.title, "event 3")
 
     def test_search_events_with_keywords_and_date(self):
         topics = [
@@ -306,14 +306,14 @@ class EventsTestCase(unittest.TestCase):
             keyword = 'event 2'
             date = '2019-02'
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 1)
-            self.assertEquals(event_basics[0].event_info.title, "event 2")
+            self.assertEqual(len(event_basics), 1)
+            self.assertEqual(event_basics[0].event_info.title, "event 2")
 
             # test date 2019-02 and keyword event 1
             keyword = 'event 1'
             date = '2019-02'
             event_basics = manager.search_event_basics(keyword, date)
-            self.assertEquals(len(event_basics), 0)
+            self.assertEqual(len(event_basics), 0)
 
     def test_get_no_event_from_one_topic_because_of_no_event_basic(self):
         topic_info = {

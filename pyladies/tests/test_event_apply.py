@@ -124,13 +124,13 @@ class TestEventApply:
     #         limit_after = event_apply_after.limit
     #
     #         # test & assertion
-    #         self.assertEquals(event_basic_sn_before, event_basic_sn_after)
-    #         self.assertEquals(start_time_before, "2019-11-23 08:00")
-    #         self.assertEquals(start_time_after, "2019-10-23 08:00")
-    #         self.assertEquals(apply_info_before, input_event_apply["apply"])
-    #         self.assertEquals(apply_info_after, update_info["apply"])
-    #         self.assertEquals(limit_before, input_event_apply["limit"])
-    #         self.assertEquals(limit_after, update_info["limit"])
+    #         self.assertEqual(event_basic_sn_before, event_basic_sn_after)
+    #         self.assertEqual(start_time_before, "2019-11-23 08:00")
+    #         self.assertEqual(start_time_after, "2019-10-23 08:00")
+    #         self.assertEqual(apply_info_before, input_event_apply["apply"])
+    #         self.assertEqual(apply_info_after, update_info["apply"])
+    #         self.assertEqual(limit_before, input_event_apply["limit"])
+    #         self.assertEqual(limit_after, update_info["limit"])
     #
     # def test_delete_event_apply(self):
     #     topic_info = {
@@ -190,4 +190,4 @@ class TestEventApply:
     #         # test & assertion
     #         with self.assertRaises(PyLadiesException) as cm:
     #             manager.get_event_apply(event_apply_sn)
-    #         self.assertEquals(cm.exception, APPLY_NOT_EXIST)
+    #         self.assertEqual(cm.exception, APPLY_NOT_EXIST)

@@ -59,9 +59,9 @@ class EventInfoTestCase(unittest.TestCase):
             # assertion
             event_info_sn = event_basic.event_info.sn
             event_info = manager.get_event_info(event_info_sn)
-            self.assertEquals(event_info.title, event_info_info["title"])
-            self.assertEquals(event_info.desc, event_info_info["desc"])
-            self.assertEquals(event_info.fields, event_info_info["fields"])
+            self.assertEqual(event_info.title, event_info_info["title"])
+            self.assertEqual(event_info.desc, event_info_info["desc"])
+            self.assertEqual(event_info.fields, event_info_info["fields"])
 
     def test_create_event_info_without_slides(self):
         speaker_info_1 = {
@@ -142,13 +142,13 @@ class EventInfoTestCase(unittest.TestCase):
             # assertion
             event_info_sn = event_basic.event_info.sn
             event_info = manager.get_event_info(event_info_sn)
-            self.assertEquals(event_info.title, event_info_info["title"])
-            self.assertEquals(event_info.desc, event_info_info["desc"])
-            self.assertEquals(event_info.fields, event_info_info["fields"])
-            self.assertEquals(event_info.speakers[0].name, speaker_info_1["name"])
-            self.assertEquals(event_info.speakers[1].name, speaker_info_2["name"])
-            self.assertEquals(event_info.assistants[0].name, assistant_info_1["name"])
-            self.assertEquals(event_info.assistants[1].name, assistant_info_2["name"])
+            self.assertEqual(event_info.title, event_info_info["title"])
+            self.assertEqual(event_info.desc, event_info_info["desc"])
+            self.assertEqual(event_info.fields, event_info_info["fields"])
+            self.assertEqual(event_info.speakers[0].name, speaker_info_1["name"])
+            self.assertEqual(event_info.speakers[1].name, speaker_info_2["name"])
+            self.assertEqual(event_info.assistants[0].name, assistant_info_1["name"])
+            self.assertEqual(event_info.assistants[1].name, assistant_info_2["name"])
 
     def test_create_event_info_with_speakers_and_slides(self):
         speaker_info = {
@@ -222,17 +222,17 @@ class EventInfoTestCase(unittest.TestCase):
             # assertion
             event_info_sn = event_basic.event_info.sn
             event_info = manager.get_event_info(event_info_sn)
-            self.assertEquals(event_info.title, event_info_info["title"])
-            self.assertEquals(event_info.desc, event_info_info["desc"])
-            self.assertEquals(event_info.fields, event_info_info["fields"])
-            self.assertEquals(event_info.speakers[0].name, speaker_info["name"])
-            self.assertEquals(event_info.assistants[0].name, assistant_info["name"])
-            self.assertEquals(event_info.slide_resources[0].type, slide_resources[0]["type"])
-            self.assertEquals(event_info.slide_resources[0].title, slide_resources[0]["title"])
-            self.assertEquals(event_info.slide_resources[0].url, slide_resources[0]["url"])
-            self.assertEquals(event_info.slide_resources[1].type, slide_resources[1]["type"])
-            self.assertEquals(event_info.slide_resources[1].title, slide_resources[1]["title"])
-            self.assertEquals(event_info.slide_resources[1].url, slide_resources[1]["url"])
+            self.assertEqual(event_info.title, event_info_info["title"])
+            self.assertEqual(event_info.desc, event_info_info["desc"])
+            self.assertEqual(event_info.fields, event_info_info["fields"])
+            self.assertEqual(event_info.speakers[0].name, speaker_info["name"])
+            self.assertEqual(event_info.assistants[0].name, assistant_info["name"])
+            self.assertEqual(event_info.slide_resources[0].type, slide_resources[0]["type"])
+            self.assertEqual(event_info.slide_resources[0].title, slide_resources[0]["title"])
+            self.assertEqual(event_info.slide_resources[0].url, slide_resources[0]["url"])
+            self.assertEqual(event_info.slide_resources[1].type, slide_resources[1]["type"])
+            self.assertEqual(event_info.slide_resources[1].title, slide_resources[1]["title"])
+            self.assertEqual(event_info.slide_resources[1].url, slide_resources[1]["url"])
 
     def test_create_event_info_with_not_exist_event_basic(self):
         event_info_info = {
@@ -344,9 +344,9 @@ class EventInfoTestCase(unittest.TestCase):
             # assertion
             event_info_sn = event_basic.event_info.sn
             event_info = manager.get_event_info(event_info_sn)
-            self.assertEquals(event_info.title, new_event_info_info["title"])
-            self.assertEquals(event_info.desc, new_event_info_info["desc"])
-            self.assertEquals(event_info.fields, new_event_info_info["fields"])
+            self.assertEqual(event_info.title, new_event_info_info["title"])
+            self.assertEqual(event_info.desc, new_event_info_info["desc"])
+            self.assertEqual(event_info.fields, new_event_info_info["fields"])
 
     def test_update_event_info_with_speakers(self):
         topic_info = {
@@ -415,11 +415,11 @@ class EventInfoTestCase(unittest.TestCase):
             # assertion
             event_info_sn = event_basic.event_info.sn
             event_info = manager.get_event_info(event_info_sn)
-            self.assertEquals(event_info.title, new_event_info_info["title"])
-            self.assertEquals(event_info.desc, new_event_info_info["desc"])
-            self.assertEquals(event_info.fields, new_event_info_info["fields"])
-            self.assertEquals(event_info.speakers[0].name, speaker_info["name"])
-            self.assertEquals(event_info.assistants[0].name, assistant_info["name"])
+            self.assertEqual(event_info.title, new_event_info_info["title"])
+            self.assertEqual(event_info.desc, new_event_info_info["desc"])
+            self.assertEqual(event_info.fields, new_event_info_info["fields"])
+            self.assertEqual(event_info.speakers[0].name, speaker_info["name"])
+            self.assertEqual(event_info.assistants[0].name, assistant_info["name"])
 
     def test_change_speakers(self):
         topic_info = {
@@ -509,12 +509,12 @@ class EventInfoTestCase(unittest.TestCase):
 
             # assertion 1
             event_info = manager.get_event_info(1)
-            self.assertEquals(event_info.speakers[0].name, new_speaker_info["name"])
-            self.assertEquals(event_info.assistants[0].name, new_assistant_info["name"])
+            self.assertEqual(event_info.speakers[0].name, new_speaker_info["name"])
+            self.assertEqual(event_info.assistants[0].name, new_assistant_info["name"])
 
             # assertion 2
             row_count = db_sess.execute("SELECT COUNT(*) FROM speaker").scalar()
-            self.assertEquals(row_count, 4)
+            self.assertEqual(row_count, 4)
 
     def test_change_slides(self):
         slide_resources = [
@@ -576,13 +576,13 @@ class EventInfoTestCase(unittest.TestCase):
 
             # assertion 1
             event_info = manager.get_event_info(1)
-            self.assertEquals(event_info.slide_resources[0].type, new_slide_resources[0]["type"])
-            self.assertEquals(event_info.slide_resources[0].title, new_slide_resources[0]["title"])
-            self.assertEquals(event_info.slide_resources[0].url, new_slide_resources[0]["url"])
+            self.assertEqual(event_info.slide_resources[0].type, new_slide_resources[0]["type"])
+            self.assertEqual(event_info.slide_resources[0].title, new_slide_resources[0]["title"])
+            self.assertEqual(event_info.slide_resources[0].url, new_slide_resources[0]["url"])
 
             # assertion 2
             row_count = db_sess.execute("SELECT COUNT(*) FROM slide_resource").scalar()
-            self.assertEquals(row_count, 1)
+            self.assertEqual(row_count, 1)
 
     def test_update_event_info_with_slides(self):
         topic_info = {
@@ -642,15 +642,15 @@ class EventInfoTestCase(unittest.TestCase):
             # assertion
             event_info_sn = event_basic.event_info.sn
             event_info = manager.get_event_info(event_info_sn)
-            self.assertEquals(event_info.title, new_event_info_info["title"])
-            self.assertEquals(event_info.desc, new_event_info_info["desc"])
-            self.assertEquals(event_info.fields, new_event_info_info["fields"])
-            self.assertEquals(event_info.slide_resources[0].type, slide_resources[0]["type"])
-            self.assertEquals(event_info.slide_resources[0].title, slide_resources[0]["title"])
-            self.assertEquals(event_info.slide_resources[0].url, slide_resources[0]["url"])
-            self.assertEquals(event_info.slide_resources[1].type, slide_resources[1]["type"])
-            self.assertEquals(event_info.slide_resources[1].title, slide_resources[1]["title"])
-            self.assertEquals(event_info.slide_resources[1].url, slide_resources[1]["url"])
+            self.assertEqual(event_info.title, new_event_info_info["title"])
+            self.assertEqual(event_info.desc, new_event_info_info["desc"])
+            self.assertEqual(event_info.fields, new_event_info_info["fields"])
+            self.assertEqual(event_info.slide_resources[0].type, slide_resources[0]["type"])
+            self.assertEqual(event_info.slide_resources[0].title, slide_resources[0]["title"])
+            self.assertEqual(event_info.slide_resources[0].url, slide_resources[0]["url"])
+            self.assertEqual(event_info.slide_resources[1].type, slide_resources[1]["type"])
+            self.assertEqual(event_info.slide_resources[1].title, slide_resources[1]["title"])
+            self.assertEqual(event_info.slide_resources[1].url, slide_resources[1]["url"])
 
     def test_delete_event_info(self):
         slide_resources = [
@@ -726,13 +726,13 @@ class EventInfoTestCase(unittest.TestCase):
             # assertion 1
             with self.assertRaises(PyLadiesException) as cm:
                 manager.get_event_info(event_info_sn)
-            self.assertEquals(cm.exception, EVENTINFO_NOT_EXIST)
+            self.assertEqual(cm.exception, EVENTINFO_NOT_EXIST)
 
             # assertion 2
             row_count = db_sess.execute("SELECT COUNT(*) FROM speaker").scalar()
-            self.assertEquals(row_count, 2)
+            self.assertEqual(row_count, 2)
             row_count = db_sess.execute("SELECT COUNT(*) FROM slide_resource").scalar()
-            self.assertEquals(row_count, 0)
+            self.assertEqual(row_count, 0)
 
     def test_delete_event_basic(self):
         topic_info = {
@@ -770,7 +770,7 @@ class EventInfoTestCase(unittest.TestCase):
             # assertion
             with self.assertRaises(PyLadiesException) as cm:
                 manager.get_event_info(1)
-            self.assertEquals(cm.exception, EVENTINFO_NOT_EXIST)
+            self.assertEqual(cm.exception, EVENTINFO_NOT_EXIST)
 
     def test_delete_topic(self):
         topic_info = {
@@ -808,7 +808,7 @@ class EventInfoTestCase(unittest.TestCase):
             # assertion
             with self.assertRaises(PyLadiesException) as cm:
                 manager.get_event_info(1)
-            self.assertEquals(cm.exception, EVENTINFO_NOT_EXIST)
+            self.assertEqual(cm.exception, EVENTINFO_NOT_EXIST)
 
     def test_delete_speaker(self):
         topic_info = {
@@ -891,12 +891,12 @@ class EventInfoTestCase(unittest.TestCase):
 
             # assertion 1
             event_info = manager.get_event_info(event_info_sn)
-            self.assertEquals(event_info.speakers[0].name, speaker_info_2["name"])
-            self.assertEquals(event_info.assistants[0].name, assistant_info_2["name"])
+            self.assertEqual(event_info.speakers[0].name, speaker_info_2["name"])
+            self.assertEqual(event_info.assistants[0].name, assistant_info_2["name"])
 
             # assertion 2
             row_count = db_sess.execute("SELECT COUNT(*) FROM speaker").scalar()
-            self.assertEquals(row_count, 2)
+            self.assertEqual(row_count, 2)
 
     def test_get_event_info_by_sn(self):
         topic_info = {
@@ -933,15 +933,15 @@ class EventInfoTestCase(unittest.TestCase):
 
             # test & assertion 1
             event_info = manager.get_event_info(event_info_sn)
-            self.assertEquals(event_info.title, event_info_info["title"])
-            self.assertEquals(event_info.desc, event_info_info["desc"])
-            self.assertEquals(event_info.fields, event_info_info["fields"])
+            self.assertEqual(event_info.title, event_info_info["title"])
+            self.assertEqual(event_info.desc, event_info_info["desc"])
+            self.assertEqual(event_info.fields, event_info_info["fields"])
 
             # test & assertion 2
             with self.assertRaises(PyLadiesException) as cm:
                 not_exist_event_info_sn = event_info_sn + 1
                 manager.get_event_info(not_exist_event_info_sn)
-            self.assertEquals(cm.exception, EVENTINFO_NOT_EXIST)
+            self.assertEqual(cm.exception, EVENTINFO_NOT_EXIST)
 
     def test_get_event_info_by_event_basic(self):
         topic_info = {
@@ -978,6 +978,6 @@ class EventInfoTestCase(unittest.TestCase):
             manager.create_event_info(event_info_info, autocommit=True)
 
             # assertion
-            self.assertEquals(event_basic.event_info.title, event_info_info["title"])
-            self.assertEquals(event_basic.event_info.desc, event_info_info["desc"])
-            self.assertEquals(event_basic.event_info.fields, event_info_info["fields"])
+            self.assertEqual(event_basic.event_info.title, event_info_info["title"])
+            self.assertEqual(event_basic.event_info.desc, event_info_info["desc"])
+            self.assertEqual(event_basic.event_info.fields, event_info_info["fields"])
