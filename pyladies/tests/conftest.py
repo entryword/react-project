@@ -30,10 +30,9 @@ def topic_info():
 
 @pytest.fixture()
 def topic_infos(request):
-    if not hasattr(request, 'param'):
-        topic_length = 1
-    else:
-        topic_length = request.param[0]
+    topic_length = 1
+    if hasattr(request, 'param'):
+        topic_length = request.param
     return _get_topic_info(length=topic_length)
 
 

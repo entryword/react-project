@@ -37,23 +37,22 @@ class TestTopic:
         assert len(topics) == length
 
     @staticmethod
-    def assert_topic_exception(tp1, tp2):
-        assert tp1 == tp2
+    def assert_exception(ex1, ex2):
+        assert ex1 == ex2
 
     def test_create_topic(self, topic_info):
-        info = topic_info
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
 
             # test
-            manager.create_topic(info, autocommit=True)
+            manager.create_topic(topic_info, autocommit=True)
 
             # assertion
-            topic = manager.get_topic_by_name(info["name"])
-            self.assert_topic(topic, info)
+            topic = manager.get_topic_by_name(topic_info["name"])
+            self.assert_topic(topic, topic_info)
 
-    @pytest.mark.parametrize('topic_infos', [[2]], indirect=True)
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
     def test_unique_topic_name(self, topic_infos):
         info_1 = topic_infos[0]
         info_2 = topic_infos[1]
@@ -71,7 +70,7 @@ class TestTopic:
             error_msg = str(cm.value)
             assert "duplicate" in error_msg.lower()
 
-    @pytest.mark.parametrize('topic_infos', [[2]], indirect=True)
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
     def test_update_topic_with_same_topic_name(self, topic_infos):
         info_1 = topic_infos[0]
         info_2 = topic_infos[1]
@@ -88,7 +87,7 @@ class TestTopic:
             topic = manager.get_topic(1)
             self.assert_topic(topic, info_2)
 
-    @pytest.mark.parametrize('topic_infos', [[4]], indirect=True)
+    @pytest.mark.parametrize('topic_infos', [4], indirect=True)
     def test_update_topic_with_different_topic_name(self, topic_infos):
         info_1 = topic_infos[0]
         info_2 = topic_infos[1]
@@ -114,54 +113,51 @@ class TestTopic:
             assert "duplicate" in error_msg.lower()
 
     def test_delete_topic(self, topic_info):
-        info = topic_info
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            manager.create_topic(info, autocommit=True)
-            topic = manager.get_topic_by_name(info["name"])
+            manager.create_topic(topic_info, autocommit=True)
+            topic = manager.get_topic_by_name(topic_info["name"])
 
             # test
             manager.delete_topic(topic.sn, autocommit=True)
 
             # assertion
             with pytest.raises(PyLadiesException) as cm:
-                manager.get_topic_by_name(info["name"])
-            self.assert_topic_exception(cm.value, TOPIC_NOT_EXIST)
+                manager.get_topic_by_name(topic_info["name"])
+            self.assert_exception(cm.value, TOPIC_NOT_EXIST)
 
     def test_get_topic_by_name(self, topic_info):
-        info = topic_info
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            manager.create_topic(info, autocommit=True)
+            manager.create_topic(topic_info, autocommit=True)
 
             # test & assertion 1
-            topic = manager.get_topic_by_name(info["name"])
-            self.assert_topic_name(topic, info)
+            topic = manager.get_topic_by_name(topic_info["name"])
+            self.assert_topic_name(topic, topic_info)
 
             # test & assertion 2
             with pytest.raises(PyLadiesException) as cm:
                 manager.get_topic_by_name("topic 2")
-            self.assert_topic_exception(cm.value, TOPIC_NOT_EXIST)
+            self.assert_exception(cm.value, TOPIC_NOT_EXIST)
 
     def test_get_topic_by_sn(self, topic_info):
-        info = topic_info
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            manager.create_topic(info, autocommit=True)
+            manager.create_topic(topic_info, autocommit=True)
 
             # test & assertion 1
             topic = manager.get_topic(1)
-            self.assert_topic_name(topic, info)
+            self.assert_topic_name(topic, topic_info)
 
             # test & assertion 2
             with pytest.raises(PyLadiesException) as cm:
                 manager.get_topic(2)
-            self.assert_topic_exception(cm.value, TOPIC_NOT_EXIST)
+            self.assert_exception(cm.value, TOPIC_NOT_EXIST)
 
-    @pytest.mark.parametrize('topic_infos', [[2]], indirect=True)
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
     def test_get_topics(self, topic_infos):
         info_1 = topic_infos[0]
         info_2 = topic_infos[1]
@@ -179,7 +175,7 @@ class TestTopic:
             self.assert_topic_name(topics[0], info_1)
             self.assert_topic_name(topics[1], info_2)
 
-    @pytest.mark.parametrize('topic_infos', [[3]], indirect=True)
+    @pytest.mark.parametrize('topic_infos', [3], indirect=True)
     def test_get_topics_by_keyword(self, topic_infos):
         info_1 = topic_infos[0]
         info_1.update({"name": "abc 1"})
