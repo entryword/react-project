@@ -1,5 +1,5 @@
-import pytest
 from random import randint
+import pytest
 
 def _get_topic_info(length=1):
     if length == 1:
@@ -20,7 +20,7 @@ def _get_topic_info(length=1):
             "freq": randint(0, 3),
             "level": randint(0, 3),
             "host": randint(0, 3),
-            "fields": [ i + 1 for i in range(randint(1, 4)) ]
+            "fields": [i + 1 for i in range(randint(1, 4))]
         })
     return topics
 
@@ -92,14 +92,14 @@ def make_test_data():
     def _make_test_data(manager, topic_info_number,
                         event_basic_number, event_info_number, event_apply_number, channel_number):
         test_data_list = []
-        for topic_sn in range(topic_info_number):
+        for _ in range(topic_info_number):
             test_data = {
                 'topic_info': _get_topic_info(),
                 'event_list': []
             }
             manager.create_topic(test_data['topic_info'], autocommit=True)
             topic = manager.get_topic_by_name(test_data['topic_info']["name"])
-            for event_basic_sn in range(event_basic_number):
+            for _ in range(event_basic_number):
                 event = {
                     'event_basic': get_event_basic(topic.sn),
                     'event_info': [],

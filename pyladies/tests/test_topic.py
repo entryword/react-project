@@ -7,35 +7,38 @@ from app.exceptions import PyLadiesException
 from app.exceptions import TOPIC_NOT_EXIST
 from app.sqldb import DBWrapper
 
-
 class TestTopic:
-    def setup_method(self):
+    def setup(self):
         self.app = create_app('test')
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.app.db.create_all()
 
-    def teardown_method(self):
+    def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
         self.app_context.pop()
 
-    def assert_topic(self, foo, bar):
-        assert foo.name == bar["name"]
-        assert foo.desc == bar["desc"]
-        assert foo.freq == bar["freq"]
-        assert foo.level == bar["level"]
-        assert foo.host == bar["host"]
-        assert foo.fields == bar["fields"]
+    @staticmethod
+    def assert_topic(tp1, tp2):
+        assert tp1.name == tp2["name"]
+        assert tp1.desc == tp2["desc"]
+        assert tp1.freq == tp2["freq"]
+        assert tp1.level == tp2["level"]
+        assert tp1.host == tp2["host"]
+        assert tp1.fields == tp2["fields"]
 
-    def assert_topic_name(self, foo, bar):
-        assert foo.name == bar["name"]
+    @staticmethod
+    def assert_topic_name(tp1, tp2):
+        assert tp1.name == tp2["name"]
 
-    def assert_topics_length(self, topics, length):
+    @staticmethod
+    def assert_topics_length(topics, length):
         assert len(topics) == length
 
-    def assert_topic_exception(self, foo, bar):
-        assert foo == bar
+    @staticmethod
+    def assert_topic_exception(tp1, tp2):
+        assert tp1 == tp2
 
     def test_create_topic(self, topic_info):
         info = topic_info
