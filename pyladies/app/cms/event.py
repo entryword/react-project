@@ -1,4 +1,4 @@
-from flask import current_app, jsonify, request
+from flask import jsonify, request
 
 from . import api
 from ..managers.event import Manager as EventManager
