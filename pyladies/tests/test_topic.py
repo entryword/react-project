@@ -56,7 +56,7 @@ class TestTopic:
     def test_unique_topic_name(self, topic_infos):
         info_1 = topic_infos[0]
         info_2 = topic_infos[1]
-        info_2.update({"name": "topic 1"})
+        info_2.update({"name": info_1["name"]})
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -74,7 +74,7 @@ class TestTopic:
     def test_update_topic_with_same_topic_name(self, topic_infos):
         info_1 = topic_infos[0]
         info_2 = topic_infos[1]
-        info_2.update({"name": "topic 1"})
+        info_2.update({"name": info_1["name"]})
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -93,8 +93,7 @@ class TestTopic:
         info_2 = topic_infos[1]
         new_info_un = topic_infos[2]
         new_info_dp = topic_infos[3]
-        new_info_dp.update({"name": "topic 2"})
-
+        new_info_dp.update({"name": info_2["name"]})
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
