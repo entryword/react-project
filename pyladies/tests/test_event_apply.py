@@ -109,23 +109,3 @@ class TestEventApply:
             with pytest.raises(PyLadiesException) as cm:
                 manager.get_event_apply(event_apply_sn)
             assert cm.value == APPLY_NOT_EXIST
-
-    # written by Coco, commented by Huiyu 2019.04.04
-    # def test_create_event_apply(self, make_test_data):
-    #     with DBWrapper(self.app.db.engine.url).session() as db_sess:
-    #         # preparation
-    #         manager = self.app.db_api_class(db_sess)
-    #         test_data = make_test_data(manager, topic_info_number=1,
-    #                                    event_basic_number=1, event_info_number=1,
-    #                                    event_apply_number=0, channel_number=[0])
-    #         event_basic_sn = test_data[0]['event_list'][0]['event_info'][0]['event_basic_sn']
-    #         event_apply_data = conftest.get_event_apply(event_basic_sn, channel_number=2)
-
-    #         # test
-    #         manager.create_event_apply(event_apply_data, autocommit=True)
-    #         event_apply = manager.get_event_apply_by_event_basic_sn(event_basic_sn)
-
-    #         # test & assertion
-    #         assert event_apply.event_basic_sn == event_basic_sn
-    #         assert event_apply.limit == event_apply_data["limit"]
-    #         assert event_apply.apply == event_apply_data["apply"]
