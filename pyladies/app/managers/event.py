@@ -14,7 +14,7 @@ class Manager(BaseEventManager):
 
     @staticmethod
     def create_event(info):
-        if not isinstance(info,dict):
+        if not isinstance(info, dict):
             with open(info) as f:
                 info = json.loads(f.read())
 
