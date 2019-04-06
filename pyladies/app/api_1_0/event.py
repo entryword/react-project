@@ -1,4 +1,4 @@
-from flask import current_app, jsonify, request
+from flask import jsonify, request
 
 from . import api
 from ..exceptions import (
@@ -10,8 +10,7 @@ from ..exceptions import (
     EVENTLIST_ERROR,
 )
 from ..managers.event import Manager as EventManager
-from ..sqldb import DBWrapper
-from ..utils import HashableDict, validate_time_format
+from ..utils import validate_time_format
 
 
 @api.route("/event/<int:e_id>", methods=["GET"])

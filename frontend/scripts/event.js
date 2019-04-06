@@ -81,6 +81,7 @@
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
     function getDefinition() {
+        // return axios.get(`/fakedata/definition.json`);
         return axios.get('/v1.0/api/definitions');
     }
 
@@ -91,8 +92,10 @@
         if(tw_pyladies.path === 'topic'){
             url = `/v1.0/api/topic/${id}`;
         }else if(tw_pyladies.path === 'top'){
+            // url = `./fakedata/top_info.json`;
             url = `/v1.0/api/events_from_distinct_topics`;
         }else if(tw_pyladies.path === 'signup'){
+            // url = `../fakedata/apply_info.json`;
             url = `/v1.0/api/event/${id}/apply_info`;
         }else{
             url = `/v1.0/api/event/${id}`;
@@ -163,14 +166,14 @@
     function signupTemplating(definition, data) {
         //data processing
         const channel_urls = ['meetup.html', 'accupass.html'];
-        data.start_day = days[new Date(data.start_time).getUTCDay()];
-        data.start_date = data.start_time.split(" ")[0];
-        data.start_time = data.start_time.split(" ")[1];
-
-        data.end_day = days[new Date(data.end_time).getUTCDay()];
-        data.end_date = data.end_time.split(" ")[0];
-        data.end_time = data.end_time.split(" ")[1];
         data.apply.forEach((a, index)=>{
+            a.start_day = days[new Date(a.start_time).getUTCDay()];
+            a.start_date = a.start_time.split(" ")[0];
+            a.start_time = a.start_time.split(" ")[1];
+
+            a.end_day = days[new Date(a.end_time).getUTCDay()];
+            a.end_date = a.end_time.split(" ")[0];
+            a.end_time = a.end_time.split(" ")[1];
             a.eventId = definition.channel[a.channel];
             a.channelName = definition.channel[a.channel];
             a.channelNum = a.channel+1;

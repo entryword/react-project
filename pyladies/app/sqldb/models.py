@@ -242,16 +242,8 @@ class EventApply(db.Model):
                                nullable=False,
                                unique=True)
     apply = db.Column(types.JSON, nullable=True)
-    start_time = db.Column(db.String(128), unique=False, nullable=True)
-    end_time = db.Column(db.String(128), unique=False, nullable=True)
-    limit = db.Column(types.JSON, nullable=True)
-    limit_desc = db.Column(db.Text, nullable=True)
 
     def __str__(self):
         return ("<EventApply sn: {obj.sn}"
                 ", event_basic_sn: {obj.event_basic_sn}"
-                ", apply: {obj.apply}"
-                ", start_time: {obj.start_time}"
-                ", end_time: {obj.end_time}"
-                ", limit: {obj.limit}>"
-                ", limit_desc: {obj.limit_desc}").format(obj=self)
+                ", apply: {obj.apply}").format(obj=self)

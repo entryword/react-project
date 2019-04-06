@@ -1,10 +1,7 @@
-from flask import current_app, jsonify
-
+from flask import jsonify
+from app.managers.topic import Manager as TopicManager
 from . import api
 from ..exceptions import OK
-from ..sqldb import DBWrapper
-from ..utils import HashableDict
-from app.managers.topic import Manager as TopicManager
 
 
 @api.route("/topic/<int:t_id>", methods=["GET"])
@@ -18,4 +15,3 @@ def get_topic(t_id):
     }
 
     return jsonify(data=topic, info=info)
-

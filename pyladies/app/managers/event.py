@@ -142,7 +142,8 @@ class Manager(BaseEventManager):
     @staticmethod
     def _get_status(event_date, event_start_time):
         """get event status"""
-        event_time = datetime.strptime('{} {}'.format(event_date, event_start_time), '%Y-%m-%d %H:%M')
+        event_time = datetime.strptime(
+            '{} {}'.format(event_date, event_start_time), '%Y-%m-%d %H:%M')
         current_time = datetime.utcnow() + timedelta(hours=8)
         if current_time >= event_time:
             return 0
