@@ -13,6 +13,7 @@ def createEvent():
         "event_basic": {
             "topic_sn": data["topic_id"],
             "date": data["start_date"],
+            # TODO:waiting table schema and data["end_date"] will add here
             "start_time": data["start_time"],
             "end_time": data["end_time"],
             "place_sn": data["place_id"],
