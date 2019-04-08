@@ -56,7 +56,7 @@ class TestTopic:
     def test_unique_topic_name(self, topic_infos):
         info_1 = topic_infos[0]
         info_2 = topic_infos[1]
-        info_2.update({"name": info_1["name"]})
+        info_2["name"] = info_1["name"]
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -74,7 +74,7 @@ class TestTopic:
     def test_update_topic_with_same_topic_name(self, topic_infos):
         info_1 = topic_infos[0]
         info_2 = topic_infos[1]
-        info_2.update({"name": info_1["name"]})
+        info_2["name"] = info_1["name"]
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -93,7 +93,7 @@ class TestTopic:
         info_2 = topic_infos[1]
         new_info_un = topic_infos[2]
         new_info_dp = topic_infos[3]
-        new_info_dp.update({"name": info_2["name"]})
+        new_info_dp["name"] = info_2["name"]
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -177,11 +177,11 @@ class TestTopic:
     @pytest.mark.parametrize('topic_infos', [3], indirect=True)
     def test_get_topics_by_keyword(self, topic_infos):
         info_1 = topic_infos[0]
-        info_1.update({"name": "abc 1"})
+        info_1["name"] = "abc 1"
         info_2 = topic_infos[1]
-        info_2.update({"name": "def 2"})
+        info_2["name"] = "def 2"
         info_3 = topic_infos[2]
-        info_3.update({"name": "efg 1"})
+        info_3["name"] = "efg 1"
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
