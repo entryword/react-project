@@ -7,12 +7,16 @@ from app.sqldb import DBWrapper
 from .abstract import BaseEventManager
 from ..utils import HashableDict
 
+
 # TODO: error handling & input verification
 class Manager(BaseEventManager):
+
+
     @staticmethod
-    def create_event(file_path):
-        with open(file_path) as f:
-            info = json.loads(f.read())
+    def create_event(info):
+        if not isinstance(info, dict):
+            with open(info) as f:
+                info = json.loads(f.read())
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)

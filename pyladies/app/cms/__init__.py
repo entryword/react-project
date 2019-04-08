@@ -1,2 +1,2 @@
 from .blueprint import api
-from . import index
+from . import index, event

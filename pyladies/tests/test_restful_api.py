@@ -1,18 +1,20 @@
 # coding=UTF-8
 
 import unittest
-
+import json
 from app import create_app
 from app.sqldb import DBWrapper
 from app.exceptions import (
-    EVENTLIST_INVALID_KEYWORD, EVENTLIST_INVALID_DATE,
-    EVENTLIST_INVALID_SORT, EVENTLIST_INVALID_ORDER, )
+    EVENTLIST_INVALID_KEYWORD,
+    EVENTLIST_INVALID_DATE,
+    EVENTLIST_INVALID_SORT,
+    EVENTLIST_INVALID_ORDER,
+)
 
 
 class RESTfulAPIv1_0TestCase(unittest.TestCase):
-
     def setUp(self):
-        self.app = create_app('test')
+        self.app = create_app("test")
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.app.db.create_all()
@@ -40,7 +42,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "freq": 0,
             "level": 1,
             "host": 0,
-            "fields": [0, 1, 2]
+            "fields": [0, 1, 2],
         }
 
         # preparation
@@ -67,7 +69,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         place_info = {
             "name": "place 1",
             "addr": "台北市信義區光復南路133號",
-            "map": "http://abc.com/map.html"
+            "map": "http://abc.com/map.html",
         }
         speaker_info = {
             "name": "speaker 1",
@@ -75,7 +77,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "title": "Senior Engineer",
             "major_related": True,
             "intro": "",
-            "fields": [3]
+            "fields": [3],
         }
         assistant_info = {
             "name": "speaker 2",
@@ -83,19 +85,19 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "title": "Engineer",
             "major_related": True,
             "intro": "",
-            "fields": [3]
+            "fields": [3],
         }
         slide_resources = [
             {
                 "type": "slide",
                 "title": "Flask Web Development - class 1",
-                "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html#/"
+                "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html#/",
             },
             {
                 "type": "resource",
                 "title": "Source Code",
-                "url": "https://github.com/win911/flask_class"
-            }
+                "url": "https://github.com/win911/flask_class",
+            },
         ]
         topic_info = {
             "name": "Flask",
@@ -103,20 +105,20 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "freq": 0,
             "level": 1,
             "host": 0,
-            "fields": [0, 1, 2]
+            "fields": [0, 1, 2],
         }
         event_basic_info = {
             "topic_sn": None,
             "date": "2017-01-01",
             "start_time": "14:00",
-            "end_time": "16:00"
+            "end_time": "16:00",
         }
         event_info_info = {
             "event_basic_sn": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
-            "slide_resources": slide_resources
+            "slide_resources": slide_resources,
         }
 
         # preparation
@@ -166,7 +168,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         place_info = {
             "name": "place 1",
             "addr": "台北市信義區光復南路133號",
-            "map": "http://abc.com/map.html"
+            "map": "http://abc.com/map.html",
         }
         topic_info = {
             "name": "Flask",
@@ -174,13 +176,13 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "freq": 0,
             "level": 1,
             "host": 0,
-            "fields": [0, 1, 2]
+            "fields": [0, 1, 2],
         }
         event_basic_info = {
             "topic_sn": None,
             "date": "2017-01-01",
             "start_time": "14:00",
-            "end_time": "16:00"
+            "end_time": "16:00",
         }
 
         # preparation
@@ -216,7 +218,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         place_info = {
             "name": "place 1",
             "addr": "台北市信義區光復南路133號",
-            "map": "http://abc.com/map.html"
+            "map": "http://abc.com/map.html",
         }
         speaker_info = {
             "name": "speaker 1",
@@ -224,7 +226,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "title": "Senior Engineer",
             "major_related": True,
             "intro": "",
-            "fields": [3]
+            "fields": [3],
         }
         assistant_info = {
             "name": "speaker 2",
@@ -232,19 +234,19 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "title": "Engineer",
             "major_related": True,
             "intro": "",
-            "fields": [0, 1]
+            "fields": [0, 1],
         }
         slide_resources = [
             {
                 "type": "slide",
                 "title": "Flask Web Development - class 1",
-                "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html#/"
+                "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html#/",
             },
             {
                 "type": "resource",
                 "title": "Source Code",
-                "url": "https://github.com/win911/flask_class"
-            }
+                "url": "https://github.com/win911/flask_class",
+            },
         ]
         topic_info = {
             "name": "Flask",
@@ -252,20 +254,20 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "freq": 0,
             "level": 1,
             "host": 0,
-            "fields": [0, 1, 2]
+            "fields": [0, 1, 2],
         }
         event_basic_info = {
             "topic_sn": None,
             "date": "2017-01-01",
             "start_time": "14:00",
-            "end_time": "16:00"
+            "end_time": "16:00",
         }
         event_info_info = {
             "event_basic_sn": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
-            "slide_resources": slide_resources
+            "slide_resources": slide_resources,
         }
 
         # preparation
@@ -322,11 +324,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 "fields": [0],
             },
         ]
-        place_info = {
-            "name": "國立台灣大學",
-            "addr": "台北市大安區羅斯福路四段1號",
-            "map": "",
-        }
+        place_info = {"name": "國立台灣大學", "addr": "台北市大安區羅斯福路四段1號", "map": ""}
         event_basics = [
             {
                 "topic_sn": 1,
@@ -489,18 +487,18 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             {
                 "name": "place 1",
                 "addr": "台北市信義區光復南路133號",
-                "map": "http://abc.com/map1.html"
+                "map": "http://abc.com/map1.html",
             },
             {
                 "name": "place 2",
                 "addr": "台北市萬華區艋舺大道101號",
-                "map": "http://abc.com/map2.html"
+                "map": "http://abc.com/map2.html",
             },
             {
                 "name": "place 3",
                 "addr": "台北市大安區和平東路二段50號",
-                "map": "http://abc.com/map3.html"
-            }
+                "map": "http://abc.com/map3.html",
+            },
         ]
 
         # preparation
@@ -525,13 +523,13 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "freq": 0,
             "level": 1,
             "host": 0,
-            "fields": [0, 1, 2]
+            "fields": [0, 1, 2],
         }
         event_basic_info = {
             "topic_sn": None,
             "date": "2017-01-01",
             "start_time": "14:00",
-            "end_time": "16:00"
+            "end_time": "16:00",
         }
 
         apply_info_1 = {
@@ -543,7 +541,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "price": "一般人400元，學生200元",
             "limit": "限女",
             "url": "https://...",
-            "qualification": "https://..."
+            "qualification": "https://...",
         }
 
         apply_info_2 = {
@@ -555,7 +553,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "price": "一般人100元，學生50元",
             "limit": "限女",
             "url": "https://...",
-            "qualification": "https://..."
+            "qualification": "https://...",
         }
 
         input_event_apply = {
@@ -572,7 +570,9 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_basic = topic.event_basics[0]
             input_event_apply["event_basic_sn"] = event_basic.sn
-            event_apply_sn = manager.create_event_apply(input_event_apply, autocommit=True)
+            event_apply_sn = manager.create_event_apply(
+                input_event_apply, autocommit=True
+            )
 
         # test
         rv = self.test_client.get("/v1.0/api/apply_info/" + str(event_apply_sn))
@@ -587,13 +587,13 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "freq": 0,
             "level": 1,
             "host": 0,
-            "fields": [0, 1, 2]
+            "fields": [0, 1, 2],
         }
         event_basic_info = {
             "topic_sn": None,
             "date": "2017-01-01",
             "start_time": "14:00",
-            "end_time": "16:00"
+            "end_time": "16:00",
         }
 
         apply_info_1 = {
@@ -605,7 +605,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "price": "一般人400元，學生200元",
             "limit": "限女",
             "url": "https://...",
-            "qualification": "https://..."
+            "qualification": "https://...",
         }
 
         apply_info_2 = {
@@ -617,7 +617,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "price": "一般人100元，學生50元",
             "limit": "限女",
             "url": "https://...",
-            "qualification": "https://..."
+            "qualification": "https://...",
         }
 
         input_event_apply = {
@@ -660,7 +660,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "freq": 0,
             "level": 1,
             "host": 0,
-            "fields": [0, 1, 2]
+            "fields": [0, 1, 2],
         }
         topic_info_2 = {
             "name": "topic 2",
@@ -668,7 +668,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "freq": 0,
             "level": 2,
             "host": 0,
-            "fields": [0, 1, 2]
+            "fields": [0, 1, 2],
         }
         topic_info_3 = {
             "name": "topic 3",
@@ -676,7 +676,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "freq": 0,
             "level": 3,
             "host": 0,
-            "fields": [0, 1, 2]
+            "fields": [0, 1, 2],
         }
         topic_info_4 = {
             "name": "topic 4",
@@ -684,56 +684,56 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "freq": 0,
             "level": 4,
             "host": 0,
-            "fields": [0, 1, 2]
+            "fields": [0, 1, 2],
         }
         event_basic_info_1 = {
             "topic_sn": None,
             "date": "2020-01-01",
             "start_time": "14:00",
-            "end_time": "16:00"
+            "end_time": "16:00",
         }
         event_basic_info_2 = {
             "topic_sn": None,
             "date": "2020-03-08",
             "start_time": "14:00",
-            "end_time": "16:00"
+            "end_time": "16:00",
         }
         event_basic_info_3 = {
             "topic_sn": None,
             "date": "2020-05-25",
             "start_time": "14:00",
-            "end_time": "16:00"
+            "end_time": "16:00",
         }
         event_basic_info_4 = {
             "topic_sn": None,
             "date": "2020-10-30",
             "start_time": "14:00",
-            "end_time": "16:00"
+            "end_time": "16:00",
         }
 
         event_info_1 = {
             "event_basic_sn": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
-            "fields": [0, 1]
+            "fields": [0, 1],
         }
         event_info_2 = {
             "event_basic_sn": None,
             "title": "Flask class 2",
             "desc": "This is description of class 2",
-            "fields": [0, 1]
+            "fields": [0, 1],
         }
         event_info_3 = {
             "event_basic_sn": None,
             "title": "Flask class 3",
             "desc": "This is description of class 3",
-            "fields": [0, 1]
+            "fields": [0, 1],
         }
         event_info_4 = {
             "event_basic_sn": None,
             "title": "Flask class 4",
             "desc": "This is description of class 4",
-            "fields": [0, 1]
+            "fields": [0, 1],
         }
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
@@ -749,10 +749,18 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             event_basic_info_3["topic_sn"] = topic_3
             event_basic_info_4["topic_sn"] = topic_4
 
-            event_basic_1_id = manager.create_event_basic(event_basic_info_1, autocommit=True)
-            event_basic_2_id = manager.create_event_basic(event_basic_info_2, autocommit=True)
-            event_basic_3_id = manager.create_event_basic(event_basic_info_3, autocommit=True)
-            event_basic_4_id = manager.create_event_basic(event_basic_info_4, autocommit=True)
+            event_basic_1_id = manager.create_event_basic(
+                event_basic_info_1, autocommit=True
+            )
+            event_basic_2_id = manager.create_event_basic(
+                event_basic_info_2, autocommit=True
+            )
+            event_basic_3_id = manager.create_event_basic(
+                event_basic_info_3, autocommit=True
+            )
+            event_basic_4_id = manager.create_event_basic(
+                event_basic_info_4, autocommit=True
+            )
 
             event_info_1["event_basic_sn"] = event_basic_1_id
             event_info_2["event_basic_sn"] = event_basic_2_id
@@ -770,62 +778,134 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], 0)
         ans_1 = {
-            "topic_info": {
-                "name": topic_info_1["name"],
-                "id": topic_1,
-            },
+            "topic_info": {"name": topic_info_1["name"], "id": topic_1},
             "event_info": {
                 "title": event_info_1["title"],
                 "level": topic_info_1["level"],
                 "date": event_basic_info_1["date"],
                 "start_time": event_basic_info_1["start_time"],
                 "end_time": event_basic_info_1["end_time"],
-                "event_basic_id": event_basic_1_id
-            }
+                "event_basic_id": event_basic_1_id,
+            },
         }
         ans_2 = {
-            "topic_info": {
-                "name": topic_info_2["name"],
-                "id": topic_2,
-            },
+            "topic_info": {"name": topic_info_2["name"], "id": topic_2},
             "event_info": {
                 "title": event_info_2["title"],
                 "level": topic_info_2["level"],
                 "date": event_basic_info_2["date"],
                 "start_time": event_basic_info_2["start_time"],
                 "end_time": event_basic_info_2["end_time"],
-                "event_basic_id": event_basic_2_id
-            }
+                "event_basic_id": event_basic_2_id,
+            },
         }
         ans_3 = {
-            "topic_info": {
-                "name": topic_info_3["name"],
-                "id": topic_3,
-            },
+            "topic_info": {"name": topic_info_3["name"], "id": topic_3},
             "event_info": {
                 "title": event_info_3["title"],
                 "level": topic_info_3["level"],
                 "date": event_basic_info_3["date"],
                 "start_time": event_basic_info_3["start_time"],
                 "end_time": event_basic_info_3["end_time"],
-                "event_basic_id": event_basic_3_id
-            }
+                "event_basic_id": event_basic_3_id,
+            },
         }
         ans_4 = {
-            "topic_info": {
-                "name": topic_info_4["name"],
-                "id": topic_4,
-            },
+            "topic_info": {"name": topic_info_4["name"], "id": topic_4},
             "event_info": {
                 "title": event_info_4["title"],
                 "level": topic_info_4["level"],
                 "date": event_basic_info_4["date"],
                 "start_time": event_basic_info_4["start_time"],
                 "end_time": event_basic_info_4["end_time"],
-                "event_basic_id": event_basic_4_id
-            }
+                "event_basic_id": event_basic_4_id,
+            },
         }
         self.assertEqual(rv.json["data"]["events"][0], ans_1)
         self.assertEqual(rv.json["data"]["events"][1], ans_2)
         self.assertEqual(rv.json["data"]["events"][2], ans_3)
         self.assertEqual(rv.json["data"]["events"][3], ans_4)
+
+    def test_post_topic_with_event(self):
+        place_info = {
+            "name": "place 1",
+            "addr": "台北市信義區光復南路133號",
+            "map": "http://abc.com/map.html",
+        }
+        speaker_info = {
+            "name": "speaker 1",
+            "photo": "https://pyladies.marsw.tw/img/speaker_1_photo.png",
+            "title": "Senior Engineer",
+            "major_related": True,
+            "intro": "",
+            "fields": [3],
+        }
+        assistant_info = {
+            "name": "speaker 2",
+            "photo": "https://pyladies.marsw.tw/img/speaker_2_photo.png",
+            "title": "Engineer",
+            "major_related": True,
+            "intro": "",
+            "fields": [3],
+        }
+
+        topic_info = {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2],
+        }
+
+        postdata = {
+            "data": {
+                "title": "XXXX",
+                "topic_id": None,
+                "start_date": "2019-03-09",
+                "start_time": "14:00",
+                "end_date": "2019-03-09",
+                "end_time": "17:00",
+                "place_id": None,
+                "desc": "XXXX",
+                "speaker_ids": [1],
+                "assistant_ids": [2],
+                "field_ids": [1, 2],
+            }
+        }
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+            manager.create_place(place_info, autocommit=True)
+            manager.create_speaker(speaker_info, autocommit=True)
+            manager.create_speaker(assistant_info, autocommit=True)
+
+            topic = manager.get_topic_by_name(topic_info["name"])
+            place = manager.get_place_by_name(place_info["name"])
+            postdata["data"]["topic_id"] = topic.sn
+            postdata["data"]["place_id"] = place.sn
+
+        # post test
+        rv = self.test_client.post(
+            "/cms/api/event",
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(postdata),
+            content_type="application/json",
+        )
+        # api assertion
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(rv.json["data"]["id"], 1)
+        event_basic_sn = rv.json["data"]["id"]
+
+        # event assertion
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            event_basic = manager.get_event_basic(event_basic_sn)
+            self.assertEqual(event_basic.topic.name, topic_info["name"])
+            self.assertEqual(event_basic.place.name, place_info["name"])
+            self.assertEqual(event_basic.place.map, place_info["map"])
+            self.assertEqual(event_basic.date, postdata["data"]["start_date"])
+            self.assertEqual(event_basic.start_time, postdata["data"]["start_time"])
+            self.assertEqual(event_basic.end_time, postdata["data"]["end_time"])
