@@ -940,7 +940,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
         self.assertEquals(rv.json["data"]["id"], 1)
-        event_basic_sn =  rv.json["data"]["id"]
+        event_basic_sn = rv.json["data"]["id"]
 
         # event assertion
         with DBWrapper(self.app.db.engine.url).session() as db_sess:

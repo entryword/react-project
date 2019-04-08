@@ -23,8 +23,6 @@ def get_event(e_id):
     return jsonify(data=event_info, info=info)
 
 
-
-
 @api.route("/events", methods=["GET"])
 def list_events():
     # event list constants

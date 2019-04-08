@@ -18,7 +18,7 @@ class BaseTopicManager():
 
 class BaseEventManager():
     @staticmethod
-    def create_event(file_path):
+    def create_event(info):
         raise NotImplementedError()
 
     @staticmethod
