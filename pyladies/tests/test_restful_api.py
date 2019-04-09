@@ -27,13 +27,13 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
 
     def test_routing_not_found(self):
         rv = self.test_client.get("/topic/1")
-        self.assertEquals(rv.status_code, 404)
-        self.assertEquals(rv.json["info"]["code"], 8000)
+        self.assertEqual(rv.status_code, 404)
+        self.assertEqual(rv.json["info"]["code"], 8000)
 
     def test_topic_not_exist(self):
         rv = self.test_client.get("/v1.0/api/topic/1")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 1000)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 1000)
 
     def test_get_topic_without_event(self):
         info = {
@@ -52,18 +52,18 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
 
         # test
         rv = self.test_client.get("/v1.0/api/topic/1")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(rv.json["data"]["name"], info["name"])
-        self.assertEquals(rv.json["data"]["desc"], info["desc"])
-        self.assertEquals(rv.json["data"]["freq"], info["freq"])
-        self.assertEquals(rv.json["data"]["level"], info["level"])
-        self.assertEquals(rv.json["data"]["host"], info["host"])
-        self.assertEquals(rv.json["data"]["fields"], info["fields"])
-        self.assertEquals(rv.json["data"]["events"], [])
-        self.assertEquals(rv.json["data"]["speakers"], [])
-        self.assertEquals(rv.json["data"]["assistants"], [])
-        self.assertEquals(rv.json["data"]["slides"], [])
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(rv.json["data"]["name"], info["name"])
+        self.assertEqual(rv.json["data"]["desc"], info["desc"])
+        self.assertEqual(rv.json["data"]["freq"], info["freq"])
+        self.assertEqual(rv.json["data"]["level"], info["level"])
+        self.assertEqual(rv.json["data"]["host"], info["host"])
+        self.assertEqual(rv.json["data"]["fields"], info["fields"])
+        self.assertEqual(rv.json["data"]["events"], [])
+        self.assertEqual(rv.json["data"]["speakers"], [])
+        self.assertEqual(rv.json["data"]["assistants"], [])
+        self.assertEqual(rv.json["data"]["slides"], [])
 
     def test_get_topic_with_event(self):
         place_info = {
@@ -138,55 +138,31 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
 
         # test
         rv = self.test_client.get("/v1.0/api/topic/1")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]["events"]), 1)
-        self.assertEquals(
-            rv.json["data"]["events"][0]["date"], event_basic_info["date"]
-        )
-        self.assertEquals(
-            rv.json["data"]["events"][0]["place_info"]["name"], place_info["name"]
-        )
-        self.assertEquals(
-            rv.json["data"]["events"][0]["place_info"]["addr"], place_info["addr"]
-        )
-        self.assertEquals(
-            rv.json["data"]["events"][0]["place_info"]["map"], place_info["map"]
-        )
-        self.assertEquals(
-            rv.json["data"]["events"][0]["title"], event_info_info["title"]
-        )
-        self.assertEquals(len(rv.json["data"]["speakers"]), 1)
-        self.assertEquals(rv.json["data"]["speakers"][0]["name"], speaker_info["name"])
-        self.assertEquals(
-            rv.json["data"]["speakers"][0]["photo"], speaker_info["photo"]
-        )
-        self.assertEquals(len(rv.json["data"]["assistants"]), 1)
-        self.assertEquals(
-            rv.json["data"]["assistants"][0]["name"], assistant_info["name"]
-        )
-        self.assertEquals(
-            rv.json["data"]["assistants"][0]["photo"], assistant_info["photo"]
-        )
-        self.assertEquals(len(rv.json["data"]["slides"]), 1)
-        self.assertEquals(
-            rv.json["data"]["slides"][0]["title"], slide_resources[0]["title"]
-        )
-        self.assertEquals(
-            rv.json["data"]["slides"][0]["url"], slide_resources[0]["url"]
-        )
-        self.assertEquals(len(rv.json["data"]["resources"]), 1)
-        self.assertEquals(
-            rv.json["data"]["resources"][0]["title"], slide_resources[1]["title"]
-        )
-        self.assertEquals(
-            rv.json["data"]["resources"][0]["url"], slide_resources[1]["url"]
-        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]["events"]), 1)
+        self.assertEqual(rv.json["data"]["events"][0]["date"], event_basic_info["date"])
+        self.assertEqual(rv.json["data"]["events"][0]["place_info"]["name"], place_info["name"])
+        self.assertEqual(rv.json["data"]["events"][0]["place_info"]["addr"], place_info["addr"])
+        self.assertEqual(rv.json["data"]["events"][0]["place_info"]["map"], place_info["map"])
+        self.assertEqual(rv.json["data"]["events"][0]["title"], event_info_info["title"])
+        self.assertEqual(len(rv.json["data"]["speakers"]), 1)
+        self.assertEqual(rv.json["data"]["speakers"][0]["name"], speaker_info["name"])
+        self.assertEqual(rv.json["data"]["speakers"][0]["photo"], speaker_info["photo"])
+        self.assertEqual(len(rv.json["data"]["assistants"]), 1)
+        self.assertEqual(rv.json["data"]["assistants"][0]["name"], assistant_info["name"])
+        self.assertEqual(rv.json["data"]["assistants"][0]["photo"], assistant_info["photo"])
+        self.assertEqual(len(rv.json["data"]["slides"]), 1)
+        self.assertEqual(rv.json["data"]["slides"][0]["title"], slide_resources[0]["title"])
+        self.assertEqual(rv.json["data"]["slides"][0]["url"], slide_resources[0]["url"])
+        self.assertEqual(len(rv.json["data"]["resources"]), 1)
+        self.assertEqual(rv.json["data"]["resources"][0]["title"], slide_resources[1]["title"])
+        self.assertEqual(rv.json["data"]["resources"][0]["url"], slide_resources[1]["url"])
 
     def test_get_event_not_exist(self):
         rv = self.test_client.get("/v1.0/api/event/1")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 1100)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 1100)
 
     def test_get_event_without_details(self):
         place_info = {
@@ -220,23 +196,23 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
 
         # test
         rv = self.test_client.get("/v1.0/api/event/1")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(rv.json["data"]["topic_info"]["name"], topic_info["name"])
-        self.assertEquals(rv.json["data"]["title"], None)
-        self.assertEquals(rv.json["data"]["fields"], [])
-        self.assertEquals(rv.json["data"]["desc"], None)
-        self.assertEquals(rv.json["data"]["level"], topic_info["level"])
-        self.assertEquals(rv.json["data"]["date"], event_basic_info["date"])
-        self.assertEquals(rv.json["data"]["start_time"], event_basic_info["start_time"])
-        self.assertEquals(rv.json["data"]["end_time"], event_basic_info["end_time"])
-        self.assertEquals(rv.json["data"]["place_info"]["name"], place_info["name"])
-        self.assertEquals(rv.json["data"]["place_info"]["addr"], place_info["addr"])
-        self.assertEquals(rv.json["data"]["place_info"]["map"], place_info["map"])
-        self.assertEquals(rv.json["data"]["host"], topic_info["host"])
-        self.assertEquals(rv.json["data"]["speakers"], [])
-        self.assertEquals(rv.json["data"]["assistants"], [])
-        self.assertEquals(rv.json["data"]["slides"], [])
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(rv.json["data"]["topic_info"]["name"], topic_info["name"])
+        self.assertEqual(rv.json["data"]["title"], None)
+        self.assertEqual(rv.json["data"]["fields"], [])
+        self.assertEqual(rv.json["data"]["desc"], None)
+        self.assertEqual(rv.json["data"]["level"], topic_info["level"])
+        self.assertEqual(rv.json["data"]["date"], event_basic_info["date"])
+        self.assertEqual(rv.json["data"]["start_time"], event_basic_info["start_time"])
+        self.assertEqual(rv.json["data"]["end_time"], event_basic_info["end_time"])
+        self.assertEqual(rv.json["data"]["place_info"]["name"], place_info["name"])
+        self.assertEqual(rv.json["data"]["place_info"]["addr"], place_info["addr"])
+        self.assertEqual(rv.json["data"]["place_info"]["map"], place_info["map"])
+        self.assertEqual(rv.json["data"]["host"], topic_info["host"])
+        self.assertEqual(rv.json["data"]["speakers"], [])
+        self.assertEqual(rv.json["data"]["assistants"], [])
+        self.assertEqual(rv.json["data"]["slides"], [])
 
     def test_get_event_with_details(self):
         place_info = {
@@ -311,37 +287,23 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
 
         # test
         rv = self.test_client.get("/v1.0/api/event/1")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(rv.json["data"]["title"], event_info_info["title"])
-        self.assertEquals(rv.json["data"]["fields"], event_info_info["fields"])
-        self.assertEquals(rv.json["data"]["desc"], event_info_info["desc"])
-        self.assertEquals(len(rv.json["data"]["speakers"]), 1)
-        self.assertEquals(rv.json["data"]["speakers"][0]["name"], speaker_info["name"])
-        self.assertEquals(
-            rv.json["data"]["speakers"][0]["photo"], speaker_info["photo"]
-        )
-        self.assertEquals(len(rv.json["data"]["assistants"]), 1)
-        self.assertEquals(
-            rv.json["data"]["assistants"][0]["name"], assistant_info["name"]
-        )
-        self.assertEquals(
-            rv.json["data"]["assistants"][0]["photo"], assistant_info["photo"]
-        )
-        self.assertEquals(len(rv.json["data"]["slides"]), 1)
-        self.assertEquals(
-            rv.json["data"]["slides"][0]["title"], slide_resources[0]["title"]
-        )
-        self.assertEquals(
-            rv.json["data"]["slides"][0]["url"], slide_resources[0]["url"]
-        )
-        self.assertEquals(len(rv.json["data"]["resources"]), 1)
-        self.assertEquals(
-            rv.json["data"]["resources"][0]["title"], slide_resources[1]["title"]
-        )
-        self.assertEquals(
-            rv.json["data"]["resources"][0]["url"], slide_resources[1]["url"]
-        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(rv.json["data"]["title"], event_info_info["title"])
+        self.assertEqual(rv.json["data"]["fields"], event_info_info["fields"])
+        self.assertEqual(rv.json["data"]["desc"], event_info_info["desc"])
+        self.assertEqual(len(rv.json["data"]["speakers"]), 1)
+        self.assertEqual(rv.json["data"]["speakers"][0]["name"], speaker_info["name"])
+        self.assertEqual(rv.json["data"]["speakers"][0]["photo"], speaker_info["photo"])
+        self.assertEqual(len(rv.json["data"]["assistants"]), 1)
+        self.assertEqual(rv.json["data"]["assistants"][0]["name"], assistant_info["name"])
+        self.assertEqual(rv.json["data"]["assistants"][0]["photo"], assistant_info["photo"])
+        self.assertEqual(len(rv.json["data"]["slides"]), 1)
+        self.assertEqual(rv.json["data"]["slides"][0]["title"], slide_resources[0]["title"])
+        self.assertEqual(rv.json["data"]["slides"][0]["url"], slide_resources[0]["url"])
+        self.assertEqual(len(rv.json["data"]["resources"]), 1)
+        self.assertEqual(rv.json["data"]["resources"][0]["title"], slide_resources[1]["title"])
+        self.assertEqual(rv.json["data"]["resources"][0]["url"], slide_resources[1]["url"])
 
     def test_search_events(self):
         topics = [
@@ -406,121 +368,119 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 manager.create_event_info(event_info, autocommit=True)
 
             # test invalid keyword parameters
-            rv = self.test_client.get(
-                "/v1.0/api/events?keyword=abcdefghijklmnopqrstuvwxyz12345"
-            )
-            self.assertEquals(rv.status_code, 200)
-            self.assertEquals(rv.json["info"]["code"], EVENTLIST_INVALID_KEYWORD.code)
+            rv = self.test_client.get("/v1.0/api/events?keyword=abcdefghijklmnopqrstuvwxyz12345")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], EVENTLIST_INVALID_KEYWORD.code)
 
             # test invalid date parameters
             rv = self.test_client.get("/v1.0/api/events?date=123")
-            self.assertEquals(rv.status_code, 200)
-            self.assertEquals(rv.json["info"]["code"], EVENTLIST_INVALID_DATE.code)
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], EVENTLIST_INVALID_DATE.code)
 
             # test invalid sort parameters
             rv = self.test_client.get("/v1.0/api/events?sort=123")
-            self.assertEquals(rv.status_code, 200)
-            self.assertEquals(rv.json["info"]["code"], EVENTLIST_INVALID_SORT.code)
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], EVENTLIST_INVALID_SORT.code)
 
             # test invalid order parameters
             rv = self.test_client.get("/v1.0/api/events?order=123")
-            self.assertEquals(rv.status_code, 200)
-            self.assertEquals(rv.json["info"]["code"], EVENTLIST_INVALID_ORDER.code)
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], EVENTLIST_INVALID_ORDER.code)
 
             # test default parameters
             # keyword = '', date = '', sort = 'date', order='asc'
             rv = self.test_client.get("/v1.0/api/events")
-            self.assertEquals(rv.status_code, 200)
-            self.assertEquals(rv.json["info"]["code"], 0)
-            self.assertEquals(len(rv.json["data"]["events"]), 2)
-            self.assertEquals(rv.json["data"]["events"][0]["event"]["title"], "event 1")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], 0)
+            self.assertEqual(len(rv.json["data"]["events"]), 2)
+            self.assertEqual(rv.json["data"]["events"][0]["event"]["title"], "event 1")
 
             # test empty parameters
             rv = self.test_client.get("/v1.0/api/events?keyword=&date=&sort=&order=")
-            self.assertEquals(rv.status_code, 200)
-            self.assertEquals(rv.json["info"]["code"], 0)
-            self.assertEquals(len(rv.json["data"]["events"]), 2)
-            self.assertEquals(rv.json["data"]["events"][0]["event"]["title"], "event 1")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], 0)
+            self.assertEqual(len(rv.json["data"]["events"]), 2)
+            self.assertEqual(rv.json["data"]["events"][0]["event"]["title"], "event 1")
 
             # test order desc
             rv = self.test_client.get("/v1.0/api/events?order=desc")
-            self.assertEquals(rv.status_code, 200)
-            self.assertEquals(rv.json["info"]["code"], 0)
-            self.assertEquals(len(rv.json["data"]["events"]), 2)
-            self.assertEquals(rv.json["data"]["events"][0]["event"]["title"], "event 2")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], 0)
+            self.assertEqual(len(rv.json["data"]["events"]), 2)
+            self.assertEqual(rv.json["data"]["events"][0]["event"]["title"], "event 2")
 
             # test topic keyword with date
             rv = self.test_client.get("/v1.0/api/events?keyword=topic 1&date=2019-01")
-            self.assertEquals(rv.status_code, 200)
-            self.assertEquals(rv.json["info"]["code"], 0)
-            self.assertEquals(len(rv.json["data"]["events"]), 1)
-            self.assertEquals(rv.json["data"]["events"][0]["event"]["title"], "event 1")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], 0)
+            self.assertEqual(len(rv.json["data"]["events"]), 1)
+            self.assertEqual(rv.json["data"]["events"][0]["event"]["title"], "event 1")
 
             # test event keyword with date
             rv = self.test_client.get("/v1.0/api/events?keyword=event 2&date=2019-01")
-            self.assertEquals(rv.status_code, 200)
-            self.assertEquals(rv.json["info"]["code"], 0)
-            self.assertEquals(len(rv.json["data"]["events"]), 0)
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], 0)
+            self.assertEqual(len(rv.json["data"]["events"]), 0)
 
     def test_get_definitions(self):
         rv = self.test_client.get("/v1.0/api/definitions")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]["field"]), 12)
-        self.assertEquals(len(rv.json["data"]["freq"]), 3)
-        self.assertEquals(len(rv.json["data"]["level"]), 4)
-        self.assertEquals(len(rv.json["data"]["host"]), 3)
-        self.assertEquals(len(rv.json["data"]["status"]), 2)
-        self.assertEquals(len(rv.json["data"]["weekday"]), 7)
-        self.assertEquals(len(rv.json["data"]["time"]), 3)
-        self.assertEquals(len(rv.json["data"]["channel"]), 2)
-        self.assertEquals(len(rv.json["data"]["type"]), 2)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]["field"]), 12)
+        self.assertEqual(len(rv.json["data"]["freq"]), 3)
+        self.assertEqual(len(rv.json["data"]["level"]), 4)
+        self.assertEqual(len(rv.json["data"]["host"]), 3)
+        self.assertEqual(len(rv.json["data"]["status"]), 2)
+        self.assertEqual(len(rv.json["data"]["weekday"]), 7)
+        self.assertEqual(len(rv.json["data"]["time"]), 3)
+        self.assertEqual(len(rv.json["data"]["channel"]), 2)
+        self.assertEqual(len(rv.json["data"]["type"]), 2)
 
     def test_get_definition(self):
         rv = self.test_client.get("/v1.0/api/definition/field")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]), 12)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]), 12)
 
         rv = self.test_client.get("/v1.0/api/definition/freq")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]), 3)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]), 3)
 
         rv = self.test_client.get("/v1.0/api/definition/level")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]), 4)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]), 4)
 
         rv = self.test_client.get("/v1.0/api/definition/host")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]), 3)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]), 3)
 
         rv = self.test_client.get("/v1.0/api/definition/status")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]), 2)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]), 2)
 
         rv = self.test_client.get("/v1.0/api/definition/weekday")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]), 7)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]), 7)
 
         rv = self.test_client.get("/v1.0/api/definition/time")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]), 3)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]), 3)
 
         rv = self.test_client.get("/v1.0/api/definition/channel")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]), 2)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]), 2)
 
         rv = self.test_client.get("/v1.0/api/definition/type")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(len(rv.json["data"]), 2)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(len(rv.json["data"]), 2)
 
     def test_get_places(self):
         places = [
@@ -549,12 +509,12 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
 
         # test
         rv = self.test_client.get("/v1.0/api/places")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(rv.json["data"]["places"][1]["name"], places[1]["name"])
-        self.assertEquals(rv.json["data"]["places"][1]["addr"], places[1]["addr"])
-        self.assertEquals(rv.json["data"]["places"][1]["map"], places[1]["map"])
-        self.assertEquals(len(rv.json["data"]["places"]), 3)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(rv.json["data"]["places"][1]["name"], places[1]["name"])
+        self.assertEqual(rv.json["data"]["places"][1]["addr"], places[1]["addr"])
+        self.assertEqual(rv.json["data"]["places"][1]["map"], places[1]["map"])
+        self.assertEqual(len(rv.json["data"]["places"]), 3)
 
     def test_get_event_apply_info(self):
         topic_info = {
@@ -616,9 +576,9 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
 
         # test
         rv = self.test_client.get("/v1.0/api/apply_info/" + str(event_apply_sn))
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(rv.json["data"], input_event_apply)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(rv.json["data"], input_event_apply)
 
     def test_get_event_apply_info_by_event_basic_sn(self):
         topic_info = {
@@ -677,24 +637,21 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager.create_event_apply(input_event_apply, autocommit=True)
 
         # test
-        rv = self.test_client.get(
-            "/v1.0/api/event/"
-            + str(input_event_apply["event_basic_sn"])
-            + "/apply_info"
-        )
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(rv.json["data"], input_event_apply)
+        rv = self.test_client.get("/v1.0/api/event/"
+                                  + str(input_event_apply["event_basic_sn"]) + "/apply_info")
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(rv.json["data"], input_event_apply)
 
     def test_get_event_apply_info_but_event_not_exist(self):
         rv = self.test_client.get("/v1.0/api/apply_info/0")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 1600)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 1600)
 
     def test_get_event_apply_info_by_event_basic_sn_but_event_not_exist(self):
         rv = self.test_client.get("/v1.0/api/event/0/apply_info")
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 1600)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 1600)
 
     def test_get_events_from_distinct_topics(self):
         topic_info_1 = {
@@ -818,8 +775,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         # test ＆ assertion
         rv = self.test_client.get("/v1.0/api/events_from_distinct_topics")
 
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
         ans_1 = {
             "topic_info": {"name": topic_info_1["name"], "id": topic_1},
             "event_info": {
@@ -864,10 +821,10 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 "event_basic_id": event_basic_4_id,
             },
         }
-        self.assertEquals(rv.json["data"]["events"][0], ans_1)
-        self.assertEquals(rv.json["data"]["events"][1], ans_2)
-        self.assertEquals(rv.json["data"]["events"][2], ans_3)
-        self.assertEquals(rv.json["data"]["events"][3], ans_4)
+        self.assertEqual(rv.json["data"]["events"][0], ans_1)
+        self.assertEqual(rv.json["data"]["events"][1], ans_2)
+        self.assertEqual(rv.json["data"]["events"][2], ans_3)
+        self.assertEqual(rv.json["data"]["events"][3], ans_4)
 
     def test_post_topic_with_event(self):
         place_info = {
@@ -937,18 +894,18 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             content_type="application/json",
         )
         # api assertion
-        self.assertEquals(rv.status_code, 200)
-        self.assertEquals(rv.json["info"]["code"], 0)
-        self.assertEquals(rv.json["data"]["id"], 1)
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 0)
+        self.assertEqual(rv.json["data"]["id"], 1)
         event_basic_sn = rv.json["data"]["id"]
 
         # event assertion
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             event_basic = manager.get_event_basic(event_basic_sn)
-            self.assertEquals(event_basic.topic.name, topic_info["name"])
-            self.assertEquals(event_basic.place.name, place_info["name"])
-            self.assertEquals(event_basic.place.map, place_info["map"])
-            self.assertEquals(event_basic.date, postdata["data"]["start_date"])
-            self.assertEquals(event_basic.start_time, postdata["data"]["start_time"])
-            self.assertEquals(event_basic.end_time, postdata["data"]["end_time"])
+            self.assertEqual(event_basic.topic.name, topic_info["name"])
+            self.assertEqual(event_basic.place.name, place_info["name"])
+            self.assertEqual(event_basic.place.map, place_info["map"])
+            self.assertEqual(event_basic.date, postdata["data"]["start_date"])
+            self.assertEqual(event_basic.start_time, postdata["data"]["start_time"])
+            self.assertEqual(event_basic.end_time, postdata["data"]["end_time"])
