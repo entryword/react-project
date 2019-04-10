@@ -2,8 +2,6 @@
 
 import json
 
-import pytest
-
 from app import create_app
 from app.sqldb import DBWrapper
 
@@ -144,7 +142,7 @@ class TestGetEvents:
             "apply": [apply_info]
         }
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
-            place_info, speaker_info, event_apply_info)
+                                        place_info, speaker_info, event_apply_info)
 
         # test
         rv = self.test_client.get("/cms/api/events")
@@ -155,7 +153,7 @@ class TestGetEvents:
             "event_apply_exist": 1,
             "id": event_info_info["event_basic_sn"],
             "place": {
-               "name": place_info["name"]
+                "name": place_info["name"]
             },
             "speaker_exist": 1,
             "title": event_info_info["title"],
@@ -184,7 +182,7 @@ class TestGetEvents:
             "fields": [3]
         }
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
-            place_info, speaker_info, None)
+                                        place_info, speaker_info, None)
 
         # test
         rv = self.test_client.get("/cms/api/events")
@@ -205,7 +203,7 @@ class TestGetEvents:
             "apply": [apply_info]
         }
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
-            place_info, None, event_apply_info)
+                                        place_info, None, event_apply_info)
 
         # test
         rv = self.test_client.get("/cms/api/events")

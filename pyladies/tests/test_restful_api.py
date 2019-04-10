@@ -1,7 +1,6 @@
 # coding=UTF-8
 
 import unittest
-import json
 from app import create_app
 from app.sqldb import DBWrapper
 from app.exceptions import (
