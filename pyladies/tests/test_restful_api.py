@@ -831,6 +831,136 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEquals(rv.json["data"]["events"][3], ans_4)
 
     def test_get_events(self):
+        topic_info_1 = {
+            "name": "topic 1",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 1,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        topic_info_2 = {
+            "name": "topic 2",
+            "desc": "This is description",
+            "freq": 0,
+            "level": 2,
+            "host": 0,
+            "fields": [0, 1, 2]
+        }
+        event_basic_info_1 = {
+            "topic_sn": 1,
+            "date": "2020-01-01",
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_basic_info_2 = {
+            "topic_sn": 2,
+            "date": "2020-03-08",
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_info_1 = {
+            "event_basic_sn": 1,
+            "title": "Flask class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        event_info_2 = {
+            "event_basic_sn": 2,
+            "title": "Flask class 2",
+            "desc": "This is description of class 2",
+            "fields": [0, 1]
+        }
+        places = [
+            {
+                "name": "place 1",
+                "addr": "台北市信義區光復南路133號",
+                "map": "http://abc.com/map1.html"
+            },
+            {
+                "name": "place 2",
+                "addr": "台北市萬華區艋舺大道101號",
+                "map": "http://abc.com/map2.html"
+            },
+            {
+                "name": "place 3",
+                "addr": "台北市大安區和平東路二段50號",
+                "map": "http://abc.com/map3.html"
+            }
+        ]
+        apply_info_1 = {
+            "host": "婦女館",
+            "channel": 1,
+            "type": "all",
+            "start_time": "2019-11-23 08:00",
+            "end_time": "2019-12-01 23:00",
+            "price": "一般人400元，學生200元",
+            "limit": "限女",
+            "url": "https://...",
+            "qualification": "https://..."
+        }
+
+        apply_info_2 = {
+            "host": "American Innovation Center 美國創新中心",
+            "channel": 0,
+            "type": "one",
+            "start_time": "2019-11-23 08:00",
+            "end_time": "2019-12-01 23:00",
+            "price": "一般人100元，學生50元",
+            "limit": "限女",
+            "url": "https://...",
+            "qualification": "https://..."
+        }
+        input_event_apply = {
+            "event_basic_sn": None,
+            "apply": [apply_info_1, apply_info_2]
+        }
+        
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+
+            topic_1 = manager.create_topic(topic_info_1, autocommit=True)
+            topic_2 = manager.create_topic(topic_info_2, autocommit=True)
+
+            event_basic_info_1["topic_sn"] = topic_1
+            event_basic_info_2["topic_sn"] = topic_2
+
+            event_basic_1_id = manager.create_event_basic(event_basic_info_1, autocommit=True)
+            event_basic_2_id = manager.create_event_basic(event_basic_info_2, autocommit=True)
+
+            event_info_1["event_basic_sn"] = event_basic_1_id
+            event_info_2["event_basic_sn"] = event_basic_2_id
+
+            manager.create_event_info(event_info_1, autocommit=True)
+            manager.create_event_info(event_info_2, autocommit=True)
+
+            for place in places:
+                manager.create_place(place, autocommit=True)
+            
+            nput_event_apply["event_basic_sn"] = event_basic.sn
+            event_apply_sn = manager.create_event_apply(input_event_apply, autocommit=True)
+
         rv = self.test_client.get("/cms/api/events")
         self.assertEquals(rv.status_code, 200)
         self.assertEquals(rv.json["info"]["code"], 0)
+"""
+        ans = {
+            "id": 1,
+            "title": "Flask class 1",
+            "topic": {
+                "name": "topic 1"
+            } ,
+            "place": {
+                "name": "place 1"
+            }
+            "date": "2020-01-01",
+            "start_time": "14:00",
+            "end_time": "16:00",
+            "event_apply_exist": 1,
+            "speaker_exist" = 0
+        }
+
+        self.assertEquals(rv.json["data"][0], ans)"""
+                            
+
