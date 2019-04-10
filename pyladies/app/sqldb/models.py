@@ -127,6 +127,7 @@ class EventBasic(db.Model):
     topic = db.relationship("Topic",
                             backref=db.backref("event_basics", uselist=True))
     place = db.relationship("Place")
+    apply = db.relationship("EventApply")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
