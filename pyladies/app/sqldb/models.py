@@ -262,10 +262,6 @@ class EventApply(db.Model):
         return ("<EventApply sn: {obj.sn}"
                 ", event_basic_sn: {obj.event_basic_sn}"
                 ", apply: {obj.apply}").format(obj=self)
-                ", start_time: {obj.start_time}"
-                ", end_time: {obj.end_time}"
-                ", limit: {obj.limit}>"
-                ", limit_desc: {obj.limit_desc}").format(obj=self)
 
 class Slide(db.Model):
     __tablename__ = "slide"
