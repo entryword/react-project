@@ -38,8 +38,8 @@ def downgrade():
     op.add_column('slide_resource', sa.Column('event_info_sn', mysql.INTEGER(display_width=11), autoincrement=False, nullable=False))
     op.execute(text("""
       INSERT INTO slide_resource (event_info_sn) 
-      SELECT event_info_sn FROM event_slide
-      WHERE event_slide.slide_sn = slide_resource.sn
+      SELECT event_slide.event_info_sn FROM event_slide
+      LEFT JOIN slide_resource ON slide_resource.sn = event_slide.slide_sn
       """))
     op.create_foreign_key('slide_resource_ibfk_1', 'slide_resource', 'event_info', ['event_info_sn'], ['sn'], ondelete='CASCADE')
     op.drop_table('event_slide')
