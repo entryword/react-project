@@ -276,19 +276,3 @@ class Slide(db.Model):
                 ", title: {obj.title}"
                 ", type: {obj.type}"
                 ", url: {obj.url}>").format(obj=self)
-
-event_slide = db.Table(
-    'event_slide',
-    db.Column(
-        'event_info_sn',
-        db.Integer,
-        db.ForeignKey('event_info.sn', ondelete="CASCADE"),
-        primary_key=True
-    ),
-    db.Column(
-        'slide_sn',
-        db.Integer,
-        db.ForeignKey('slide.sn', ondelete="CASCADE"),
-        primary_key=True
-    )
-)
