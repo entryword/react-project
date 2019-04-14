@@ -732,7 +732,7 @@ class EventInfoTestCase(unittest.TestCase):
             row_count = db_sess.execute("SELECT COUNT(*) FROM speaker").scalar()
             self.assertEqual(row_count, 2)
             row_count = db_sess.execute("SELECT COUNT(*) FROM slide_resource").scalar()
-            self.assertEqual(row_count, 0)
+            self.assertEqual(row_count, 2)
 
     def test_delete_event_basic(self):
         topic_info = {
