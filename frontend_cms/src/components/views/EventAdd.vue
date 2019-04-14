@@ -22,7 +22,8 @@
                         class="form-control"
                         name="event_title"
                         placeholder="活動名稱(限150字)"
-                        value="Devops CI/CD"
+                        maxlength="150"
+                        v-model="vueModel.title"
                       >
                     </div>
                   </div>
@@ -33,12 +34,7 @@
                   </div>
                   <div class="col-md-10">
                     <div class="form-group">
-                      <select class="form-control select2" style="width: 100%;">
-                        <option>46 Python入門(週末密集充實版)</option>
-                        <option selected="selected">47 業界常用工具與技術分享</option>
-                        <option>45 Production TensorFlow</option>
-                        <option>42 生活中的程式-Python自動化</option>
-                      </select>
+                      <v-select :options="topics" label="label" v-model="vueModel.topicOption"></v-select>
                     </div>
                   </div>
                 </div>
@@ -64,15 +60,10 @@
                   <div class="col-md-2">活動地點</div>
                   <div class="col-md-10">
                     <div class="form-group">
-                      <select class="form-control select2" style="width: 100%;">
-                        <option selected="selected">21 美國創新中心AIC</option>
-                        <option>30 臺北市婦女館</option>
-                        <option>39 AppWorks</option>
-                      </select>
+                      <v-select :options="places" label="label" v-model="vueModel.placeOption"></v-select>
                     </div>
                   </div>
                 </div>
-
                 <div>
                   活動內容
                   <textarea
@@ -86,17 +77,12 @@
                   <div class="col-md-2">講師</div>
                   <div class="col-md-10">
                     <div class="form-group">
-                      <select
-                        class="form-control select2"
-                        multiple="multiple"
-                        data-placeholder="選擇講師"
-                        style="width: 100%;"
-                      >
-                        <option>Mars</option>
-                        <option>毛毛</option>
-                        <option>柏憲</option>
-                        <option>plum</option>
-                      </select>
+                      <v-select
+                        :options="speakers"
+                        multiple
+                        label="name"
+                        v-model="vueModel.speakerOption"
+                      ></v-select>
                     </div>
                     <!-- /.form-group -->
                   </div>
@@ -105,16 +91,12 @@
                   <div class="col-md-2">助教</div>
                   <div class="col-md-10">
                     <div class="form-group">
-                      <select
-                        class="form-control select2"
-                        multiple="multiple"
-                        data-placeholder="選擇助教"
-                        style="width: 100%;"
-                      >
-                        <option>龜珍</option>
-                        <option>米卡</option>
-                        <option>東曄</option>
-                      </select>
+                      <v-select
+                        :options="speakers"
+                        multiple
+                        label="name"
+                        v-model="vueModel.assistantption"
+                      ></v-select>
                     </div>
                     <!-- /.form-group -->
                   </div>
@@ -123,17 +105,12 @@
                   <div class="col-md-2">活動領域</div>
                   <div class="col-md-10">
                     <div class="form-group">
-                      <select
-                        class="form-control select2"
-                        multiple="multiple"
-                        data-placeholder="選擇領域"
-                        style="width: 100%;"
-                      >
-                        <option>網頁爬蟲</option>
-                        <option>業界分享</option>
-                        <option>網站開發</option>
-                        <option>資料科學</option>
-                      </select>
+                      <v-select
+                        multiple
+                        :options="fields"
+                        label="name"
+                        v-model="vueModel.fieldOption"
+                      ></v-select>
                     </div>
                     <!-- /.form-group -->
                   </div>
@@ -450,24 +427,37 @@ require("moment");
 import Vue from "vue";
 import vSelect from "vue-select";
 
+import store from "../../store";
+import { mapState, mapActions } from "vuex";
+
 Vue.component("v-select", vSelect);
 
 export default {
   name: "EventAdd",
   components: {},
+  created() {
+    this.getData();
+  },
   data: function() {
     return {
-      styleObj: {}
+      vueModel: {
+        placeOption: { id: 37, name: "未定", addr: "未定", label: "37 未定" }
+      }
     };
   },
   computed: {
-    datetime() {
-      return new Date();
-    }
+    ...mapState(["topics", "places", "speakers", "fields"])
   },
   methods: {
+    ...mapActions(["getTopics", "getPlaces", "getSpeakers", "getDefinitions"]),
     clearInput(vueModel) {
-      vueModel = "";
+      vueModel = {};
+    },
+    getData() {
+      this.getTopics();
+      this.getPlaces();
+      this.getSpeakers();
+      this.getDefinitions();
     }
   }
 };

@@ -8,16 +8,16 @@
           </div>
           <!-- /.box-header -->
           <div class="box-body">
-            <div class="dataTables_wrapper form-inline dt-bootstrap" id="example1_wrapper">
+            <div class="dataTables_wrapper form-inline dt-bootstrap" id="events_wrapper">
               <div class="row">
                 <div class="col-sm-6">
-                  <div id="example1_length" class="dataTables_length"></div>
+                  <div id="events_length" class="dataTables_length"></div>
                 </div>
               </div>
 
               <div class="row">
                 <div class="col-sm-12 table-responsive">
-                  <table id="example1" class="table table-bordered table-striped">
+                  <table id="events" class="table table-bordered table-striped">
                     <thead>
                       <tr>
                         <th>編號</th>
@@ -29,65 +29,21 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
+                      <tr v-for="event in events" :key="event.id">
                         <td>
-                          <a href="/event-edit" target="_blank">137</a>
+                          <a :href="'/event-edit/' + event.id">{{event.id}}</a>
                         </td>
-                        <td>Python入門(週末密集充實版) 台北-01</td>
-                        <td>AppWorks</td>
-                        <td>2019-03-09 (六) 14:00-17:00</td>
-                        <td>V</td>
-                        <td>V</td>
-                      </tr>
-                      <tr>
+                        <td>{{event.title}}</td>
+                        <td>{{event.place.name}}</td>
+                        <td>{{event.date}} ({{event.weekday}}) {{event.start_time}}-{{event.end_time}}</td>
                         <td>
-                          <a href="/event-edit" target="_blank">138</a>
+                          <template v-if="event.event_apply_exist">V</template>
+                          <template v-if="!event.event_apply_exist">X</template>
                         </td>
-                        <td>Python入門(週末密集充實版) 台北-02</td>
-                        <td>AppWorks</td>
-                        <td>2019-03-10 (日) 14:00-17:00</td>
-                        <td>V</td>
-                        <td>V</td>
-                      </tr>
-                      <tr>
                         <td>
-                          <a href="/event-edit" target="_blank">141</a>
+                          <template v-if="event.speaker_exist">V</template>
+                          <template v-if="!event.speaker_exist">X</template>
                         </td>
-                        <td>Python入門(週末密集充實版) 高雄-01</td>
-                        <td>X</td>
-                        <td>2019-04-27 (六) 14:00-17:00</td>
-                        <td>X</td>
-                        <td>V</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <a href="/event-edit" target="_blank">148</a>
-                        </td>
-                        <td>業界常用工具與技術分享 Devops CI/CD</td>
-                        <td>美國創新中心AIC</td>
-                        <td>2019-03-24 (日) 14:00-17:00</td>
-                        <td>X</td>
-                        <td>V</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <a href="/event-edit" target="_blank">149</a>
-                        </td>
-                        <td>業界常用工具與技術分享 Business Intelligence</td>
-                        <td>美國創新中心AIC</td>
-                        <td>2019-04-20 (六) 14:00-17:00</td>
-                        <td>X</td>
-                        <td>V</td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <a href="/event-edit" target="_blank">150</a>
-                        </td>
-                        <td>業界常用工具與技術分享 Distributed Task Queue/Scheduler/Monitor</td>
-                        <td>美國創新中心AIC</td>
-                        <td>2019-05-26 (日) 13:00-17:00</td>
-                        <td>X</td>
-                        <td>V</td>
                       </tr>
                     </tbody>
                   </table>
@@ -107,13 +63,36 @@ import $ from "jquery";
 // Require needed datatables modules
 require("datatables.net");
 require("datatables.net-bs");
+import store from "../../store";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "EventList",
-  mounted() {
-    this.$nextTick(() => {
-      $("#example1").DataTable();
-    });
+  store: store,
+  created() {
+    this.getData();
+  },
+  computed: {
+    ...mapState(["events"])
+    // events: function() {
+    //   console.log(this.$store.state.events);
+    //   return this.$store.state.events;
+    // }
+  },
+  watch: {
+    events: function(newEvents, oldEvents) {
+      if (newEvents !== oldEvents) {
+        this.$nextTick(() => {
+          $("#events").DataTable();
+        });
+      }
+    }
+  },
+  methods: {
+    ...mapActions(["getEvents"]),
+    getData() {
+      this.getEvents();
+    }
   }
 };
 </script>

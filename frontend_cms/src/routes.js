@@ -30,7 +30,7 @@ const routes = [
         meta: {description: 'List of our servers', requiresAuth: true}
       },
       {
-        path: '/event-edit',
+        path: '/event-edit/:id',
         component: EventEditView,
         name: '活動編輯',
         meta: {description: '', requiresAuth: true}

@@ -21,9 +21,12 @@ module.exports = {
     'generator-star-spacing': 0,
     // disable space before func paren
     'space-before-function-paren': 0,
-    // controller by vuter
+    // controlled by vuter
     'semi': 0,
     'quotes': 0,
+    'space-before-blocks':0,
+    'indent':0,
+    'no-unused-vars':0,
     // allow debugger during development
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }

@@ -1,0 +1,67 @@
+{
+    "data": {
+           "title":"台北-01",
+           "topic_id":53,
+           "start_date":"2019-03-09",
+           "start_time":"14:00",
+           "end_date":"2019-03-09",
+           "end_time":"17:00",
+           "place_id":39,
+           "desc":"給新手入門的活動",
+           "speaker_ids":[  
+              1,
+              2
+           ],
+           "assistant_ids":[  
+              3,
+              4
+           ],
+           "field_ids":[  
+              1,
+              2
+           ],
+  
+          "slide_resources": [
+              {
+                  "type": "slide",
+                  "title": "Flask Web Development - class 1",
+                  "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html#/"
+              },
+              {
+                  "type": "resource",
+                  "title": "Flask Web Development - class 1",
+                  "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html#/"
+              }
+          ],
+          "apply": [
+              {
+                  "host": "婦女館",
+                  "channel": 1,
+                  "type": "all",
+                  "start_time": "2019-11-23 08:00",
+                  "end_time": "2019-12-01 23:00",
+                  "price": "一般人400元，學生200元",
+                  "limit": "限女",
+                  "url": "https://..."
+              },
+              {
+                  "host": "American Innovation Center 美國創新中心",
+                  "channel": 0,
+                  "type": "one",
+                  "start_time": "2019-11-23 08:00",
+                  "end_time": "2019-12-01 23:00",
+                  "price": "一般人100元，學生50元",
+                  "limit": "限女",
+                  "url": "https://...",
+                  "qualification": "https://..."
+              }
+  
+          ]
+  
+    },
+    "info": {
+          "code": 0, 
+          "message": "Perform the action successfully."
+    }
+  }
+  
