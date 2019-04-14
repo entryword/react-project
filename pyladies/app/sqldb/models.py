@@ -262,17 +262,3 @@ class EventApply(db.Model):
         return ("<EventApply sn: {obj.sn}"
                 ", event_basic_sn: {obj.event_basic_sn}"
                 ", apply: {obj.apply}").format(obj=self)
-
-class Slide(db.Model):
-    __tablename__ = "slide"
-
-    sn    = db.Column(db.Integer, primary_key=True)
-    type  = db.Column(db.String(128), nullable=False)
-    title = db.Column(db.String(128), nullable=False)
-    url   = db.Column(db.String(1024), nullable=False)
-
-    def __str__(self):
-        return ("<Slide sn: {obj.sn}"
-                ", title: {obj.title}"
-                ", type: {obj.type}"
-                ", url: {obj.url}>").format(obj=self)
