@@ -25,21 +25,44 @@ def upgrade():
     sa.ForeignKeyConstraint(['slide_sn'], ['slide_resource.sn'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('event_info_sn', 'slide_sn')
     )
+
     ## copy data to join table ##
     op.execute(text("""
-      INSERT INTO event_slide (event_info_sn, slide_sn) 
-      SELECT event_info_sn, sn FROM slide_resource
+      INSERT INTO event_slide (event_info_sn, slide_sn)
+        SELECT 
+          event_info.event_info_sn, slide.sn
+        FROM 
+          (SELECT sn, url FROM slide_resource GROUP BY url) AS slide 
+        LEFT JOIN 
+          (SELECT event_info_sn, url FROM `slide_resource`) AS event_info 
+        ON slide.url = event_info.url
       """))
-    op.drop_constraint('slide_resource_ibfk_1', 'slide_resource', type_='foreignkey')
+
     op.drop_column('slide_resource', 'event_info_sn')
 
+    ## Remove duplicate data in slide_resource ##
+    op.execute(text("""
+      SET FOREIGN_KEY_CHECKS = 0;
+      """))
+    op.execute(text("""
+      CREATE TABLE temp LIKE slide_resource;
+      """))
+    op.execute(text("""
+      INSERT INTO temp
+          SELECT * FROM slide_resource GROUP BY url;
+      """))
+    op.drop_table('slide_resource')
+    op.rename_table('temp', 'slide_resource')
+    op.execute(text("""
+      SET FOREIGN_KEY_CHECKS = 1;
+      """))
 
 def downgrade():
     op.add_column('slide_resource', sa.Column('event_info_sn', mysql.INTEGER(display_width=11), autoincrement=False, nullable=False))
     op.execute(text("""
-      INSERT INTO slide_resource (event_info_sn) 
-      SELECT event_slide.event_info_sn FROM event_slide
-      LEFT JOIN slide_resource ON slide_resource.sn = event_slide.slide_sn
+      UPDATE slide_resource 
+      SET event_info_sn =(
+        SELECT event_slide.event_info_sn FROM event_slide
+        WHERE slide_resource.sn = event_slide.slide_sn)  
       """))
-    op.create_foreign_key('slide_resource_ibfk_1', 'slide_resource', 'event_info', ['event_info_sn'], ['sn'], ondelete='CASCADE')
     op.drop_table('event_slide')
