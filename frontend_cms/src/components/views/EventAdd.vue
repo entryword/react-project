@@ -45,13 +45,18 @@
                   </div>
                   <div class="col-md-10">
                     <div class="form-group">
-                      <div class="input-group">
-                        <div class="input-group-addon">
-                          <i class="fa fa-clock-o"></i>
-                        </div>
-                        <input type="text" class="form-control pull-right" id="event_time">
-                      </div>
-                      <!-- /.input group -->
+                      <date-range-picker
+                        :opens="dateTimeOptions.opens"
+                        :locale-data="dateTimeOptions.locale"
+                        :singleDatePicker="dateTimeOptions.singleDatePicker"
+                        :timePicker="dateTimeOptions.timePicker"
+                        :timePicker24Hour="dateTimeOptions.timePicker24Hour"
+                        :showWeekNumbers="dateTimeOptions.showWeekNumbers"
+                        :showDropdowns="dateTimeOptions.showDropdowns"
+                        :autoApply="dateTimeOptions.autoApply"
+                        :ranges="dateTimeOptions.ranges"
+                        v-model="vueModel.eventDateTime"
+                      ></date-range-picker>
                     </div>
                   </div>
                 </div>
@@ -207,13 +212,18 @@
                     <div class="col-md-2">報名時間</div>
                     <div class="col-md-10">
                       <div class="form-group">
-                        <div class="input-group">
-                          <div class="input-group-addon">
-                            <i class="fa fa-clock-o"></i>
-                          </div>
-                          <input type="text" class="form-control pull-right" id="signup_time">
-                        </div>
-                        <!-- /.input group -->
+                        <date-range-picker
+                          :opens="dateTimeOptions.opens"
+                          :locale-data="dateTimeOptions.locale"
+                          :singleDatePicker="dateTimeOptions.singleDatePicker"
+                          :timePicker="dateTimeOptions.timePicker"
+                          :timePicker24Hour="dateTimeOptions.timePicker24Hour"
+                          :showWeekNumbers="dateTimeOptions.showWeekNumbers"
+                          :showDropdowns="dateTimeOptions.showDropdowns"
+                          :autoApply="dateTimeOptions.autoApply"
+                          :ranges="dateTimeOptions.ranges"
+                          v-model="vueModel.signupDateTime"
+                        ></date-range-picker>
                       </div>
                     </div>
                   </div>
@@ -423,18 +433,23 @@
   </div>
 </template>
 <script>
-require("moment");
+import moment from "moment";
 import Vue from "vue";
 import vSelect from "vue-select";
+import DateRangePicker from "vue2-daterange-picker";
 
 import store from "../../store";
 import { mapState, mapActions } from "vuex";
 
-Vue.component("v-select", vSelect);
-
 export default {
   name: "EventAdd",
-  components: {},
+  filters: {
+    date(value) {
+      let options = { year: "numeric", month: "long", day: "numeric" };
+      return Intl.DateTimeFormat("en-US", options).format(value);
+    }
+  },
+  components: { "v-select": vSelect, DateRangePicker },
   created() {
     this.getData();
   },
@@ -442,6 +457,17 @@ export default {
     return {
       vueModel: {
         placeOption: { id: 37, name: "未定", addr: "未定", label: "37 未定" }
+      },
+      dateTimeOptions: {
+        opens: "center",
+        locale: { firstDay: 0, format: "YYYY-MM-DD HH:mm" },
+        singleDatePicker: false,
+        timePicker: true,
+        timePicker24Hour: true,
+        showWeekNumbers: false,
+        showDropdowns: false,
+        autoApply: true,
+        ranges: false
       }
     };
   },
@@ -463,8 +489,3 @@ export default {
 };
 </script>
 
-<style>
-.datetime-picker input {
-  height: 4em !important;
-}
-</style>
