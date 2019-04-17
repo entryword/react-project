@@ -34,7 +34,7 @@ def upgrade():
         FROM 
           (SELECT sn, url FROM slide_resource GROUP BY url) AS slide 
         LEFT JOIN 
-          (SELECT event_info_sn, url FROM `slide_resource`) AS event_info 
+          (SELECT event_info_sn, url FROM slide_resource) AS event_info 
         ON slide.url = event_info.url
       """))
 
