@@ -58,7 +58,7 @@ def upgrade():
       """))
 
 def downgrade():
-    op.add_column('slide_resource', sa.Column('event_info_sn', mysql.INTEGER(display_width=11), autoincrement=False, nullable=False))
+    op.add_column('slide_resource', sa.Column('event_info_sn', sa.Integer(), nullable=False))
     op.execute(text("""
       UPDATE slide_resource 
       SET event_info_sn =(
