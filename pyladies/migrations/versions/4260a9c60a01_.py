@@ -58,11 +58,11 @@ def upgrade():
       """))
 
 def downgrade():
-    op.add_column('slide_resource', sa.Column('event_info_sn', sa.Integer(), nullable=False))
+    op.add_column('slide_resource', sa.Column('event_info_sn', sa.Integer(), nullable=True))
     op.execute(text("""
-      UPDATE slide_resource 
-      SET event_info_sn =(
-        SELECT event_slide.event_info_sn FROM event_slide
-        WHERE slide_resource.sn = event_slide.slide_sn)  
+      INSERT INTO slide_resource (event_info_sn)
+      SELECT event_slide.event_info_sn FROM event_slide
+      WHERE slide_resource.sn = event_slide.slide_sn 
       """))
+    op.alter_column('slide_resource', 'event_info_sn', nullable=False) 
     op.drop_table('event_slide')
