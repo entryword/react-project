@@ -26,43 +26,66 @@ def upgrade():
     sa.PrimaryKeyConstraint('event_info_sn', 'slide_sn')
     )
 
-    ## copy data to join table ##
+    # ## copy data to join table ##
     op.execute(text("""
       INSERT INTO event_slide (event_info_sn, slide_sn)
-        SELECT 
+        SELECT
           event_info.event_info_sn, slide.sn
-        FROM 
-          (SELECT sn, url FROM slide_resource GROUP BY url) AS slide 
-        LEFT JOIN 
-          (SELECT event_info_sn, url FROM slide_resource) AS event_info 
+        FROM
+          (SELECT sn, url FROM slide_resource GROUP BY url) AS slide
+        LEFT JOIN
+          (SELECT event_info_sn, url FROM slide_resource) AS event_info
         ON slide.url = event_info.url
       """))
 
+    op.drop_constraint('slide_resource_ibfk_1', 'slide_resource', type_='foreignkey')
     op.drop_column('slide_resource', 'event_info_sn')
 
     ## Remove duplicate data in slide_resource ##
     op.execute(text("""
-      SET FOREIGN_KEY_CHECKS = 0;
-      """))
-    op.execute(text("""
-      CREATE TABLE temp LIKE slide_resource;
+      CREATE TABLE temp (sn int);
       """))
     op.execute(text("""
       INSERT INTO temp
-          SELECT * FROM slide_resource GROUP BY url;
+          SELECT sn FROM slide_resource GROUP BY url;
       """))
-    op.drop_table('slide_resource')
-    op.rename_table('temp', 'slide_resource')
     op.execute(text("""
-      SET FOREIGN_KEY_CHECKS = 1;
+      DELETE FROM slide_resource WHERE sn NOT IN (SELECT sn FROM temp);
       """))
+    op.drop_table('temp')
+
 
 def downgrade():
-    op.add_column('slide_resource', sa.Column('event_info_sn', sa.Integer(), nullable=True))
+    ## Restore duplicate data in slide_resource ##
     op.execute(text("""
-      INSERT INTO slide_resource (event_info_sn)
-      SELECT event_slide.event_info_sn FROM event_slide
-      WHERE slide_resource.sn = event_slide.slide_sn 
+      CREATE TABLE temp LIKE slide_resource;
       """))
-    op.alter_column('slide_resource', 'event_info_sn', nullable=False) 
+    op.add_column('temp', sa.Column('event_info_sn', sa.Integer(), nullable=False))
+    op.execute(text("""
+      INSERT INTO temp (event_info_sn, type, title, url)
+        SELECT
+          mapping_info.event_info_sn, slide_info.type, slide_info.title, slide_info.url
+        FROM
+          (SELECT event_info_sn, slide_sn FROM event_slide) AS mapping_info
+        LEFT JOIN
+          (SELECT * FROM slide_resource) AS slide_info
+        ON mapping_info.slide_sn = slide_info.sn
+      """))
+    op.execute(text("""
+      DELETE FROM slide_resource;
+      """))
+    op.add_column('slide_resource', sa.Column('event_info_sn', sa.Integer(), nullable=False))
+    op.execute(text("""
+      INSERT INTO slide_resource
+        SELECT * FROM temp;
+      """))
+    op.drop_table('temp')
+
+    op.create_foreign_key(
+      "slide_resource_ibfk_1",
+      "slide_resource",
+      "event_info",
+      ["event_info_sn"],
+      ["sn"],
+      ondelete="CASCADE")
     op.drop_table('event_slide')

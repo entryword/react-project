@@ -209,7 +209,7 @@ event_slide = db.Table(
         'slide_sn',
         db.Integer,
         db.ForeignKey('slide_resource.sn', ondelete="CASCADE")
-    )
+    ),
     db.PrimaryKeyConstraint("event_info_sn", "slide_sn")
 )
 
