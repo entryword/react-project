@@ -111,4 +111,7 @@ hr.visible-xs-block {
   height: 1px;
   border-color: transparent;
 }
+.content-wrapper {
+  min-height: calc(100vh - 100px);
+}
 </style>

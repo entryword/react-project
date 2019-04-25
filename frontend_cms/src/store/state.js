@@ -5,9 +5,11 @@ export default {
   user: null,
   token: null,
   events: [],
+  event: [],
   topics: [],
   places: [],
   speakers: [],
   fields: [],
-  resources: []
+  slide_resources: [],
+  post_event_result: null
 }

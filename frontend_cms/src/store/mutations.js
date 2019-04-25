@@ -22,6 +22,9 @@ export default {
     })
     state.events = modEvents;
   },
+  SET_EVENT (state, event){
+    state.event = event;
+  },
   SET_TOPICS (state, topics){
     const modTopics = topics.map(t => {
       return {
@@ -46,13 +49,16 @@ export default {
   SET_FIELDS (state, fields){
    const modFields = Object.keys(fields).map(key => {
     return {
-      id: key,
+      id: parseInt(key, 10),
       name: fields[key]
     }
    })
     state.fields = modFields;
   },
-  SET_RESOURCES (state, resources){
-    state.resources = resources;
+  SET_SLIDE_RESOURCES (state, resources){
+    state.slide_resources = resources;
+  },
+  POST_EVENT_RESULT(state, postEventResult){
+    state.post_event_result = postEventResult;
   }
 }

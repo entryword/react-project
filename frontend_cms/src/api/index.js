@@ -40,6 +40,17 @@ export default {
     }
     return axios({ method, url, data })
   },
+  getEvent(id) {
+    let method = "get";
+    let url = "";
+    let data = null;
+    if (process.env.NODE_ENV === 'development'){
+      url = "/static/fake_data/event.json"
+    } else {
+      url = `${prefix}/event/${id}`
+    }
+    return axios({ method, url, data })
+  },
   getPlaces() {
     let method = "get";
     let url = "";
@@ -70,6 +81,29 @@ export default {
       url = "/static/fake_data/definitions.json"
     } else {
       url = `${prefix}/definitions`
+    }
+    return axios({ method, url, data })
+  },
+  getSlideResources() {
+    let method = "get";
+    let url = "";
+    let data = null;
+    if (process.env.NODE_ENV === 'development'){
+      url = "/static/fake_data/resources.json"
+    } else {
+      url = `${prefix}/getSlideResources`
+    }
+    return axios({ method, url, data })
+  },
+  postEvent(data){
+    let method = "POST";
+    let url = "";
+    if (process.env.NODE_ENV === 'development'){
+      console.log(data)
+      method = "get";
+      url = "/static/fake_data/post_event_result.json"
+    } else {
+      url = `${prefix}/event`
     }
     return axios({ method, url, data })
   }

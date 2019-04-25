@@ -4,6 +4,10 @@ export default {
         const events = await api.getEvents().then(res => res.data.data);
         context.commit('SET_EVENTS', events);
     },
+    getEvent: async function(context) {
+        const event = await api.getEvent().then(res => res.data.data);
+        context.commit('SET_EVENT', event);
+    },
     getTopics: async function(context) {
         const topics = await api.getTopics().then(res => res.data.data);
         context.commit('SET_TOPICS', topics);
@@ -19,5 +23,13 @@ export default {
     getDefinitions: async function(context) {
         const definitions = await api.getDefinitions().then(res => res.data.data);
         context.commit('SET_FIELDS', definitions.field);
+    },
+    getSlideResources: async function(context) {
+        const slide_resources = await api.getSlideResources().then(res => res.data.data);
+        context.commit('SET_SLIDE_RESOURCES', slide_resources);
+    },
+    postEvent: async function({ commit, state }, data) {
+        const postEventResult = await api.postEvent(data).then(res => res.data.data);
+        commit('POST_EVENT_RESULT', postEventResult);
     }
 }
