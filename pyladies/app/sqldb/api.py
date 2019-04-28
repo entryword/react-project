@@ -93,6 +93,14 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             return obj.sn
         return None
 
+    def create_slide(self, info, autocommit=False):
+        obj = SlideResource(**info)
+        self.session.add(obj)
+
+        if autocommit:
+            self.session.commit()
+            return obj.sn
+        return None
 
     ########## get
 
