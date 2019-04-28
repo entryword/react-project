@@ -89,3 +89,8 @@ class BaseApplyManager():
     @staticmethod
     def delete_event_apply_info(event_apply_sn):
         raise NotImplementedError()
+
+class BaseSlideManager():
+    @staticmethod
+    def list_slides():
+        raise NotImplementedError()
