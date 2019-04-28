@@ -227,3 +227,60 @@ class TestGetEvents:
         # assertion
         assert rv.json["data"][0]["event_apply_exist"] == 0
         assert rv.json["data"][0]["speaker_exist"] == 0
+
+class TestGetTopics:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def test_get_topics(self):
+        topics = [
+            {
+                "name": "topic 1",
+                "desc": "this is topic 1",
+                "freq": 0,
+                "level": 0,
+                "host": 0,
+                "fields": [0],
+            },
+            {
+                "name": "topic 2",
+                "desc": "this is topic 2",
+                "freq": 0,
+                "level": 0,
+                "host": 0,
+                "fields": [0],
+            },
+            {
+                "name": "topic 3",
+                "desc": "this is topic 3",
+                "freq": 0,
+                "level": 0,
+                "host": 0,
+                "fields": [0],
+            },
+        ]
+
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            for topic in topics:
+                manager.create_topic(topic, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/cms/api/topics")
+
+        #assert
+        assert rv.json["info"]["code"] == 0
+        assert len(rv.json["data"]) == 3
+        assert rv.json["data"][0]["name"] == topics[0]["name"]
+        assert rv.json["data"][1]["name"] == topics[1]["name"]
+        assert rv.json["data"][2]["name"] == topics[2]["name"]
