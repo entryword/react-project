@@ -20,20 +20,12 @@ class Manager(BaseEventManager):
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.create_event_basic(info["event_basic"], autocommit=True)
-            event_basics = manager.get_event_basics_by_topic(info["event_basic"]["topic_sn"])
-            for i in event_basics:
-                if i.date == info["event_basic"]["date"] \
-                        and i.start_time == info["event_basic"]["start_time"] \
-                        and i.end_time == info["event_basic"]["end_time"]:
-                    event_basic = i
-                    break
-
+            event_basic_sn = manager.create_event_basic(info["event_basic"], autocommit=True)
             if info["event_info"]:
-                info["event_info"]["event_basic_sn"] = event_basic.sn
+                info["event_info"]["event_basic_sn"] = event_basic_sn
                 manager.create_event_info(info["event_info"], autocommit=True)
 
-            return event_basic.sn
+            return event_basic_sn
 
     @staticmethod
     def update_event(sn, file_path):

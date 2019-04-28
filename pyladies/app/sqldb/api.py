@@ -39,7 +39,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def create_event_info(self, info, autocommit=False):
         speaker_sns = info.pop("speaker_sns", [])
         assistant_sns = info.pop("assistant_sns", [])
-        slide_resources = info.pop("slide_resources", [])
+        slide_resource_sns = info.pop("slide_resource_sns", [])
 
         obj = EventInfo(**info)
 
@@ -49,10 +49,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         assistants = self.session.query(Speaker).filter(Speaker.sn.in_(assistant_sns)).all()
         obj.assistants = assistants
 
-        slide_resources_ = []
-        for i in slide_resources:
-            slide_resources_.append(SlideResource(**i))
-        obj.slide_resources = slide_resources_
+        slide_resources = self.session.query(SlideResource).filter(SlideResource.sn.in_(slide_resource_sns)).all()
+        obj.slide_resources = slide_resources
 
         self.session.add(obj)
 
@@ -93,6 +91,14 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             return obj.sn
         return None
 
+    def create_slide_resource(self, info, autocommit=False):
+        obj = SlideResource(**info)
+        self.session.add(obj)
+
+        if autocommit:
+            self.session.commit()
+            return obj.sn
+        return None
 
     ########## get
 
@@ -285,14 +291,10 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             assistants = self.session.query(Speaker).filter(Speaker.sn.in_(assistant_sns)).all()
             event_info.assistants = assistants
 
-        if "slide_resources" in info:
-            for i in event_info.slide_resources:
-                self.delete_slide_resource(i.sn, autocommit=autocommit)
-            slide_resources = info.pop("slide_resources")
-            slide_resources_ = []
-            for i in slide_resources:
-                slide_resources_.append(SlideResource(**i))
-            event_info.slide_resources = slide_resources_
+        if "slide_resource_sns" in info:
+            slide_resource_sns = info.pop("slide_resource_sns")
+            slide_resources = self.session.query(SlideResource).filter(SlideResource.sn.in_(slide_resource_sns)).all()
+            event_info.slide_resources = slide_resources
 
         info.pop("sn", None)
         for key, value in info.items():
