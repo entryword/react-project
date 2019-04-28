@@ -179,6 +179,7 @@ class EventInfoTestCase(unittest.TestCase):
                 "url": "https://github.com/win911/flask_class"
             }
         ]
+        slide_resource_sns = []
         topic_info = {
             "name": "Flask",
             "desc": "This is description",
@@ -198,7 +199,7 @@ class EventInfoTestCase(unittest.TestCase):
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
-            "slide_resources": slide_resources
+            "slide_resource_sns": slide_resource_sns
         }
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
@@ -207,6 +208,8 @@ class EventInfoTestCase(unittest.TestCase):
             speaker = manager.get_speaker_by_name(speaker_info["name"])
             manager.create_speaker(assistant_info, autocommit=True)
             assistant = manager.get_speaker_by_name(assistant_info["name"])
+            for item in slide_resources:
+                slide_resource_sns.append(manager.create_slide_resource(item, autocommit=True))
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
             event_basic_info["topic_sn"] = topic.sn
@@ -524,6 +527,7 @@ class EventInfoTestCase(unittest.TestCase):
                 "url": "http://tw.pyladies.com/~maomao/1_flask.slides.html#/"
             }
         ]
+        slide_resource_sns = []
         new_slide_resources = [
             {
                 "type": "resource",
@@ -531,6 +535,7 @@ class EventInfoTestCase(unittest.TestCase):
                 "url": "https://github.com/win911/flask_class"
             }
         ]
+        new_slide_resource_sns = []
         topic_info = {
             "name": "Flask",
             "desc": "This is description",
@@ -550,14 +555,14 @@ class EventInfoTestCase(unittest.TestCase):
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
-            "slide_resources": slide_resources
+            "slide_resource_sns": slide_resource_sns
         }
         new_event_info_info = {
             "event_basic_sn": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
-            "slide_resources": new_slide_resources
+            "slide_resource_sns": new_slide_resource_sns
         }
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
@@ -569,7 +574,11 @@ class EventInfoTestCase(unittest.TestCase):
             event_basic = topic.event_basics[0]
             event_info_info["event_basic_sn"] = event_basic.sn
             new_event_info_info["event_basic_sn"] = event_basic.sn
+            for item in slide_resources:
+                slide_resource_sns.append(manager.create_slide_resource(item, autocommit=True))
             manager.create_event_info(event_info_info, autocommit=True)
+            for item in new_slide_resources:
+                new_slide_resource_sns.append(manager.create_slide_resource(item, autocommit=True))
 
             # test
             manager.update_event_info(1, new_event_info_info, autocommit=True)
@@ -582,7 +591,7 @@ class EventInfoTestCase(unittest.TestCase):
 
             # assertion 2
             row_count = db_sess.execute("SELECT COUNT(*) FROM slide_resource").scalar()
-            self.assertEqual(row_count, 1)
+            self.assertEqual(row_count, 2)
 
     def test_update_event_info_with_slides(self):
         topic_info = {
@@ -617,12 +626,13 @@ class EventInfoTestCase(unittest.TestCase):
                 "url": "https://github.com/win911/flask_class"
             }
         ]
+        slide_resource_sns = []
         new_event_info_info = {
             "event_basic_sn": None,
             "title": "Flask class 1-1",
             "desc": "This is description of class 1-1",
             "fields": [0, 1],
-            "slide_resources": slide_resources
+            "slide_resource_sns": slide_resource_sns
         }
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
@@ -635,6 +645,8 @@ class EventInfoTestCase(unittest.TestCase):
             event_info_info["event_basic_sn"] = event_basic.sn
             new_event_info_info["event_basic_sn"] = event_basic.sn
             manager.create_event_info(event_info_info, autocommit=True)
+            for item in slide_resources:
+                slide_resource_sns.append(manager.create_slide_resource(item, autocommit=True))
 
             # test
             manager.update_event_info(1, new_event_info_info, autocommit=True)
@@ -665,6 +677,7 @@ class EventInfoTestCase(unittest.TestCase):
                 "url": "https://github.com/win911/flask_class"
             }
         ]
+        slide_resource_sns = []
         topic_info = {
             "name": "Flask",
             "desc": "This is description",
@@ -684,7 +697,7 @@ class EventInfoTestCase(unittest.TestCase):
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
-            "slide_resources": slide_resources
+            "slide_resource_sns": slide_resource_sns
         }
         speaker_info = {
             "name": "speaker 1",
@@ -715,6 +728,8 @@ class EventInfoTestCase(unittest.TestCase):
             speaker = manager.get_speaker_by_name(speaker_info["name"])
             manager.create_speaker(assistant_info, autocommit=True)
             assistant = manager.get_speaker_by_name(assistant_info["name"])
+            for item in slide_resources:
+                slide_resource_sns.append(manager.create_slide_resource(item, autocommit=True))
             event_info_info["speaker_sns"] = [speaker.sn]
             event_info_info["assistant_sns"] = [assistant.sn]
             manager.create_event_info(event_info_info, autocommit=True)

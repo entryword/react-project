@@ -98,6 +98,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 "url": "https://github.com/win911/flask_class",
             },
         ]
+        slide_resource_sns = []
         topic_info = {
             "name": "Flask",
             "desc": "This is description",
@@ -117,7 +118,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
-            "slide_resources": slide_resources,
+            "slide_resource_sns": slide_resource_sns,
         }
 
         # preparation
@@ -133,6 +134,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             event_info_info["speaker_sns"] = [1]
             manager.create_speaker(assistant_info, autocommit=True)
             event_info_info["assistant_sns"] = [2]
+            for item in slide_resources:
+                slide_resource_sns.append(manager.create_slide_resource(item, autocommit=True))
             manager.create_event_info(event_info_info, autocommit=True)
 
         # test
@@ -247,6 +250,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 "url": "https://github.com/win911/flask_class",
             },
         ]
+        slide_resource_sns = []
         topic_info = {
             "name": "Flask",
             "desc": "This is description",
@@ -266,7 +270,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
-            "slide_resources": slide_resources,
+            "slide_resource_sns": slide_resource_sns,
         }
 
         # preparation
@@ -282,6 +286,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             event_info_info["speaker_sns"] = [1]
             manager.create_speaker(assistant_info, autocommit=True)
             event_info_info["assistant_sns"] = [2]
+            for item in slide_resources:
+                slide_resource_sns.append(manager.create_slide_resource(item, autocommit=True))
             manager.create_event_info(event_info_info, autocommit=True)
 
         # test
