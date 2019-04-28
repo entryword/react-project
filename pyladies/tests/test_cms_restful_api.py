@@ -227,3 +227,41 @@ class TestGetEvents:
         # assertion
         assert rv.json["data"][0]["event_apply_exist"] == 0
         assert rv.json["data"][0]["speaker_exist"] == 0
+
+class TestGetSlides:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def test_get_slides(self):
+        slide_1 = {
+            'title': "Dive into Pinkoi 2013 活動投影片",
+            'type': "slide",
+            'url': "https://speakerdeck.com/mosky/dive-into-pinkoi-2013"
+        }
+        slide_2 = {
+            'title': "ihower 的 Git 教室",
+            'type': "resource",
+            'url': "https://ihower.tw/git/"
+        }
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_slide(slide_1, autocommit=True)
+            manager.create_slide(slide_2, autocommit=True)
+        # test
+        rv = self.test_client.get("/cms/api/slides")
+
+        # assertion
+        assert rv.json["data"][0]["id"] == 1
+        assert rv.json["data"][0]["type"] == 'slide'
+        assert rv.json["data"][1]["id"] == 2
+        assert rv.json["data"][1]["type"] == 'resource'
