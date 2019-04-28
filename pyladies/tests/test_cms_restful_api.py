@@ -227,3 +227,91 @@ class TestGetEvents:
         # assertion
         assert rv.json["data"][0]["event_apply_exist"] == 0
         assert rv.json["data"][0]["speaker_exist"] == 0
+
+    def test_events(self, topic_info, event_basic_info, place_info, apply_info):
+        event_info_info = {
+            "event_basic_sn": None,
+            "title": "Flask class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        speaker_info = {
+            "name": "speaker 1",
+            "photo": "https://pyladies.marsw.tw/img/speaker_1_photo.png",
+            "title": "Senior Engineer",
+            "major_related": True,
+            "intro": "",
+            "fields": [3]
+        }
+        event_apply_info = {
+            "event_basic_sn": None,
+            "apply": [apply_info]
+        }
+        topic_info_2 = {
+            "name": "topic 2",
+            "desc": "This is description 2",
+            "freq": 0,
+            "level": 2,
+            "host": 0,
+            "fields": [0, 1, 2],
+        }
+        event_basic_info_2 = {
+            "sn": None,
+            "date": "2013-09-28",
+            "start_time": "14:00",
+            "end_time": "17:00",
+            "place_sn": None
+        }
+        event_info_info_2 = {
+            "event_basic_sn": None,
+            "title": "Flask class 2",
+            "desc": "This is description of class 2",
+            "fields": [0, 1]
+        }
+        place_info_2 = {
+            "name": "place 2",
+            "addr": "台北市信義區光復南路133號",
+            "map": "http://abc.com/map.html",
+        }
+        self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
+                                        place_info, speaker_info, event_apply_info)
+        self._preparation_for_one_event(topic_info_2, event_basic_info_2, event_info_info_2,
+                                        place_info_2, None, None)
+
+        # test
+        rv = self.test_client.get("/cms/api/events")
+
+        # assertion
+        expected_result = {
+            "date": event_basic_info["date"],
+            "event_apply_exist": 1,
+            "id": event_info_info["event_basic_sn"],
+            "place": {
+                "name": place_info["name"]
+            },
+            "speaker_exist": 1,
+            "title": event_info_info["title"],
+            "topic": {
+                "name": topic_info["name"]
+            },
+            "end_time": event_basic_info["end_time"],
+            "start_time": event_basic_info["start_time"]
+        }
+        expected_result_2 = {
+            "date": event_basic_info_2["date"],
+            "event_apply_exist": 0,
+            "id": event_info_info_2["event_basic_sn"],
+            "place": {
+                "name": place_info_2["name"]
+            },
+            "speaker_exist": 0,
+            "title": event_info_info_2["title"],
+            "topic": {
+                "name": topic_info_2["name"]
+            },
+            "end_time": event_basic_info_2["end_time"],
+            "start_time": event_basic_info_2["start_time"]
+        }
+        assert len(rv.json["data"]) == 2
+        assert rv.json["data"][0] == expected_result
+        assert rv.json["data"][1] == expected_result_2
