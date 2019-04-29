@@ -243,14 +243,14 @@ class TestGetSlides:
 
     def test_get_slides(self):
         slide_1 = {
-            'title': "Dive into Pinkoi 2013 活動投影片",
-            'type': "slide",
-            'url': "https://speakerdeck.com/mosky/dive-into-pinkoi-2013"
+            "title": "Dive into Pinkoi 2013 活動投影片",
+            "type": "slide",
+            "url": "https://speakerdeck.com/mosky/dive-into-pinkoi-2013"
         }
         slide_2 = {
-            'title': "ihower 的 Git 教室",
-            'type': "resource",
-            'url': "https://ihower.tw/git/"
+            "title": "ihower 的 Git 教室",
+            "type": "resource",
+            "url": "https://ihower.tw/git/"
         }
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -262,6 +262,10 @@ class TestGetSlides:
 
         # assertion
         assert rv.json["data"][0]["id"] == 1
-        assert rv.json["data"][0]["type"] == 'slide'
+        assert rv.json["data"][0]["type"] == "slide"
+        assert rv.json["data"][0]["title"] == "Dive into Pinkoi 2013 活動投影片"
+        assert rv.json["data"][0]["url"] == "https://speakerdeck.com/mosky/dive-into-pinkoi-2013"
         assert rv.json["data"][1]["id"] == 2
-        assert rv.json["data"][1]["type"] == 'resource'
+        assert rv.json["data"][1]["type"] == "resource"
+        assert rv.json["data"][1]["title"] == "ihower 的 Git 教室"
+        assert rv.json["data"][1]["url"] == "https://ihower.tw/git/"
