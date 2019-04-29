@@ -87,29 +87,16 @@ def place_infos(request):
 
 # apply_info
 def _get_apply_infos(length):
-    # note: this version only return 1 or 2 apply_infos
-    applies = [{
+    applies = []
+    for i in range(length):
+        random_clock = randint(0, 21)
+        applies.append({
         "host": "婦女館",
         "channel": 1,
         "type": "all",
-        "start_time": "2019-11-23 08:00",
-        "end_time": "2019-12-01 23:00",
+        "start_time": "%02d:00" % random_clock,
+        "end_time": "%02d:00" % (random_clock + 2),
         "price": u"一般人400元，學生200元",
-        "limit": u"限女",
-        "url": "https://...",
-        "qualification": "https://..."
-    }]
-
-    if length == 1:
-        return applies
-
-    applies.append({
-        "host": "American Innovation Center 美國創新中心",
-        "channel": 0,
-        "type": "one",
-        "start_time": "2019-10-23 08:00",
-        "end_time": "2019-12-01 23:00",
-        "price": u"一般人100元，學生50元",
         "limit": u"限女",
         "url": "https://...",
         "qualification": "https://..."
