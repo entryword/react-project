@@ -1,8 +1,9 @@
-from flask import jsonify, request
+from flask import jsonify
 
 from . import api
 from ..exceptions import OK
 from ..managers.slide import Manager as SlideManager
+
 
 @api.route("/slides", methods=["GET"])
 def get_slides():

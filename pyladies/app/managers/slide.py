@@ -1,10 +1,8 @@
-import json
-
 from flask import current_app
 
 from app.sqldb import DBWrapper
 from .abstract import BaseSlideManager
-from ..utils import HashableDict
+
 
 class Manager(BaseSlideManager):
     @staticmethod
