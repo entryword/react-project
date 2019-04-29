@@ -7,29 +7,25 @@ from app.sqldb import DBWrapper
 from .abstract import BaseEventManager
 from ..utils import HashableDict
 
+
 # TODO: error handling & input verification
 class Manager(BaseEventManager):
+
+
     @staticmethod
-    def create_event(file_path):
-        with open(file_path) as f:
-            info = json.loads(f.read())
+    def create_event(info):
+        if not isinstance(info, dict):
+            with open(info) as f:
+                info = json.loads(f.read())
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.create_event_basic(info["event_basic"], autocommit=True)
-            event_basics = manager.get_event_basics_by_topic(info["event_basic"]["topic_sn"])
-            for i in event_basics:
-                if i.date == info["event_basic"]["date"] \
-                        and i.start_time == info["event_basic"]["start_time"] \
-                        and i.end_time == info["event_basic"]["end_time"]:
-                    event_basic = i
-                    break
-
+            event_basic_sn = manager.create_event_basic(info["event_basic"], autocommit=True)
             if info["event_info"]:
-                info["event_info"]["event_basic_sn"] = event_basic.sn
+                info["event_info"]["event_basic_sn"] = event_basic_sn
                 manager.create_event_info(info["event_info"], autocommit=True)
 
-            return event_basic.sn
+            return event_basic_sn
 
     @staticmethod
     def update_event(sn, file_path):
@@ -138,7 +134,8 @@ class Manager(BaseEventManager):
     @staticmethod
     def _get_status(event_date, event_start_time):
         """get event status"""
-        event_time = datetime.strptime('{} {}'.format(event_date, event_start_time), '%Y-%m-%d %H:%M')
+        event_time = datetime.strptime(
+            '{} {}'.format(event_date, event_start_time), '%Y-%m-%d %H:%M')
         current_time = datetime.utcnow() + timedelta(hours=8)
         if current_time >= event_time:
             return 0
@@ -253,4 +250,37 @@ class Manager(BaseEventManager):
                         }
                     }
                     events.append(info_event)
+            return events
+
+    @staticmethod
+    def get_events():
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            event_basics = manager.get_event_basics()
+            events = []
+            for event_basic in event_basics:
+                data = {
+                    "id": event_basic.sn,
+                    "title": event_basic.event_info.title,
+                    "topic": {
+                        "name": event_basic.topic.name
+                    },
+                    "place": {
+                        "name": event_basic.place.name
+                    },
+                    "date": event_basic.date,
+                    "start_time": event_basic.start_time,
+                    "end_time": event_basic.end_time
+                }
+                if event_basic.apply:
+                    data["event_apply_exist"] = 1
+                else:
+                    data["event_apply_exist"] = 0
+
+                if event_basic.event_info.speakers:
+                    data["speaker_exist"] = 1
+                else:
+                    data["speaker_exist"] = 0
+
+                events.append(data)
             return events

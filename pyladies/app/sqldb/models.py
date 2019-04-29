@@ -127,6 +127,7 @@ class EventBasic(db.Model):
     topic = db.relationship("Topic",
                             backref=db.backref("event_basics", uselist=True))
     place = db.relationship("Place")
+    apply = db.relationship("EventApply")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -188,9 +189,6 @@ class SlideResource(db.Model):
     __tablename__ = "slide_resource"
 
     sn = db.Column(db.Integer, primary_key=True)
-    event_info_sn = db.Column(db.Integer,
-                              db.ForeignKey("event_info.sn", ondelete="CASCADE"),
-                              nullable=False)
     type = db.Column(db.String(128), nullable=False)
     title = db.Column(db.String(128), nullable=False)
     url = db.Column(db.String(1024), nullable=False)
@@ -200,6 +198,20 @@ class SlideResource(db.Model):
                 ", title: {obj.title}"
                 ", type: {obj.type}>").format(obj=self)
 
+event_slide = db.Table(
+    'event_slide',
+    db.Column(
+        'event_info_sn',
+        db.Integer,
+        db.ForeignKey('event_info.sn', ondelete="CASCADE")
+    ),
+    db.Column(
+        'slide_sn',
+        db.Integer,
+        db.ForeignKey('slide_resource.sn', ondelete="CASCADE")
+    ),
+    db.PrimaryKeyConstraint("event_info_sn", "slide_sn")
+)
 
 class EventInfo(db.Model):
     __tablename__ = "event_info"
@@ -215,7 +227,9 @@ class EventInfo(db.Model):
 
     event_basic = db.relationship("EventBasic",
                                   backref=db.backref("event_info", uselist=False))
-    slide_resources = db.relationship("SlideResource", uselist=True)
+    slide_resources = db.relationship("SlideResource", 
+                                      secondary=event_slide, 
+                                      uselist=True)
     speakers = db.relationship("Speaker",
                                secondary=event_info_to_speaker,
                                uselist=True)
@@ -242,16 +256,8 @@ class EventApply(db.Model):
                                nullable=False,
                                unique=True)
     apply = db.Column(types.JSON, nullable=True)
-    start_time = db.Column(db.String(128), unique=False, nullable=True)
-    end_time = db.Column(db.String(128), unique=False, nullable=True)
-    limit = db.Column(types.JSON, nullable=True)
-    limit_desc = db.Column(db.Text, nullable=True)
 
     def __str__(self):
         return ("<EventApply sn: {obj.sn}"
                 ", event_basic_sn: {obj.event_basic_sn}"
-                ", apply: {obj.apply}"
-                ", start_time: {obj.start_time}"
-                ", end_time: {obj.end_time}"
-                ", limit: {obj.limit}>"
-                ", limit_desc: {obj.limit_desc}").format(obj=self)
+                ", apply: {obj.apply}").format(obj=self)
