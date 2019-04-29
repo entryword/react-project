@@ -8,6 +8,7 @@ LEVELS = list(constant.LEVEL_1_0.keys())
 HOSTS = list(constant.HOST_1_0.keys())
 FIELDS = list(constant.FIELD_1_0.keys())
 
+
 # topc_info
 def _get_topic_infos(length=1):
     topics = []
@@ -23,10 +24,12 @@ def _get_topic_infos(length=1):
         })
     return topics
 
+
 @pytest.fixture()
 def topic_info():
     topics = _get_topic_infos(length=1)
     return topics[0]
+
 
 @pytest.fixture()
 def topic_infos(request):
@@ -34,6 +37,7 @@ def topic_infos(request):
     if hasattr(request, 'param'):
         length = request.param
     return _get_topic_infos(length)
+
 
 # event_basic_info
 def _get_event_basic_infos(length=1):
@@ -49,10 +53,12 @@ def _get_event_basic_infos(length=1):
         })
     return event_basics
 
+
 @pytest.fixture()
-def event_basic_info(request):
+def event_basic_info():
     event_basics = _get_event_basic_infos(length=1)
     return event_basics[0]
+
 
 @pytest.fixture()
 def event_basic_infos(request):
@@ -60,6 +66,34 @@ def event_basic_infos(request):
     if hasattr(request, 'param'):
         length = request.param
     return _get_event_basic_infos(length)
+
+
+# event_info
+def _get_event_infos(length=1):
+    event_infos = []
+    for i in range(length):
+        event_infos.append({
+            "event_basic_sn": None,
+            "title": "event " + str(i+1),
+            "desc": "this is event " + str(i+1),
+            "fields": [0, 1],
+        })
+    return event_infos
+
+
+@pytest.fixture()
+def event_info():
+    event_infos = _get_event_infos(length=1)
+    return event_infos[0]
+
+
+@pytest.fixture()
+def event_infos(request):
+    length = 1
+    if hasattr(request, 'param'):
+        length = request.param
+    return _get_event_infos(length)
+
 
 # place_info
 def _get_place_infos(length):
@@ -73,10 +107,12 @@ def _get_place_infos(length):
         })
     return places
 
+
 @pytest.fixture()
 def place_info():
     places = _get_place_infos(length=1)
     return places[0]
+
 
 @pytest.fixture()
 def place_infos(request):
@@ -85,28 +121,31 @@ def place_infos(request):
         length = request.param
     return _get_place_infos(length)
 
+
 # apply_info
 def _get_apply_infos(length):
     applies = []
     for i in range(length):
         random_clock = randint(0, 21)
         applies.append({
-        "host": "婦女館",
-        "channel": 1,
-        "type": "all",
-        "start_time": "%02d:00" % random_clock,
-        "end_time": "%02d:00" % (random_clock + 2),
-        "price": u"一般人400元，學生200元",
-        "limit": u"限女",
-        "url": "https://...",
-        "qualification": "https://..."
-    })
+            "host": "婦女館",
+            "channel": 1,
+            "type": "all",
+            "start_time": "%02d:00" % random_clock,
+            "end_time": "%02d:00" % (random_clock + 2),
+            "price": u"一般人400元，學生200元",
+            "limit": u"限女",
+            "url": "https://...",
+            "qualification": "https://..."
+        })
     return applies
+
 
 @pytest.fixture()
 def apply_info():
     applies = _get_apply_infos(length=1)
     return applies[0]
+
 
 @pytest.fixture()
 def apply_infos(request):

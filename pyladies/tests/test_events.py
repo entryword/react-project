@@ -29,25 +29,15 @@ class TestEvents:
 
     @pytest.mark.parametrize('topic_infos', [2], indirect=True)
     @pytest.mark.parametrize('event_basic_infos', [2], indirect=True)
-    def test_search_events_with_keywords(self, topic_infos, place_info, event_basic_infos):
+    @pytest.mark.parametrize('event_infos', [2], indirect=True)
+    def test_search_events_with_keywords(self, topic_infos, place_info, event_basic_infos, event_infos):
         topics = [topic_infos[0], topic_infos[1]]
         event_basic_infos[0]['topic_sn'] = 1
         event_basic_infos[1]['topic_sn'] = 1
         event_basics = [event_basic_infos[0], event_basic_infos[1]]
-        event_infos = [
-            {
-                "event_basic_sn": 1,
-                "title": "event 1",
-                "desc": "this is event 1",
-                "fields": [0, 1],
-            },
-            {
-                "event_basic_sn": 2,
-                "title": "event 2",
-                "desc": "this is event 2",
-                "fields": [0],
-            },
-        ]
+        event_infos[0]['event_basic_sn'] = 1
+        event_infos[1]['event_basic_sn'] = 2
+        event_infos_list = [event_infos[0], event_infos[1]]
 
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -57,7 +47,7 @@ class TestEvents:
             manager.create_place(place_info, autocommit=True)
             for event_basic in event_basics:
                 manager.create_event_basic(event_basic, autocommit=True)
-            for event_info in event_infos:
+            for event_info in event_infos_list:
                 manager.create_event_info(event_info, autocommit=True)
 
             # test
@@ -101,7 +91,8 @@ class TestEvents:
 
     @pytest.mark.parametrize('topic_infos', [2], indirect=True)
     @pytest.mark.parametrize('event_basic_infos', [3], indirect=True)
-    def test_search_events_with_date(self, topic_infos, place_info, event_basic_infos):
+    @pytest.mark.parametrize('event_infos', [3], indirect=True)
+    def test_search_events_with_date(self, topic_infos, place_info, event_basic_infos, event_infos):
         topics = [topic_infos[0], topic_infos[1]]
         event_basic_infos[0]['topic_sn'] = 1
         event_basic_infos[1]['topic_sn'] = 1
@@ -110,26 +101,10 @@ class TestEvents:
         event_basic_infos[1]['date'] = "2019-02-03"
         event_basic_infos[2]['date'] = "2019-02-17"
         event_basics = [event_basic_infos[0], event_basic_infos[1], event_basic_infos[2]]
-        event_infos = [
-            {
-                "event_basic_sn": 1,
-                "title": "event 1",
-                "desc": "this is event 1",
-                "fields": [0, 1],
-            },
-            {
-                "event_basic_sn": 2,
-                "title": "event 2",
-                "desc": "this is event 2",
-                "fields": [0],
-            },
-            {
-                "event_basic_sn": 3,
-                "title": "event 3",
-                "desc": "this is event 3",
-                "fields": [0],
-            },
-        ]
+        event_infos[0]['event_basic_sn'] = 1
+        event_infos[1]['event_basic_sn'] = 2
+        event_infos[2]['event_basic_sn'] = 3
+        event_infos_list = [event_infos[0], event_infos[1], event_infos[2]]
 
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -139,7 +114,7 @@ class TestEvents:
             manager.create_place(place_info, autocommit=True)
             for event_basic in event_basics:
                 manager.create_event_basic(event_basic, autocommit=True)
-            for event_info in event_infos:
+            for event_info in event_infos_list:
                 manager.create_event_info(event_info, autocommit=True)
 
             # test
@@ -165,7 +140,8 @@ class TestEvents:
 
     @pytest.mark.parametrize('topic_infos', [2], indirect=True)
     @pytest.mark.parametrize('event_basic_infos', [3], indirect=True)
-    def test_search_events_with_keywords_and_date(self, topic_infos, place_info, event_basic_infos):
+    @pytest.mark.parametrize('event_infos', [3], indirect=True)
+    def test_search_events_with_keywords_and_date(self, topic_infos, place_info, event_basic_infos, event_infos):
         topics = [topic_infos[0], topic_infos[1]]
         event_basic_infos[0]['topic_sn'] = 1
         event_basic_infos[1]['topic_sn'] = 1
@@ -174,27 +150,10 @@ class TestEvents:
         event_basic_infos[1]['date'] = "2019-02-03"
         event_basic_infos[2]['date'] = "2019-02-17"
         event_basics = [event_basic_infos[0], event_basic_infos[1], event_basic_infos[2]]
-
-        event_infos = [
-            {
-                "event_basic_sn": 1,
-                "title": "event 1",
-                "desc": "this is event 1",
-                "fields": [0, 1],
-            },
-            {
-                "event_basic_sn": 2,
-                "title": "event 2",
-                "desc": "this is event 2",
-                "fields": [0],
-            },
-            {
-                "event_basic_sn": 3,
-                "title": "event 3",
-                "desc": "this is event 3",
-                "fields": [0],
-            },
-        ]
+        event_infos[0]['event_basic_sn'] = 1
+        event_infos[1]['event_basic_sn'] = 2
+        event_infos[2]['event_basic_sn'] = 3
+        event_infos_list = [event_infos[0], event_infos[1], event_infos[2]]
 
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -204,7 +163,7 @@ class TestEvents:
             manager.create_place(place_info, autocommit=True)
             for event_basic in event_basics:
                 manager.create_event_basic(event_basic, autocommit=True)
-            for event_info in event_infos:
+            for event_info in event_infos_list:
                 manager.create_event_info(event_info, autocommit=True)
 
             # test date 2019-02 and keyword event 2
@@ -248,15 +207,9 @@ class TestEvents:
             # assertion
             assert len(test_events_from_distinct_topic) == 0
 
-    def test_get_no_event_from_one_topic_because_of_past_event(self, topic_info, event_basic_info):
+    def test_get_no_event_from_one_topic_because_of_past_event(self, topic_info, event_basic_info, event_info):
         event_basic_info['date'] = self.get_past_date(1)
-        event_info_info = {
-            "event_basic_sn": None,
-            "title": "A class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-
+        event_info_info = event_info
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -275,15 +228,9 @@ class TestEvents:
             # assertion
             assert len(test_events_from_distinct_topic) == 0
 
-    def test_get_event_from_one_topic_with_only_one_future_event(self, topic_info, event_basic_info):
+    def test_get_event_from_one_topic_with_only_one_future_event(self, topic_info, event_basic_info, event_info):
         event_basic_info['date'] = self.get_future_date(1)
-        event_info_info = {
-            "event_basic_sn": None,
-            "title": "A class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-
+        event_info_info = event_info
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -304,27 +251,14 @@ class TestEvents:
             assert test_events_from_distinct_topic[0].date == event_basic_info["date"]
 
     @pytest.mark.parametrize('event_basic_infos', [2], indirect=True)
-    def test_get_event_from_one_topic_with_multiple_future_events(self, topic_info, event_basic_infos):
-        def _get_future_date(interval=1):
-            future_time = datetime.utcnow() + timedelta(days=interval, hours=8)
-            return future_time.strftime("%Y-%m-%d")
-
+    @pytest.mark.parametrize('event_infos', [3], indirect=True)
+    def test_get_event_from_one_topic_with_multiple_future_events(self, topic_info, event_basic_infos, event_infos):
         event_basic_infos[0]['date'] = self.get_future_date(1)
         event_basic_infos[1]['date'] = self.get_future_date(2)
         event_basic_info_1 = event_basic_infos[0]
         event_basic_info_2 = event_basic_infos[1]
-        event_info_info_1 = {
-            "event_basic_sn": None,
-            "title": "A class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_2 = {
-            "event_basic_sn": None,
-            "title": "B class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
+        event_info_info_1 = event_infos[0]
+        event_info_info_2 = event_infos[1]
 
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
@@ -351,7 +285,8 @@ class TestEvents:
 
     @pytest.mark.parametrize('topic_infos', [4], indirect=True)
     @pytest.mark.parametrize('event_basic_infos', [4], indirect=True)
-    def test_get_events_from_four_distinct_level_topics(self, topic_infos, event_basic_infos):
+    @pytest.mark.parametrize('event_infos', [4], indirect=True)
+    def test_get_events_from_four_distinct_level_topics(self, topic_infos, event_basic_infos, event_infos):
         topic_info_1 = topic_infos[0]
         topic_info_1['level'] = 1
         topic_info_2 = topic_infos[1]
@@ -368,30 +303,10 @@ class TestEvents:
         event_basic_info_2 = event_basic_infos[1]
         event_basic_info_3 = event_basic_infos[2]
         event_basic_info_4 = event_basic_infos[3]
-        event_info_info_1 = {
-            "event_basic_sn": None,
-            "title": "A class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_2 = {
-            "event_basic_sn": None,
-            "title": "B class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_3 = {
-            "event_basic_sn": None,
-            "title": "C class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_4 = {
-            "event_basic_sn": None,
-            "title": "D class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
+        event_info_info_1 = event_infos[0]
+        event_info_info_2 = event_infos[1]
+        event_info_info_3 = event_infos[2]
+        event_info_info_4 = event_infos[3]
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -434,7 +349,8 @@ class TestEvents:
 
     @pytest.mark.parametrize('topic_infos', [5], indirect=True)
     @pytest.mark.parametrize('event_basic_infos', [5], indirect=True)
-    def test_get_events_from_five_distinct_level_topics(self, topic_infos, event_basic_infos):
+    @pytest.mark.parametrize('event_infos', [5], indirect=True)
+    def test_get_events_from_five_distinct_level_topics(self, topic_infos, event_basic_infos, event_infos):
         topic_info_1 = topic_infos[0]
         topic_info_1['level'] = 1
         topic_info_2 = topic_infos[1]
@@ -455,37 +371,11 @@ class TestEvents:
         event_basic_info_3 = event_basic_infos[2]
         event_basic_info_4 = event_basic_infos[3]
         event_basic_info_5 = event_basic_infos[4]
-
-        event_info_info_1 = {
-            "event_basic_sn": None,
-            "title": "A class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_2 = {
-            "event_basic_sn": None,
-            "title": "B class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_3 = {
-            "event_basic_sn": None,
-            "title": "C class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_4 = {
-            "event_basic_sn": None,
-            "title": "D class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_5 = {
-            "event_basic_sn": None,
-            "title": "E class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
+        event_info_info_1 = event_infos[0]
+        event_info_info_2 = event_infos[1]
+        event_info_info_3 = event_infos[2]
+        event_info_info_4 = event_infos[3]
+        event_info_info_5 = event_infos[4]
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -534,7 +424,8 @@ class TestEvents:
 
     @pytest.mark.parametrize('topic_infos', [4], indirect=True)
     @pytest.mark.parametrize('event_basic_infos', [4], indirect=True)
-    def test_get_events_from_four_topics_but_two_are_same_level(self, topic_infos, event_basic_infos):
+    @pytest.mark.parametrize('event_infos', [4], indirect=True)
+    def test_get_events_from_four_topics_but_two_are_same_level(self, topic_infos, event_basic_infos, event_infos):
         topic_info_1 = topic_infos[0]
         topic_info_1['level'] = 1
         topic_info_2 = topic_infos[1]
@@ -551,31 +442,10 @@ class TestEvents:
         event_basic_info_2 = event_basic_infos[1]
         event_basic_info_3 = event_basic_infos[2]
         event_basic_info_4 = event_basic_infos[3]
-
-        event_info_info_1 = {
-            "event_basic_sn": None,
-            "title": "A class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_2 = {
-            "event_basic_sn": None,
-            "title": "B class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_3 = {
-            "event_basic_sn": None,
-            "title": "C class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        event_info_info_4 = {
-            "event_basic_sn": None,
-            "title": "D class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
+        event_info_info_1 = event_infos[0]
+        event_info_info_2 = event_infos[1]
+        event_info_info_3 = event_infos[2]
+        event_info_info_4 = event_infos[3]
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
