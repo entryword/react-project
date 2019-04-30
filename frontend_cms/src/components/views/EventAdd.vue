@@ -367,7 +367,7 @@ export default {
         document.getElementById("basic_info").scrollIntoView();
       } else {
         // submit data
-        const submitData = JSON.parse(JSON.stringify(this.vueModel));
+        const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
         this.postEvent(submitData).then(() => {
           this.$router.push("/event-list");
         });

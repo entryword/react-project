@@ -60,5 +60,11 @@ export default {
   },
   POST_EVENT_RESULT(state, postEventResult){
     state.post_event_result = postEventResult;
+  },
+  PUT_EVENT_RESULT(state, putEventResult){
+    state.put_event_result = putEventResult;
+  },
+  POST_SLIDE_RESULT(state, postSlideResult){
+    state.post_slide_result = postSlideResult;
   }
 }

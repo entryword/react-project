@@ -1,17 +1,15 @@
 <template>
   <div>
-    <form action="#" method="post">
+    <form @submit="submit">
       <section class="content">
         <!-- Main row -->
-        <pre>event: {{event}}</pre>
-        <pre>apply: {{processApply}}</pre>
-        <!-- <pre>event: {{event}}</pre> -->
+        <!-- <pre>vueModel: {{vueModel}}</pre> -->
         <div class="row">
           <!-- 活動內容編輯 -->
           <div class="col-lg-12">
-            <div class="box">
+            <div class="box" id="basic_info">
               <div class="box-header">
-                <h3 class="box-title">活動內容新增</h3>
+                <h3 class="box-title">活動內容編輯</h3>
               </div>
               <div class="box-body">
                 <div class="row">
@@ -19,7 +17,7 @@
                     <font style="color:red">*活動名稱</font>
                   </div>
                   <div class="col-md-10">
-                    <div class="form-group">
+                    <div class="form-group" v-bind:class="{ 'has-error': errors.title }">
                       <input
                         type="text"
                         class="form-control"
@@ -28,6 +26,7 @@
                         maxlength="150"
                         v-model="title"
                       >
+                      <div v-if="errors.title" class="help-block">請填寫活動名稱</div>
                     </div>
                   </div>
                 </div>
@@ -36,19 +35,18 @@
                     <font style="color:red">*活動主題</font>
                   </div>
                   <div class="col-md-10">
-                    <div class="form-group">
+                    <div class="form-group" v-bind:class="{ 'has-error': errors.topic }">
                       <v-select :options="topics" label="label" v-model="topicOption"></v-select>
+                      <div v-if="errors.topic" class="help-block">請選擇活動主題</div>
                     </div>
                   </div>
                 </div>
-
                 <div class="row">
                   <div class="col-md-2">
                     <font style="color:red">*活動時間</font>
                   </div>
                   <div class="col-md-10">
-                    {{eventDateTime}}
-                    <div class="form-group">
+                    <div class="form-group" v-bind:class="{ 'has-error': errors.eventDateTime }">
                       <date-range-picker
                         :opens="dateTimeOptions.opens"
                         :locale-data="dateTimeOptions.locale"
@@ -61,6 +59,7 @@
                         :ranges="dateTimeOptions.ranges"
                         v-model="eventDateTime"
                       ></date-range-picker>
+                      <div v-if="errors.eventDateTime" class="help-block">請選擇活動時間 (點選 Apply)</div>
                     </div>
                   </div>
                 </div>
@@ -123,9 +122,9 @@
             <div class="nav-tabs-custom">
               <ul class="nav nav-tabs">
                 <li
-                  v-for="(apply, index) in vueModel.apply"
+                  v-for="(apply, index) in processApply"
                   :key="index"
-                  v-bind:class="{ 'active': index === vueModel.applySelected }"
+                  v-bind:class="{ 'active': index === applySelected }"
                 >
                   <a :href="'#tab_'+index" data-toggle="tab">報名方式 {{index + 1}}</a>
                 </li>
@@ -140,7 +139,7 @@
                   class="tab-pane"
                   v-for="(apply, index) in processApply"
                   :key="index"
-                  v-bind:class="{ 'active': index === vueModel.applySelected }"
+                  v-bind:class="{ 'active': index === applySelected }"
                   :id="'tab_'+index"
                 >
                   <!--報名tab -->
@@ -148,7 +147,6 @@
                     <div class="col-md-2">負責單位</div>
                     <div class="col-md-10">
                       <div class="form-group">
-                        {{apply.host}}
                         <input
                           type="text"
                           class="form-control"
@@ -156,7 +154,7 @@
                           maxlength="150"
                           placeholder="主辦單位(限150字)"
                           v-model="apply.host"
-                          @input="apply.host === $event.target.value"
+                          v-on:keyup="applyChange(index, 'host', apply.host)"
                         >
                       </div>
                     </div>
@@ -164,7 +162,6 @@
                   <div class="row">
                     <div class="col-md-2">報名管道</div>
                     <div class="col-md-10">
-                      {{apply.channel }}
                       <div class="form-group">
                         <div class="radio" v-for="type in applyChannelType" :key="type.key">
                           <label>
@@ -175,6 +172,7 @@
                               :value="type.key"
                               :checked="apply.channel == type.key"
                               v-model="apply.channel"
+                              @change="applyChange(index, 'channel', type.key)"
                             >
                             {{type.name}}
                           </label>
@@ -195,6 +193,7 @@
                               :value="type.key"
                               :checked="apply.type == type.key"
                               v-model="apply.type"
+                              @change="applyChange(index, 'type', type.key)"
                             >
                             {{type.name}}
                           </label>
@@ -212,6 +211,7 @@
                           name="signup_url"
                           placeholder="報名網址"
                           v-model="apply.url"
+                          v-on:keyup="applyChange(index, 'url', apply.url)"
                         >
                       </div>
                     </div>
@@ -231,6 +231,7 @@
                           :autoApply="dateTimeOptions.autoApply"
                           :ranges="dateTimeOptions.ranges"
                           v-model="apply.applyDateTime"
+                          @update="applyDataTimeChange(index, apply.applyDateTime)"
                         ></date-range-picker>
                       </div>
                     </div>
@@ -245,6 +246,7 @@
                           name="signup_price"
                           placeholder="報名費用"
                           v-model="apply.price"
+                          v-on:keyup="applyChange(index, 'price', apply.price)"
                         >
                       </div>
                     </div>
@@ -259,6 +261,7 @@
                           name="signup_limit"
                           placeholder="報名對象"
                           v-model="apply.limit"
+                          v-on:keyup="applyChange(index, 'limit', apply.limit)"
                         >
                       </div>
                     </div>
@@ -291,14 +294,14 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(item, index) in vueModel.slide_resources" :key="index">
-                      <td>{{index + 1}}</td>
+                    <tr v-for="(item, index) in slide_resources_list" :key="index">
+                      <td>{{item.id}}</td>
                       <td>
                         <a :href="item.url" target="_blank">{{item.title}}</a>
                       </td>
                       <td>{{RESOURCE_TYPE[item.type]}}</td>
                       <td>
-                        <span class="badge bg-red">刪除</span>
+                        <span class="badge bg-red" @click="deleteSlide(index)">刪除</span>
                       </td>
                     </tr>
                   </tbody>
@@ -313,7 +316,9 @@
         <!-- /.row (main row) -->
         <div class="row">
           <div class="col-lg-12">
-            <button type="submit" class="btn btn-primary">儲存</button>
+            <div class="box-footer">
+              <button type="submit" class="btn btn-primary pull-right">儲存</button>
+            </div>
           </div>
         </div>
       </section>
@@ -328,33 +333,32 @@
             <h4 class="modal-title">新增投影片 / 資源</h4>
           </div>
           <div class="modal-body">
+            <!-- <pre>{{newSlide}}</pre> -->
             <div class="form-inline">
               <div class="form-group">
                 <div class="radio">
-                  <label>
-                    <input
-                      type="radio"
-                      name="optionsRadios"
-                      id="optionsRadios1"
-                      value="option1"
-                      checked
-                    >
-                    新投影片
-                  </label>
+                  <input
+                    type="radio"
+                    name="optionsRadios"
+                    id="optionsRadios1"
+                    value="slide"
+                    :checked="newSlide.type == 'slide'"
+                    v-model="newSlide.type"
+                  >
+                  新投影片
                 </div>
               </div>
               <div class="form-group">
                 <div class="radio">
-                  <label>
-                    <input
-                      type="radio"
-                      name="optionsRadios"
-                      id="optionsRadios2"
-                      value="option2"
-                      checked
-                    >
-                    新資源
-                  </label>
+                  <input
+                    type="radio"
+                    name="optionsRadios"
+                    id="optionsRadios2"
+                    value="resource"
+                    :checked="newSlide.type == 'resource'"
+                    v-model="newSlide.type"
+                  >
+                  新資源
                 </div>
               </div>
             </div>
@@ -362,13 +366,15 @@
               <div class="col-md-3">名稱</div>
               <div class="col-md-9">
                 <div class="form-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    name="signup_price"
-                    placeholder="投影片名稱"
-                    value="Git 上半場"
-                  >
+                  <label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      name="signup_price"
+                      placeholder="投影片名稱"
+                      v-model="newSlide.title"
+                    >
+                  </label>
                 </div>
               </div>
             </div>
@@ -381,22 +387,33 @@
                     class="form-control"
                     name="signup_price"
                     placeholder="投影片網址"
-                    value="https://www.google.com"
+                    v-model="newSlide.url"
                   >
                 </div>
               </div>
             </div>
 
             <div class="radio">
-              <label style="width: 100%">
-                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+              <label style="width: 100%" for="optionsRadios3">
+                <input
+                  type="radio"
+                  name="optionsRadios"
+                  id="optionsRadios3"
+                  value="exist"
+                  v-model="newSlide.type"
+                >
                 從已有投影片/資源選擇
-                <v-select :options="slide_resources" label="title" v-model="slideResourceOption"></v-select>
+                <v-select :options="slide_resources" label="title" v-model="newSlide.selectedSlide"></v-select>
               </label>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">儲存</button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-dismiss="modal"
+              @click="addNewSlide"
+            >儲存</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">關閉</button>
           </div>
         </div>
@@ -434,6 +451,26 @@ export default {
       RESOURCE_TYPE: RESOURCE_TYPE,
       APPLY_TYPE: APPLY_TYPE,
       CHANNEL_TYPE: CHANNEL_TYPE,
+      errors: {
+        title: false,
+        topic: false,
+        eventDateTime: false
+      },
+      vueModel: {
+        title: null,
+        topic_id: null,
+        start_date: null,
+        start_time: null,
+        end_date: null,
+        end_time: null,
+        place_id: 37,
+        desc: null,
+        speaker_ids: [],
+        assistant_ids: [],
+        field_ids: [],
+        slide_resource_ids: [],
+        apply: []
+      },
       dateTimeOptions: {
         opens: "center",
         locale: { firstDay: 0, format: "YYYY-MM-DD HH:mm" },
@@ -446,8 +483,13 @@ export default {
         ranges: false
       },
       editorConfig: {},
-      slideResourceOption: {}
-      // eventDateTime1: { startDate: moment(), endDate: moment() }
+      newSlide: {
+        title: null,
+        url: "",
+        type: null,
+        selectedSlide: null
+      },
+      applySelected: 0
     };
   },
   computed: {
@@ -457,7 +499,9 @@ export default {
       "speakers",
       "fields",
       "slide_resources",
-      "event"
+      "event",
+      "put_event_result",
+      "post_slide_result"
     ]),
     applyChannelType: function() {
       return Object.keys(this.CHANNEL_TYPE).map(key => {
@@ -471,64 +515,42 @@ export default {
     },
     title: {
       get: function() {
-        return this.event.title;
+        return this.vueModel.title;
       },
       set: function(newValue) {
-        this.event.title = newValue;
+        this.errors.title = false;
+        this.vueModel.title = newValue;
       }
     },
     desc: {
       get: function() {
-        return this.event.desc;
+        return this.vueModel.desc;
       },
       set: function(newValue) {
-        this.event.desc = newValue;
+        this.vueModel.desc = newValue;
       }
     },
     eventDateTime: {
       get: function() {
-        if (this.event.start_date) {
+        if (this.vueModel.start_date) {
           return {
             startDate: moment(
-              `${this.event.start_date} ${this.event.start_time}`
+              `${this.vueModel.start_date} ${this.vueModel.start_time}`
             ),
-            endDate: moment(`${this.event.end_date} ${this.event.end_time}`)
+            endDate: moment(
+              `${this.vueModel.end_date} ${this.vueModel.end_time}`
+            )
           };
         }
       },
       set: function(newValue) {
-        this.event.start_date = moment(newValue.startDate).format("YYYY-MM-DD");
-        this.event.start_time = moment(newValue.startDate).format("HH:mm");
-        this.event.end_date = moment(newValue.endDate).format("YYYY-MM-DD");
-        this.event.end_time = moment(newValue.endDate).format("HH:mm");
-      }
-    },
-    vueModel: {
-      get: function() {
-        return {
-          eventDateTime: {
-            startDate: moment(
-              `${this.event.start_date} ${this.event.start_time}`
-            ).toDate(),
-            endDate: moment(
-              `${this.event.end_date} ${this.event.end_time}`
-            ).toDate()
-          },
-          title: this.event.title,
-          topic_id: this.event.topic_id,
-          start_date: this.event.start_date,
-          start_time: this.event.start_time,
-          end_date: this.event.end_date,
-          end_time: this.event.end_time,
-          desc: this.event.desc,
-          place_id: this.event.place_id,
-          speaker_ids: this.event.speaker_ids,
-          assistant_ids: this.event.assistant_ids,
-          field_ids: this.event.field_ids,
-          slide_resources: this.event.slide_resources,
-          applySelected: 0,
-          apply: this.event.apply
-        };
+        this.errors.eventDateTime = false;
+        this.vueModel.start_date = moment(newValue.startDate).format(
+          "YYYY-MM-DD"
+        );
+        this.vueModel.start_time = moment(newValue.startDate).format("HH:mm");
+        this.vueModel.end_date = moment(newValue.endDate).format("YYYY-MM-DD");
+        this.vueModel.end_time = moment(newValue.endDate).format("HH:mm");
       }
     },
     processApply: {
@@ -551,7 +573,6 @@ export default {
           : [];
       },
       set: function(newValue) {
-        console.log(newValue);
         this.vueModel.apply = newValue.map(a => ({
           host: a.host,
           channel: a.channel,
@@ -564,7 +585,7 @@ export default {
           limit: a.limit,
           url: a.url
         }));
-        // console.log(this.vueModel.apply);
+        // this.event.apply = [...this.vueModel.appy];
       }
     },
     placeOption: {
@@ -576,9 +597,9 @@ export default {
           label: "37 未定"
         };
 
-        if (this.event.place_info && this.event.place_info.id) {
+        if (this.vueModel.place_id) {
           const place = this.places.filter(
-            p => p.id === this.event.place_info.id
+            p => p.id === this.vueModel.place_id
           );
           if (place.length > 0) {
             return place;
@@ -590,15 +611,16 @@ export default {
         }
       },
       set: function(newValue) {
-        this.event.place_info = {
-          id: newValue.id,
-          name: newValue.name
-        };
+        if (!newValue) {
+          this.vueModel.place_id = 37;
+        } else {
+          this.vueModel.place_id = newValue.id;
+        }
       }
     },
     topicOption: {
       get: function() {
-        if (this.event.topic_id) {
+        if (this.vueModel.topic_id) {
           const topic = this.topics.filter(t => t.id === this.event.topic_id);
           if (topic.length > 0) {
             return topic;
@@ -610,37 +632,39 @@ export default {
         }
       },
       set: function(newValue) {
-        this.event.topic_id = newValue.id;
+        if (!newValue) {
+          this.vueModel.topic_id = null;
+        } else {
+          this.errors.topic = false;
+          this.vueModel.topic_id = newValue.id;
+        }
       }
     },
     speakerOption: {
       get: function() {
-        if (this.event.speakers) {
-          const event_speakers_id = this.event.speakers.map(s => s.id);
-          const a = this.speakers.reduce((acc, item, index) => {
-            if (event_speakers_id.indexOf(item.id) >= 0) {
+        if (this.vueModel.speaker_ids) {
+          return this.speakers.reduce((acc, item, index) => {
+            if (this.vueModel.speaker_ids.indexOf(item.id) >= 0) {
               return [...acc, this.speakers[index]];
             }
             return acc;
           }, []);
-          return a;
         }
         return [];
       },
       set: function(newValue) {
-        this.vueModel.speaker_ids = newValue.map(s => s.id);
-        this.event.speakers = newValue.map(s => ({
-          id: s.id,
-          name: s.name
-        }));
+        if (newValue) {
+          this.vueModel.speaker_ids = newValue.map(s => s.id);
+        } else {
+          this.vueModel.speaker_ids = [];
+        }
       }
     },
     assistantOption: {
       get: function() {
-        if (this.event.assistants) {
-          const event_assistants_id = this.event.assistants.map(s => s.id);
+        if (this.vueModel.assistant_ids) {
           return this.speakers.reduce((acc, item, index) => {
-            if (event_assistants_id.indexOf(item.id) >= 0) {
+            if (this.vueModel.assistant_ids.indexOf(item.id) >= 0) {
               return [...acc, this.speakers[index]];
             }
             return acc;
@@ -649,18 +673,18 @@ export default {
         return [];
       },
       set: function(newValue) {
-        this.vueModel.assistant_ids = newValue.map(s => s.id);
-        this.event.assistants = newValue.map(s => ({
-          id: s.id,
-          name: s.name
-        }));
+        if (newValue) {
+          this.vueModel.assistant_ids = newValue.map(s => s.id);
+        } else {
+          this.vueModel.assistant_ids = [];
+        }
       }
     },
     fieldOption: {
       get: function() {
-        if (this.event.field) {
+        if (this.vueModel.field_ids) {
           return this.fields.reduce((acc, item, index) => {
-            if (this.event.field.indexOf(item.id) >= 0) {
+            if (this.vueModel.field_ids.indexOf(item.id) >= 0) {
               return [...acc, this.fields[index]];
             }
             return acc;
@@ -669,14 +693,38 @@ export default {
         return [];
       },
       set: function(newValue) {
-        this.vueModel.field = newValue.map(s => s.id);
-        this.event.field = newValue.map(s => s.id);
+        if (newValue) {
+          this.vueModel.field_ids = newValue.map(s => s.id);
+        } else {
+          this.vueModel.field_ids = [];
+        }
       }
-    }
-  },
-  watch: {
-    processApply(newValue) {
-      console.log(newValue);
+    },
+    slide_resources_list: {
+      get: function() {
+        if (
+          this.vueModel.slide_resource_ids &&
+          this.vueModel.slide_resource_ids.length > 0
+        ) {
+          return this.slide_resources.filter(s => {
+            const id = parseInt(s.id, 10);
+            return this.vueModel.slide_resource_ids.indexOf(id) >= 0;
+          });
+        } else {
+          return [];
+        }
+      },
+      set: function(newValue) {
+        if (newValue) {
+          this.vueModel.slide_resource_ids = newValue.map(s =>
+            parseInt(s.id, 10)
+          );
+          this.event.slide_resources = newValue;
+        } else {
+          this.vueModel.slide_resource_ids = [];
+          this.event.slide_resources = null;
+        }
+      }
     }
   },
   methods: {
@@ -686,7 +734,9 @@ export default {
       "getSpeakers",
       "getDefinitions",
       "getSlideResources",
-      "getEvent"
+      "getEvent",
+      "putEvent",
+      "postSlide"
     ]),
     clearInput(vueModel) {
       vueModel = {};
@@ -697,28 +747,130 @@ export default {
       this.getSpeakers();
       this.getDefinitions();
       this.getSlideResources();
-      this.getEvent(id);
+      this.getEvent(id).then(() => {
+        console.log(this.event);
+        this.title = this.event.title;
+        this.desc = this.event.desc;
+        this.eventDateTime = this.event.start_date
+          ? {
+              startDate: moment(
+                `${this.event.start_date} ${this.event.start_time}`
+              ),
+              endDate: moment(`${this.event.end_date} ${this.event.end_time}`)
+            }
+          : null;
+        this.vueModel.place_id = this.event.place_info.id;
+        this.vueModel.topic_id = this.event.topic_id;
+        this.vueModel.speaker_ids = this.event.speakers.map(s => s.id);
+        this.vueModel.assistant_ids = this.event.assistants.map(s => s.id);
+        this.vueModel.field_ids = this.event.field;
+        this.vueModel.slide_resource_ids = this.event.slide_resources.map(
+          s => s.id
+        );
+        this.vueModel.apply = this.event.apply;
+      });
     },
     addApply() {
+      var now = moment().format("YYYY-MM-DD HH:mm");
       this.vueModel.apply.push({
         host: "",
         channel: null,
         type: null,
         applyDateTime: null,
-        start_time: "",
-        end_time: "",
+        start_time: now,
+        end_time: now,
         price: "",
         limit: "",
         url: ""
       });
-      this.vueModel.applySelected = this.vueModel.apply.length - 1;
+      this.applySelected = this.vueModel.apply.length - 1;
     },
-    submit() {
+    addNewSlide() {
+      if (!this.newSlide.type) {
+        alert("投影片 / 資源 類型 沒選");
+      } else if (this.newSlide.type === "exist") {
+        this.addExitSlide();
+      } else if (!this.newSlide.title || !this.newSlide.url) {
+        alert("新投影片 / 資源 標題 或 url 需填寫");
+      } else {
+        //add slide api
+        const new_data = {
+          data: {
+            type: this.newSlide.type,
+            title: this.newSlide.title,
+            url: this.newSlide.url
+          }
+        };
+        this.postSlide(new_data).then(() => {
+          this.$set(
+            this.vueModel.slide_resource_ids,
+            this.vueModel.slide_resource_ids.length,
+            this.post_slide_result.id
+          );
+          this.$set(
+            this.slide_resources,
+            this.slide_resources.length,
+            this.post_slide_result
+          );
+        });
+      }
+    },
+    addExitSlide() {
+      if (this.newSlide.type === "exist" && !this.newSlide.selectedSlide) {
+        alert("選擇已存在投影片 / 資源");
+      } else {
+        this.$set(
+          this.vueModel.slide_resource_ids,
+          this.vueModel.slide_resource_ids.length,
+          parseInt(this.newSlide.selectedSlide.id, 10)
+        );
+      }
+    },
+    deleteSlide(index) {
+      this.$delete(this.vueModel.slide_resource_ids, index);
+    },
+    applyChange(index, key, value) {
+      Vue.set(this.vueModel.apply[index], key, value);
+    },
+    applyDataTimeChange(index, value) {
+      const start_time = moment(value.startDate).format("YYYY-MM-DD HH:mm");
+      const end_time = moment(value.endDate).format("YYYY-MM-DD HH:mm");
+
+      Vue.set(this.vueModel.apply[index], "start_time", start_time);
+      Vue.set(this.vueModel.apply[index], "end_time", end_time);
+    },
+    submit(e) {
+      e.preventDefault();
       // check required data
-      // convert data
+      let hasError = false;
+      if (!this.vueModel.title || this.vueModel.title.trim().length <= 0) {
+        this.errors.title = true;
+        hasError = true;
+      }
+      if (!this.vueModel.topic_id || this.vueModel.topic_id.length <= 0) {
+        this.errors.topic = true;
+        hasError = true;
+      }
+      if (
+        !this.vueModel.start_date ||
+        !this.vueModel.start_time ||
+        !this.vueModel.end_date ||
+        !this.vueModel.end_time
+      ) {
+        this.errors.eventDateTime = true;
+        hasError = true;
+      }
       //call api
+      if (hasError) {
+        document.getElementById("basic_info").scrollIntoView();
+      } else {
+        // submit data
+        const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
+        this.putEvent(submitData).then(() => {
+          this.$router.push("/event-list");
+        });
+      }
     }
   }
 };
 </script>
-

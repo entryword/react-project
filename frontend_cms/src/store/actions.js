@@ -31,5 +31,13 @@ export default {
     postEvent: async function({ commit, state }, data) {
         const postEventResult = await api.postEvent(data).then(res => res.data.data);
         commit('POST_EVENT_RESULT', postEventResult);
+    },
+    putEvent: async function({ commit, state }, data) {
+        const putEventResult = await api.putEvent(data).then(res => res.data.data);
+        commit('PUT_EVENT_RESULT', putEventResult);
+    },
+    postSlide: async function({ commit, state }, data) {
+        const postSlideResult = await api.postSlide(data).then(res => res.data.data);
+        commit('POST_SLIDE_RESULT', postSlideResult);
     }
 }

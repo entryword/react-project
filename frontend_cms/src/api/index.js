@@ -106,6 +106,30 @@ export default {
       url = `${prefix}/event`
     }
     return axios({ method, url, data })
+  },
+  putEvent(data){
+    let method = "POST";
+    let url = "";
+    if (process.env.NODE_ENV === 'development'){
+      console.log(data)
+      method = "get";
+      url = "/static/fake_data/put_event_result.json"
+    } else {
+      url = `${prefix}/event`
+    }
+    return axios({ method, url, data })
+  },
+  postSlide(data){
+    let method = "POST";
+    let url = "";
+    if (process.env.NODE_ENV === 'development'){
+      console.log(data)
+      method = "get";
+      url = "/static/fake_data/post_slide_result.json"
+    } else {
+      url = `${prefix}/slide`
+    }
+    return axios({ method, url, data })
   }
 }
 

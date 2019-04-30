@@ -11,5 +11,7 @@ export default {
   speakers: [],
   fields: [],
   slide_resources: [],
-  post_event_result: null
+  post_event_result: null,
+  put_event_result: null,
+  post_slide_result: null
 }
