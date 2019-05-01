@@ -6,7 +6,8 @@ from sqlalchemy import or_, and_
 from app.exceptions import (
     TOPIC_NOT_EXIST, EVENTBASIC_NOT_EXIST,
     EVENTINFO_NOT_EXIST, SPEAKER_NOT_EXIST,
-    PLACE_NOT_EXIST, APPLY_NOT_EXIST
+    PLACE_NOT_EXIST, APPLY_NOT_EXIST,
+    SLIDERESOURCE_NOT_EXIST
 )
 from .abstract import SQLDatabaseAPI
 from .models import (
@@ -246,6 +247,13 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def get_slides(self):
         return self.session.query(SlideResource).all()
+
+    def get_slide_resource(self, sn):
+        slide_resource = self.session.query(SlideResource).filter_by(sn=sn).one_or_none()
+        if not slide_resource:
+            raise SLIDERESOURCE_NOT_EXIST
+        slide_resource = self.session.merge(slide_resource)
+        return slide_resource
 
     ########## update
 
