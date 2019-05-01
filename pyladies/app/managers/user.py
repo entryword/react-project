@@ -1,5 +1,3 @@
-import json
-
 from flask import current_app
 from flask_login import login_user, logout_user
 
