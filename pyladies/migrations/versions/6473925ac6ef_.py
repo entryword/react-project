@@ -25,7 +25,6 @@ def upgrade():
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_users_name'), 'user', ['name'], unique=True)
-    op.bulk_insert(t_user, [{'name': 'pyladies', 'password_hash': 'pbkdf2:sha1:50000$dlFrwKmm$6449e2fd3c0a7e8989317ec537652cd1a18ef17f'}])
     # ### end Alembic commands ###
 
 
