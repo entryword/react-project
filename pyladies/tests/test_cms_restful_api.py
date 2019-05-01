@@ -228,6 +228,7 @@ class TestGetEvents:
         assert rv.json["data"][0]["event_apply_exist"] == 0
         assert rv.json["data"][0]["speaker_exist"] == 0
 
+
 class TestGetSlides:
     def setup(self):
         self.app = create_app('test')
@@ -255,8 +256,8 @@ class TestGetSlides:
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            manager.create_slide(slide_1, autocommit=True)
-            manager.create_slide(slide_2, autocommit=True)
+            manager.create_slide_resource(slide_1, autocommit=True)
+            manager.create_slide_resource(slide_2, autocommit=True)
         # test
         rv = self.test_client.get("/cms/api/slides")
 
