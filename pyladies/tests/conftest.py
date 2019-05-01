@@ -6,8 +6,10 @@ from app import constant
 FREQS = list(constant.FREQ_1_0.keys())
 LEVELS = list(constant.LEVEL_1_0.keys())
 HOSTS = list(constant.HOST_1_0.keys())
+HOST_PLACES = list(constant.HOST_PLACE_1_0.keys())
 FIELDS = list(constant.FIELD_1_0.keys())
-
+TYPE = list(constant.TYPE_1_0.keys())
+APPLY_LIMIT = list(constant.APPLY_LIMIT_1_0.keys())
 
 # topc_info
 def _get_topic_infos(length=1):
@@ -128,13 +130,13 @@ def _get_apply_infos(length):
     for i in range(length):
         random_clock = randint(0, 21)
         applies.append({
-            "host": "婦女館",
-            "channel": 1,
-            "type": "all",
+            "host": choice(HOST_PLACES),
+            "channel": randint(0, 1),
+            "type": choice(TYPE),
             "start_time": "%02d:00" % random_clock,
             "end_time": "%02d:00" % (random_clock + 2),
-            "price": u"一般人400元，學生200元",
-            "limit": u"限女",
+            "price": u"一般150元，學生50元",
+            "limit": choice(APPLY_LIMIT),
             "url": "https://...",
             "qualification": "https://..."
         })

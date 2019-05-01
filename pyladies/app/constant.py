@@ -34,6 +34,13 @@ HOST_1_0 = {
     2: "PyLadies 受邀"
 }
 
+HOST_PLACE_1_0 = {
+    0: "美國創新中心AIC",
+    1: "臺北市婦女館",
+    2: "天瓏書局CodingSpace TLCS",
+    3: "松菸133號共創合作社"
+}
+
 STATUS_1_0 = {
     0: "已結束",
     1: "未來活動"
@@ -75,4 +82,10 @@ DEFINITION_1_0 = {
     "time": TIME_1_0,
     "channel": CHANNEL_1_0,
     "type": TYPE_1_0
+}
+
+APPLY_LIMIT_1_0 = {
+    "girl": "限女",
+    "family": "親子",
+    "no": "不限"
 }
