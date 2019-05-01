@@ -7,6 +7,8 @@ class PyLadiesException(Exception):
 # [0~999] preserved
 _msg = "Perform the action successfully."
 OK = PyLadiesException(0, _msg)
+_msg = "Unable to perform the action. Please check the format of input is correct, and try again."
+INVALID_INPUT = PyLadiesException(1, _msg)
 
 # [1000~1099] topic
 _msg = "Unable to perform the action. Topic doesn't exist."
@@ -43,6 +45,14 @@ PLACE_NOT_EXIST = PyLadiesException(1500, _msg)
 # [1600~1699] apply
 _msg = "Unable to perform the action. Apply doesn't exist."
 APPLY_NOT_EXIST = PyLadiesException(1600, _msg)
+
+# [1700~1799] user
+_msg = "Unable to perform the action. User doesn't exist."
+USER_NOT_EXIST = PyLadiesException(1700, _msg)
+_msg = "Failed to log in. Please check username and password are correct, and try again."
+USER_LOGIN_FAILED = PyLadiesException(1701, _msg)
+_msg = "Unable to perform the action. Please log in first."
+USER_LOGIN_REQUIRED = PyLadiesException(1702, _msg)
 
 # [8000~8099] routing
 _msg = "Routing Not Found"

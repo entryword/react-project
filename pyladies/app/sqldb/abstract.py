@@ -62,6 +62,9 @@ class SQLDatabaseAPI():
     def get_event_apply(self, sn):
         raise NotImplementedError()
 
+    def get_user_by_name(self, name):
+        raise NotImplementedError()
+
     ########## update
 
     def update_topic(self, sn, info, autocommit=False):
