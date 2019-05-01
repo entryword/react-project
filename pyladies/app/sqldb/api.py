@@ -244,6 +244,9 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         speaker = self.session.merge(speaker)
         return speaker
 
+    def get_slides(self):
+        return self.session.query(SlideResource).all()
+
     ########## update
 
     # TODO: not finished yet
