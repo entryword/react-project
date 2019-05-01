@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from random import choice, randint, sample
+from random import choice, randint, sample, getrandbits
 import pytest
 from app import constant
 
@@ -72,21 +72,22 @@ def event_basic_infos(request):
 
 # event_info
 def _get_event_infos(length=1):
-    event_infos = []
+    events = []
     for i in range(length):
-        event_infos.append({
+        event_idx = i + 1
+        events.append({
             "event_basic_sn": None,
-            "title": "event " + str(i+1),
-            "desc": "this is event " + str(i+1),
-            "fields": [0, 1],
+            "title": "event %s" % event_idx,
+            "desc": "this is event %s" % event_idx,
+            "fields": sample(FIELDS, randint(1, len(FIELDS))),
         })
-    return event_infos
+    return events
 
 
 @pytest.fixture()
 def event_info():
-    event_infos = _get_event_infos(length=1)
-    return event_infos[0]
+    events = _get_event_infos(length=1)
+    return events[0]
 
 
 @pytest.fixture()
@@ -95,6 +96,78 @@ def event_infos(request):
     if hasattr(request, 'param'):
         length = request.param
     return _get_event_infos(length)
+
+
+# speaker_info
+def _get_speaker_infos(length=1, speaker_type='speaker'):
+    speakers = []
+    for i in range(length):
+        speaker_idx = i + 1
+        speakers.append({
+            "name": "%s %s" % (speaker_type, speaker_idx),
+            "photo": "https://pyladies.marsw.tw/img/speaker_%s_photo.png" % speaker_idx,
+            "title": "%s title %s" % (speaker_type, speaker_idx),
+            "major_related": bool(getrandbits(1)),
+            "intro": "intro %s" % speaker_idx,
+            "fields": sample(FIELDS, randint(1, len(FIELDS))),
+        })
+    return speakers
+
+
+@pytest.fixture()
+def speaker_info():
+    speakers = _get_speaker_infos(length=1, speaker_type='speaker')
+    return speakers[0]
+
+
+@pytest.fixture()
+def speaker_infos(request):
+    length = 1
+    if hasattr(request, 'param'):
+        length = request.param
+    return _get_speaker_infos(length, speaker_type='speaker')
+
+
+@pytest.fixture()
+def assistant_info():
+    speakers = _get_speaker_infos(length=1, speaker_type='assistant')
+    return speakers[0]
+
+
+@pytest.fixture()
+def assistant_infos(request):
+    length = 1
+    if hasattr(request, 'param'):
+        length = request.param
+    return _get_speaker_infos(length, speaker_type='assistant')
+
+
+# slide_resource
+def _get_slide_resources(length=1):
+    slides = []
+    for i in range(length):
+        slide_idx = i + 1
+        slide_resource_type = choice(["slide", "resource"])
+        slides.append({
+            "type": slide_resource_type,
+            "title": "%s title %s" % (slide_resource_type, slide_idx),
+            "url": "http://tw.pyladies.com/slides/%s" % slide_idx,
+        })
+    return slides
+
+
+@pytest.fixture()
+def slide_resource():
+    slides = _get_slide_resources(length=1)
+    return slides[0]
+
+
+@pytest.fixture()
+def slide_resources(request):
+    length = 1
+    if hasattr(request, 'param'):
+        length = request.param
+    return _get_slide_resources(length)
 
 
 # place_info
@@ -127,7 +200,7 @@ def place_infos(request):
 # apply_info
 def _get_apply_infos(length):
     applies = []
-    for i in range(length):
+    for _ in range(length):
         random_clock = randint(0, 21)
         applies.append({
             "host": choice(HOST_PLACES),
