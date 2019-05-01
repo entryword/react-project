@@ -99,10 +99,10 @@ class BaseSlideManager():
 
 
 class BaseUserManager():
-     @staticmethod
-     def login(username, password):
+    @staticmethod
+    def login(username, password):
         raise NotImplementedError()
 
-     @staticmethod
-     def logout():
+    @staticmethod
+    def logout():
         raise NotImplementedError()

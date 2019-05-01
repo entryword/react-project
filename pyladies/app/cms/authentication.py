@@ -2,10 +2,10 @@ from flask import jsonify, request
 from flask_login import login_required
 from jsonschema import validate
 
+from app.schemas.authentication import schema_login
 from . import api
 from ..exceptions import OK
 from ..managers.user import Manager as UserManager
-from app.schemas.authentication import schema_login
 
 
 @api.route('/login', methods=["POST"])

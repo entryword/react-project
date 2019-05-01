@@ -3,12 +3,12 @@ import json
 from flask import current_app
 from flask_login import login_user, logout_user
 
-from .abstract import BaseUserManager
 from app.exceptions import (
     PyLadiesException,
     USER_NOT_EXIST, USER_LOGIN_FAILED,
 )
 from app.sqldb import DBWrapper
+from .abstract import BaseUserManager
 
 
 class Manager(BaseUserManager):

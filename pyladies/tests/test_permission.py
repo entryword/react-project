@@ -1,5 +1,3 @@
-import json
-
 from werkzeug.security import generate_password_hash
 
 from app import create_app
@@ -26,7 +24,7 @@ class TestLoginRequired:
 
     def test_access_secret_when_user_not_login(self):
         rv = self.test_client.get("/cms/api/secret")
-        
+
         assert rv.status_code == 200
         assert rv.json["info"]["code"] == 1702
 
@@ -38,7 +36,7 @@ class TestLoginRequired:
         }
         user_info = {
             "name": login_info["username"],
-            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1") 
+            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1")
         }
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             obj = User(**user_info)
@@ -48,7 +46,7 @@ class TestLoginRequired:
         # test
         self.login(login_info)
         rv = self.test_client.get("/cms/api/secret")
-        
+
         # assertion
         assert rv.status_code == 200
         assert rv.data == b"Only authenticated users are allowed!"

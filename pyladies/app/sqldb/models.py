@@ -227,8 +227,8 @@ class EventInfo(db.Model):
 
     event_basic = db.relationship("EventBasic",
                                   backref=db.backref("event_info", uselist=False))
-    slide_resources = db.relationship("SlideResource", 
-                                      secondary=event_slide, 
+    slide_resources = db.relationship("SlideResource",
+                                      secondary=event_slide,
                                       uselist=True)
     speakers = db.relationship("Speaker",
                                secondary=event_info_to_speaker,
