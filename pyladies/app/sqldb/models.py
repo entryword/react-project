@@ -1,10 +1,10 @@
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
+from flask_login import UserMixin, AnonymousUserMixin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import types, String
 from sqlalchemy.ext.declarative import declarative_base
-
-# from app import db
 
 
 Base = declarative_base(name='Model')
@@ -261,3 +261,30 @@ class EventApply(db.Model):
         return ("<EventApply sn: {obj.sn}"
                 ", event_basic_sn: {obj.event_basic_sn}"
                 ", apply: {obj.apply}").format(obj=self)
+
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'user'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True, index=True)
+    password_hash = db.Column(db.String(128))
+
+    # @property
+    # def password(self):
+    #     raise AttributeError('password is not a readable attribute')
+
+    # @password.setter
+    # def password(self, password):
+    #     self.password_hash = generate_password_hash(password, method="pbkdf2:sha1")
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
+class AnonymousUser(AnonymousUserMixin):
+    def can(self, permissions):
+        return False
+
+    def is_administrator(self):
+        return False

@@ -89,3 +89,13 @@ class BaseApplyManager():
     @staticmethod
     def delete_event_apply_info(event_apply_sn):
         raise NotImplementedError()
+
+
+class BaseUserManager():
+     @staticmethod
+     def login(username, password):
+        raise NotImplementedError()
+
+     @staticmethod
+     def logout():
+        raise NotImplementedError()

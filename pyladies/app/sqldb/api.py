@@ -6,12 +6,13 @@ from sqlalchemy import or_, and_
 from app.exceptions import (
     TOPIC_NOT_EXIST, EVENTBASIC_NOT_EXIST,
     EVENTINFO_NOT_EXIST, SPEAKER_NOT_EXIST,
-    PLACE_NOT_EXIST, APPLY_NOT_EXIST
+    PLACE_NOT_EXIST, APPLY_NOT_EXIST,
+    USER_NOT_EXIST
 )
 from .abstract import SQLDatabaseAPI
 from .models import (
     Topic, Speaker, Link, Place, EventBasic,
-    SlideResource, EventInfo, EventApply
+    SlideResource, EventInfo, EventApply, User
 )
 
 
@@ -243,6 +244,13 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             raise SPEAKER_NOT_EXIST
         speaker = self.session.merge(speaker)
         return speaker
+
+    def get_user_by_name(self, name):
+        user = self.session.query(User).filter_by(name=name).one_or_none()
+        if not user:
+            raise USER_NOT_EXIST
+        user = self.session.merge(user)
+        return user
 
     ########## update
 
