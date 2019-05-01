@@ -6,10 +6,22 @@ from app import constant
 FREQS = list(constant.FREQ_1_0.keys())
 LEVELS = list(constant.LEVEL_1_0.keys())
 HOSTS = list(constant.HOST_1_0.keys())
-HOST_PLACES = list(constant.HOST_PLACE_1_0.keys())
 FIELDS = list(constant.FIELD_1_0.keys())
 TYPE = list(constant.TYPE_1_0.keys())
-APPLY_LIMIT = list(constant.APPLY_LIMIT_1_0.keys())
+CHANNEL = list(constant.CHANNEL_1_0.keys())
+APPLY_LIMIT_1_0 = {
+    "girl": "限女",
+    "family": "親子",
+    "no": "不限"
+}
+APPLY_LIMIT = list(APPLY_LIMIT_1_0.keys())
+HOST_PLACE_1_0 = {
+    0: "美國創新中心AIC",
+    1: "臺北市婦女館",
+    2: "天瓏書局CodingSpace TLCS",
+    3: "松菸133號共創合作社"
+}
+HOST_PLACES = list(HOST_PLACE_1_0.keys())
 
 # topc_info
 def _get_topic_infos(length=1):
@@ -204,7 +216,7 @@ def _get_apply_infos(length):
         random_clock = randint(0, 21)
         applies.append({
             "host": choice(HOST_PLACES),
-            "channel": randint(0, 1),
+            "channel": choice(CHANNEL),
             "type": choice(TYPE),
             "start_time": "%02d:00" % random_clock,
             "end_time": "%02d:00" % (random_clock + 2),
