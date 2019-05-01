@@ -7,6 +7,8 @@ class PyLadiesException(Exception):
 # [0~999] preserved
 _msg = "Perform the action successfully."
 OK = PyLadiesException(0, _msg)
+_msg = "Unable to perform the action. Please check the format of input is correct, and try again."
+INVALID_INPUT = PyLadiesException(1, _msg)
 
 # [1000~1099] topic
 _msg = "Unable to perform the action. Topic doesn't exist."

@@ -2,8 +2,11 @@
 
 import json
 
+from werkzeug.security import generate_password_hash
+
 from app import create_app
 from app.sqldb import DBWrapper
+from app.sqldb.models import User
 
 
 class TestCreateEvent:
@@ -270,3 +273,111 @@ class TestGetSlides:
         assert rv.json["data"][1]["type"] == "resource"
         assert rv.json["data"][1]["title"] == "ihower 的 Git 教室"
         assert rv.json["data"][1]["url"] == "https://ihower.tw/git/"
+
+
+class TestLogin:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def create_new_user(self, login_info):
+        user_info = {
+            "name": login_info["username"],
+            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1")
+        }
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            obj = User(**user_info)
+            db_sess.add(obj)
+            db_sess.commit()
+
+    def test_invalid_input(self):
+        login_info = {
+            "username": "pyladies",
+            "password": ""
+        }
+
+        rv = self.test_client.post("/cms/api/login", json=login_info)
+
+        assert rv.json["info"]["code"] == 1
+
+    def test_user_not_exist(self):
+        login_info = {
+            "username": "pyladies",
+            "password": "test123456"
+        }
+
+        rv = self.test_client.post("/cms/api/login", json=login_info)
+
+        assert rv.json["info"]["code"] == 1701
+
+    def test_wrong_password(self):
+        login_info = {
+            "username": "pyladies",
+            "password": "test123456"
+        }
+        self.create_new_user(login_info)
+
+        login_info["password"] = "12345678"
+        rv = self.test_client.post("/cms/api/login", json=login_info)
+
+        assert rv.json["info"]["code"] == 1701
+
+    def test_success(self):
+        login_info = {
+            "username": "pyladies",
+            "password": "test123456"
+        }
+        self.create_new_user(login_info)
+
+        rv = self.test_client.post("/cms/api/login", json=login_info)
+
+        assert rv.json["info"]["code"] == 0
+
+
+class TestLogout:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def create_new_user(self, login_info):
+        user_info = {
+            "name": login_info["username"],
+            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1")
+        }
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            obj = User(**user_info)
+            db_sess.add(obj)
+            db_sess.commit()
+
+    def test_not_login(self):
+        rv = self.test_client.put("/cms/api/logout")
+
+        assert rv.json["info"]["code"] == 1702
+
+    def test_success(self):
+        login_info = {
+            "username": "pyladies",
+            "password": "test123456"
+        }
+        self.create_new_user(login_info)
+        self.test_client.post("/cms/api/login", json=login_info)
+
+        rv = self.test_client.put("/cms/api/logout")
+
+        assert rv.json["info"]["code"] == 0

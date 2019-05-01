@@ -1,10 +1,14 @@
 from flask import Flask, jsonify, current_app
 from flask_login import LoginManager
+from jsonschema.exceptions import ValidationError
 from werkzeug.exceptions import Unauthorized
 
 from config import config
 
-from app.exceptions import PyLadiesException, ROUTING_NOT_FOUND, UNEXPECTED_ERROR, USER_LOGIN_REQUIRED
+from app.exceptions import (
+    PyLadiesException, ROUTING_NOT_FOUND, UNEXPECTED_ERROR,
+    USER_LOGIN_REQUIRED, INVALID_INPUT,
+)
 from app.sqldb.models import db, AnonymousUser, User
 
 
@@ -36,6 +40,7 @@ def create_app(config_name):
 
     app.register_error_handler(404, handle_not_found_error)
     app.register_error_handler(PyLadiesException, handle_pyladies_error)
+    app.register_error_handler(ValidationError, handle_validation_error)
     app.register_error_handler(Unauthorized, handle_unauthorized_error)
     app.register_error_handler(Exception, handle_unexpected_error)
 
@@ -56,6 +61,17 @@ def handle_pyladies_error(error):
     info = {
         "code": error.code,
         "message": error.message
+    }
+    return jsonify(info=info)
+
+
+def handle_validation_error(error):
+    # TODO: logging
+    import traceback
+    print(traceback.format_exc())
+    info = {
+        "code": INVALID_INPUT.code,
+        "message": INVALID_INPUT.message
     }
     return jsonify(info=info)
 
