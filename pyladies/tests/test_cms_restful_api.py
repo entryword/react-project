@@ -270,3 +270,46 @@ class TestGetSlides:
         assert rv.json["data"][1]["type"] == "resource"
         assert rv.json["data"][1]["title"] == "ihower 的 Git 教室"
         assert rv.json["data"][1]["url"] == "https://ihower.tw/git/"
+
+
+class TestCreateSlideResource:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def test_success(self):
+        slide_info = {
+            "type":"slide",
+            "title":"TEST_SLIDE2",
+            "url":"http://789101112"
+        }
+
+        # post
+        rv = self.test_client.post(
+            "/cms/api/slide",
+            headers={"Content-Type": "application/json"},
+            content_type="application/json",
+            data=json.dumps({'data':slide_info}),
+        )
+        # api assertion
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["id"] == 1
+
+        # slide_resource assertion
+        slide_resource_sn = rv.json["data"]["id"]
+
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            slide_resource = manager.get_slide_resource(slide_resource_sn)
+            assert slide_resource.title == slide_info["title"]
+            assert slide_resource.type == slide_info["type"]
+            assert slide_resource.url == slide_info["url"]
