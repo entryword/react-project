@@ -245,6 +245,9 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         speaker = self.session.merge(speaker)
         return speaker
 
+    def get_slides(self):
+        return self.session.query(SlideResource).all()
+    
     def get_user_by_name(self, name):
         user = self.session.query(User).filter_by(name=name).one_or_none()
         if not user:
