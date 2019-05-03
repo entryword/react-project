@@ -36,7 +36,12 @@
                   </div>
                   <div class="col-md-10">
                     <div class="form-group" v-bind:class="{ 'has-error': errors.topic }">
-                      <v-select :options="topics" label="label" v-model="topicOption"></v-select>
+                      <v-select
+                        :options="topics"
+                        :clearable="false"
+                        label="label"
+                        v-model="topicOption"
+                      ></v-select>
                       <div v-if="errors.topic" class="help-block">請選擇活動主題</div>
                     </div>
                   </div>
@@ -68,7 +73,12 @@
                   <div class="col-md-2">活動地點</div>
                   <div class="col-md-10">
                     <div class="form-group">
-                      <v-select :options="places" label="label" v-model="placeOption"></v-select>
+                      <v-select
+                        :options="places"
+                        :clearable="false"
+                        label="label"
+                        v-model="placeOption"
+                      ></v-select>
                     </div>
                   </div>
                 </div>
@@ -120,13 +130,17 @@
           <!-- 報名頁 -->
           <div class="col-lg-12">
             <div class="nav-tabs-custom">
-              <ul class="nav nav-tabs">
+              <ul class="nav nav-tabs apply-tabs">
                 <li
                   v-for="(apply, index) in processApply"
                   :key="index"
                   v-bind:class="{ 'active': index === applySelected }"
                 >
-                  <a :href="'#tab_'+index" data-toggle="tab">報名方式 {{index + 1}}</a>
+                  <a
+                    :href="'#tab_'+index"
+                    data-toggle="tab"
+                    @click="applySelected=index"
+                  >報名方式 {{index + 1}}</a>
                 </li>
                 <li class="pull-right">
                   <a class="text-muted" @click="addApply">
@@ -266,6 +280,12 @@
                       </div>
                     </div>
                   </div>
+                  <div class="row">
+                    <div class="col-md-12" style="text-align:right">
+                      <span class="badge bg-red" @click="deleteApply(index)">刪除</span>
+                      <span style="color: #666;font-size: 12px;">(刪除此報名方式後會無法復原，請謹慎處理)</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -283,7 +303,7 @@
                 <table class="table table-striped">
                   <thead>
                     <tr>
-                      <th style="width: 10px">#</th>
+                      <th style="width: 10px">id</th>
                       <th>投影片/資源名稱</th>
                       <th>投影片/資源類型</th>
                       <th style="width: 40px">
@@ -784,6 +804,12 @@ export default {
         url: ""
       });
       this.applySelected = this.vueModel.apply.length - 1;
+    },
+    deleteApply(index) {
+      this.$delete(this.vueModel.apply, index);
+      this.$nextTick(function() {
+        this.applySelected = 0;
+      });
     },
     addNewSlide() {
       if (!this.newSlide.type) {

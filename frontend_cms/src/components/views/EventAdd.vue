@@ -36,7 +36,12 @@
                   </div>
                   <div class="col-md-10">
                     <div class="form-group" v-bind:class="{ 'has-error': errors.topic }">
-                      <v-select :options="topics" label="label" v-model="topicOption"></v-select>
+                      <v-select
+                        :options="topics"
+                        :clearable="false"
+                        label="label"
+                        v-model="topicOption"
+                      ></v-select>
                       <div v-if="errors.topic" class="help-block">請選擇活動主題</div>
                     </div>
                   </div>
@@ -69,7 +74,12 @@
                   <div class="col-md-2">活動地點</div>
                   <div class="col-md-10">
                     <div class="form-group">
-                      <v-select :options="places" label="label" v-model="placeOption"></v-select>
+                      <v-select
+                        :options="places"
+                        :clearable="false"
+                        label="label"
+                        v-model="placeOption"
+                      ></v-select>
                     </div>
                   </div>
                 </div>
@@ -252,7 +262,11 @@ export default {
         }
       },
       set: function(newValue) {
-        this.vueModel.place_id = newValue.id;
+        if (newValue) {
+          this.vueModel.place_id = newValue.id;
+        } else {
+          this.vueModel.place_id = 37;
+        }
       }
     },
     topicOption: {
@@ -271,8 +285,12 @@ export default {
         }
       },
       set: function(newValue) {
-        this.errors.topic = false;
-        this.vueModel.topic_id = newValue.id;
+        if (newValue) {
+          this.errors.topic = false;
+          this.vueModel.topic_id = newValue.id;
+        } else {
+          this.vueModel.topic_id = null;
+        }
       }
     },
     speakerOption: {

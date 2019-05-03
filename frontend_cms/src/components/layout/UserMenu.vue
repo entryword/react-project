@@ -8,14 +8,14 @@
     </a>
     <!-- Account Info and Menu -->
     <ul class="dropdown-menu">
-      <li class="user-header" style="height:auto;min-height:85px;padding-bottom:15px;">
+      <!-- <li class="user-header" style="height:auto;min-height:85px;padding-bottom:15px;">
         <p>
           <span>{{user.displayName}}</span>
           <small v-for="role in user.roles" :key="role">{{role}}</small>
         </p>
-      </li>
+      </li>-->
       <li class="user-footer">
-        <a href="javascript:;" class="btn btn-default btn-flat btn-block">
+        <a href="javascript:;" class="btn btn-default btn-flat btn-block" @click="go_logout">
           <i class="fa fa-sign-out"></i>
           <span>Logout</span>
         </a>
@@ -25,9 +25,21 @@
 </template>
 
 <script>
+import Vue from "vue";
+import { mapActions } from "vuex";
+
 export default {
   name: "UserMenu",
-  props: ["user"]
+  props: ["user"],
+  methods: {
+    ...mapActions(["logout"]),
+    go_logout() {
+      this.logout().then(() => {
+        // TODO logout href
+        window.location.href = "http://127.0.0.1:8081/login.html";
+      });
+    }
+  }
 };
 </script>
 <style>

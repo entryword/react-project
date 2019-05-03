@@ -11,6 +11,9 @@ export default {
   SET_TOKEN (state, token) {
     state.token = token
   },
+  LOG_OUT (state, info) {
+    state.log_out_info = info
+  },
   SET_EVENTS (state, events){
     const weekdayString = ['日', 'ㄧ', '二', '三', '四', '五', '六']
     const modEvents = events.map(e => {
