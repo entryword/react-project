@@ -4,6 +4,7 @@
         * api_1_0/ : v1.0 RESTful API
         * cms/ : cms 的 RESTful API
         * managers/ : 提供資料給 API 來達成各項功能
+        * schemas/ : 定義 JSON schema 給 API 或 managers 使用
         * sqldb/ : 定義 DB 結構、提供 managers 操作 DB 後的資料
         * \__init__.py : 指定 server 要使用的 API 以及 error handler
         * constant.py : 共用常數
@@ -19,6 +20,7 @@
 ```
 git clone https://soniawaka@bitbucket.org/pyladies-tw/website2018.git
 cd ./website2018
+docker-compose build
 docker-compose up -d
 docker-compose exec app bash
 python manage.py db upgrade
@@ -32,6 +34,8 @@ python manage.py db upgrade
 
 ### Docker 指令
 ```
+# Build Docker images
+docker-compose build
 # 啟動 container
 docker-compose up -d
 # 查看目前啟動中的 container
@@ -56,10 +60,8 @@ python manage.py db downgrade
 
 ### Pylint
 ```
-cp .pylintrc pyladies/
 docker-compose exec app bash
-mv .pylintrc ../
-cd ../
+cd ..
 pylint -rn --rcfile .pylintrc ./pyladies/
 ```
 
