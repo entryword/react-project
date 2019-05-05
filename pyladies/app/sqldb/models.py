@@ -1,10 +1,10 @@
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
+from flask_login import UserMixin, AnonymousUserMixin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import types, String
 from sqlalchemy.ext.declarative import declarative_base
-
-# from app import db
 
 
 Base = declarative_base(name='Model')
@@ -127,6 +127,7 @@ class EventBasic(db.Model):
     topic = db.relationship("Topic",
                             backref=db.backref("event_basics", uselist=True))
     place = db.relationship("Place")
+    apply = db.relationship("EventApply")
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -188,9 +189,6 @@ class SlideResource(db.Model):
     __tablename__ = "slide_resource"
 
     sn = db.Column(db.Integer, primary_key=True)
-    event_info_sn = db.Column(db.Integer,
-                              db.ForeignKey("event_info.sn", ondelete="CASCADE"),
-                              nullable=False)
     type = db.Column(db.String(128), nullable=False)
     title = db.Column(db.String(128), nullable=False)
     url = db.Column(db.String(1024), nullable=False)
@@ -200,6 +198,20 @@ class SlideResource(db.Model):
                 ", title: {obj.title}"
                 ", type: {obj.type}>").format(obj=self)
 
+event_slide = db.Table(
+    'event_slide',
+    db.Column(
+        'event_info_sn',
+        db.Integer,
+        db.ForeignKey('event_info.sn', ondelete="CASCADE")
+    ),
+    db.Column(
+        'slide_sn',
+        db.Integer,
+        db.ForeignKey('slide_resource.sn', ondelete="CASCADE")
+    ),
+    db.PrimaryKeyConstraint("event_info_sn", "slide_sn")
+)
 
 class EventInfo(db.Model):
     __tablename__ = "event_info"
@@ -215,7 +227,9 @@ class EventInfo(db.Model):
 
     event_basic = db.relationship("EventBasic",
                                   backref=db.backref("event_info", uselist=False))
-    slide_resources = db.relationship("SlideResource", uselist=True)
+    slide_resources = db.relationship("SlideResource",
+                                      secondary=event_slide,
+                                      uselist=True)
     speakers = db.relationship("Speaker",
                                secondary=event_info_to_speaker,
                                uselist=True)
@@ -247,3 +261,30 @@ class EventApply(db.Model):
         return ("<EventApply sn: {obj.sn}"
                 ", event_basic_sn: {obj.event_basic_sn}"
                 ", apply: {obj.apply}").format(obj=self)
+
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'user'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True, index=True)
+    password_hash = db.Column(db.String(128))
+
+    # @property
+    # def password(self):
+    #     raise AttributeError('password is not a readable attribute')
+
+    # @password.setter
+    # def password(self, password):
+    #     self.password_hash = generate_password_hash(password, method="pbkdf2:sha1")
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
+class AnonymousUser(AnonymousUserMixin):
+    def can(self, permissions):
+        return False
+
+    def is_administrator(self):
+        return False
