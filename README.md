@@ -31,6 +31,10 @@ python manage.py db upgrade
 2. localhost:55688/v1.0/api/definitions (確認 flask 服務運作正常)
 3. localhost:5555/v1.0/api/definitions (確認 nginx 服務運作正常)
 
+### Local DB 操作
+除了使用phpMyAdmin，也可使用MySQL Workbench或其他支援MariaDB的GUI。
+設定連線方式如下：
+![MySQL Workbench](/img/mysql_workbench.jpg)
 
 ### Docker 指令
 ```
