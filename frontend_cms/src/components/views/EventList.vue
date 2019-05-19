@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <div class="box">
           <div class="box-header">
-            <router-link tag="button" class="btn btn-primary" to="/event-add">建立活動</router-link>
+            <router-link tag="button" class="btn btn-primary" to="event-add">建立活動</router-link>
           </div>
           <!-- /.box-header -->
           <div class="box-body">
@@ -31,7 +31,12 @@
                     <tbody>
                       <tr v-for="event in events" :key="event.id">
                         <td>
-                          <a :href="'/event-edit/' + event.id">{{event.id}}</a>
+                          <!-- <a :href="'event-edit/' + event.id">{{event.id}}</a> -->
+                          <router-link
+                            tag="button"
+                            class="btn btn-link"
+                            :to="{name:'活動編輯',  params: {id: event.id}}"
+                          >{{event.id}}</router-link>
                         </td>
                         <td>{{event.title}}</td>
                         <td>{{event.place.name}}</td>
@@ -65,12 +70,18 @@ require("datatables.net");
 require("datatables.net-bs");
 import store from "../../store";
 import { mapState, mapActions } from "vuex";
-
 export default {
   name: "EventList",
   store: store,
   created() {
     this.getData();
+  },
+  data: {
+    function() {
+      return {
+        route_base: process.env.ROUTE_BASE
+      };
+    }
   },
   computed: {
     ...mapState(["events"])
@@ -107,7 +118,7 @@ export default {
 @import url('/static/js/plugins/datatables/jquery.dataTables.min.css');
 */
 
-@import url("/static/js/plugins/datatables/dataTables.bootstrap.css");
+@import url("/cms/static/js/plugins/datatables/dataTables.bootstrap.css");
 
 table.dataTable thead .sorting:after,
 table.dataTable thead .sorting_asc:after,

@@ -1,6 +1,6 @@
 <template>
   <div id="notFound">
-    <img src="/static/img/logos/pyladies-circle.png" class="center-block logo">
+    <img src="<%= BASE_URL%>/static/img/logos/pyladies-circle.png" class="center-block logo">
 
     <div class="text-center col-sm-12">
       <h1>你迷路了</h1>

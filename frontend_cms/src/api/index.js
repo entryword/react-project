@@ -2,9 +2,11 @@ import axios from 'axios'
 import config from '../config'
 
 const prefix = ' /cms/api'
-const devPrefix = 'http://127.0.0.1:5566/cms/api'
+const prefix_officialSite = ' /v1.0/api'
+const devPrefix = '/api'
+const devPrefix_officialSite = '/fapi'
 
-const useFakeData = true;
+const useFakeData = false;
 
 export default {
   request (method, uri, data = null) {
@@ -28,9 +30,9 @@ export default {
     if (useFakeData && process.env.NODE_ENV === 'development'){
       url = "/static/fake_data/topics.json"
     } else if (process.env.NODE_ENV === 'development'){
-      url = `${prefix}/topics`
-    } else {
       url = `${devPrefix}/topics`
+    } else {
+      url = `${prefix}/topics`
     }
     return axios({ method, url, data })
   },
@@ -58,6 +60,7 @@ export default {
     } else {
       url = `${prefix}/event/${id}`
     }
+    console.log(url);
     return axios({ method, url, data })
   },
   getPlaces() {
@@ -93,9 +96,9 @@ export default {
     if (useFakeData && process.env.NODE_ENV === 'development'){
       url = "/static/fake_data/definitions.json"
     } else if (!useFakeData && process.env.NODE_ENV === 'development'){
-      url = `${devPrefix}/definitions`
+      url = `${devPrefix_officialSite}/definitions`
     } else {
-      url = `${prefix}/definitions`
+      url = `${prefix_officialSite}/definitions`
     }
     return axios({ method, url, data })
   },
@@ -106,9 +109,9 @@ export default {
     if (useFakeData && process.env.NODE_ENV === 'development'){
       url = "/static/fake_data/resources.json"
     } else if (!useFakeData && process.env.NODE_ENV === 'development'){
-      url = `${devPrefix}/getSlideResources`
+      url = `${devPrefix}/slides`
     } else {
-      url = `${prefix}/getSlideResources`
+      url = `${prefix}/slides`
     }
     return axios({ method, url, data })
   },
@@ -130,7 +133,7 @@ export default {
     let method = "PUT";
     let url = "";
     if (!useFakeData && process.env.NODE_ENV === 'development'){
-      console.log(data)
+      //console.log(data)
       method = "get";
       url = "/static/fake_data/put_event_result.json"
     } else if (!useFakeData && process.env.NODE_ENV === 'development'){

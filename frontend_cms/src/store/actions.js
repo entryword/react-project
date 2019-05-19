@@ -14,8 +14,8 @@ export default {
             window.location.href = loginUrl;
         }
     },
-    getEvent: async function(context) {
-        const data = await api.getEvent().then(res => res.data);
+    getEvent: async function(context, id) {
+        const data = await api.getEvent(id).then(res => res.data);
         if (data.info.code == 0) {
             context.commit('SET_EVENT', data.data);
         } else {
