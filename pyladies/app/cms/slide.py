@@ -16,6 +16,7 @@ def get_slides():
 
     return jsonify(data=data, info=info)
 
+
 @api.route("/slide", methods=["POST"])
 def create_slide():
     request_data = request.get_json()

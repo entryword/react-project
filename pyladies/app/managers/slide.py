@@ -25,8 +25,8 @@ class Manager(BaseSlideManager):
     def create_slide(info):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            slide = manager.create_slide_resource(info, autocommit=True)
-            return slide
+            slide_sn = manager.create_slide_resource(info, autocommit=True)
+            return slide_sn
 
     @staticmethod
     def get_slide(sn):
