@@ -1,0 +1,56 @@
+{
+  "data": {
+    "field": {
+      "0": "Data Science",
+      "1": "Web",
+      "2": "Crawler",
+      "3": "Deep Learning",
+      "4": "Optimization",
+      "5": "Tutorial",
+      "6": "Application",
+      "7": "Experience",
+      "8": "Party",
+      "9": "IoT",
+      "10": "Finance",
+      "11": "Bot"
+    },
+    "freq": {
+      "0": "\u7cfb\u5217\u6d3b\u52d5",
+      "1": "\u5de5\u4f5c\u574a",
+      "2": "\u55ae\u6b21\u6d3b\u52d5"
+    },
+    "host": {
+      "0": "PyLadies \u4e3b\u8fa6",
+      "1": "PyLadies \u5408\u8fa6",
+      "2": "PyLadies \u53d7\u9080"
+    },
+    "level": {
+      "0": "\u7121\u7a0b\u5f0f\u57fa\u790e\u8005",
+      "1": "\u5165\u9580 - \u4e86\u89e3\u57fa\u790e\u8a9e\u6cd5 (\u7269\u4ef6\u8207\u547d\u540d\u3001if else\u3001\u52a0\u6e1b\u4e58\u9664\u3001def\u3001....)",
+      "2": "\u9032\u968e - \u719f\u6089\u57fa\u790e\u8a9e\u6cd5\u8207\u57fa\u672c\u8cc7\u6599\u578b\u614b (list\u3001dict\u3001tuple\u3001\u2026)",
+      "3": "\u7cbe\u901a - \u719f\u6089\u7522\u751f\u5668\u3001\u88dd\u98fe\u5668\u3001OOP\uff0c\u4e26\u6709\u5c08\u6848\u958b\u767c\u7d93\u9a57"
+    },
+    "status": {
+      "0": "已結束",
+      "1": "未來活動"
+    },
+    "weekday": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    },
+    "time": {
+      "0": "上午 (00:00- 11:59)",
+      "1": "下午 (12:00- 16:59)",
+      "2": "晚上 (17:00- 23:59)"
+    }
+  },
+  "info": {
+    "code": 0,
+    "message": "Perform the action successfully."
+  }
+}
