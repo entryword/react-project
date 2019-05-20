@@ -302,20 +302,14 @@ class TestCreateSlideResource:
             content_type="application/json",
             data=json.dumps({'data':slide_info}),
         )
+
         # api assertion
         assert rv.status_code == 200
         assert rv.json["info"]["code"] == 0
         assert rv.json["data"]["id"] == 1
-
-        # slide_resource assertion
-        slide_resource_sn = rv.json["data"]["id"]
-
-        with DBWrapper(self.app.db.engine.url).session() as db_sess:
-            manager = self.app.db_api_class(db_sess)
-            slide_resource = manager.get_slide_resource(slide_resource_sn)
-            assert slide_resource.title == slide_info["title"]
-            assert slide_resource.type == slide_info["type"]
-            assert slide_resource.url == slide_info["url"]
+        assert rv.json["data"]["title"] == slide_info["title"]
+        assert rv.json["data"]["type"] == slide_info["type"]
+        assert rv.json["data"]["url"] == slide_info["url"]
         
 
 class TestLogin:
