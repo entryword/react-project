@@ -26,7 +26,7 @@
 
 ### 建立專案
 ```
-git clone https://soniawaka@bitbucket.org/pyladies-tw/website2018.git
+git clone https://{youraccount}@bitbucket.org/pyladies-tw/website2018.git
 cd ./website2018
 docker-compose build
 docker-compose up -d
@@ -98,6 +98,7 @@ python manage.py db upgrade
 2. localhost:55688/v1.0/api/definitions (確認 flask 服務運作正常)
 3. localhost:5555/v1.0/api/definitions (確認 nginx 服務運作正常)
 
+<<<<<<< HEAD
 #### 前端畫面
 
 這裡所顯示的畫面是在 `website2018/frontend` 資料夾裡的 code 的結果，前端開發期間請用上述的開發 port。
@@ -107,6 +108,12 @@ python manage.py db upgrade
 3. localhost:5555/cms/ 後台 CMS
 3. localhost:5555/cms/login 後台 CMS login 畫面
 
+=======
+### Local DB 操作
+除了使用phpMyAdmin，也可使用MySQL Workbench或其他支援MariaDB的GUI。
+設定連線方式如下：
+![](img/mysql_workbench.png)
+>>>>>>> dev
 
 ### Docker 指令
 ```
