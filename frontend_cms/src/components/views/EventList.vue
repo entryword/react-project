@@ -76,19 +76,8 @@ export default {
   created() {
     this.getData();
   },
-  data: {
-    function() {
-      return {
-        route_base: process.env.ROUTE_BASE
-      };
-    }
-  },
   computed: {
     ...mapState(["events"])
-    // events: function() {
-    //   console.log(this.$store.state.events);
-    //   return this.$store.state.events;
-    // }
   },
   watch: {
     events: function(newEvents, oldEvents) {

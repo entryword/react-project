@@ -60,7 +60,6 @@ export default {
     } else {
       url = `${prefix}/event/${id}`
     }
-    console.log(url);
     return axios({ method, url, data })
   },
   getPlaces() {
@@ -116,7 +115,6 @@ export default {
     return axios({ method, url, data })
   },
   postEvent(data){
-    // console.log(data)
     let method = "POST";
     let url = "";
     if (useFakeData && process.env.NODE_ENV === 'development'){
@@ -129,25 +127,24 @@ export default {
     }
     return axios({ method, url, data })
   },
-  putEvent(data){
+  putEvent({data, id}){
     let method = "PUT";
     let url = "";
-    if (!useFakeData && process.env.NODE_ENV === 'development'){
+    if (useFakeData && process.env.NODE_ENV === 'development'){
       //console.log(data)
       method = "get";
       url = "/static/fake_data/put_event_result.json"
     } else if (!useFakeData && process.env.NODE_ENV === 'development'){
-      url = `${devPrefix}/event`
+      url = `${devPrefix}/event/${id}`
     } else {
-      url = `${prefix}/event`
+      url = `${prefix}/event/${id}`
     }
     return axios({ method, url, data })
   },
   postSlide(data){
     let method = "POST";
     let url = "";
-    if (!useFakeData && process.env.NODE_ENV === 'development'){
-      console.log(data)
+    if (useFakeData && process.env.NODE_ENV === 'development'){
       method = "get";
       url = "/static/fake_data/post_slide_result.json"
     } else if (!useFakeData && process.env.NODE_ENV === 'development'){
@@ -158,5 +155,3 @@ export default {
     return axios({ method, url, data })
   }
 }
-
-console.log("NODE_ENV", process.env.NODE_ENV);

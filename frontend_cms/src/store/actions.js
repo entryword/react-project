@@ -52,7 +52,6 @@ export default {
     },
     getDefinitions: async function(context) {
         const data = await api.getDefinitions().then(res => res.data);
-        console.log(data)
         if (data.info.code == 0) {
             context.commit('SET_FIELDS', data.data.field);
         } else {

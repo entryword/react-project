@@ -768,7 +768,7 @@ export default {
       this.getDefinitions();
       this.getSlideResources();
       this.getEvent(id).then(() => {
-        console.log(this.event);
+        // console.log(this.event);
         this.title = this.event.title;
         this.desc = this.event.desc;
         this.eventDateTime = this.event.start_date
@@ -806,7 +806,7 @@ export default {
       this.applySelected = this.vueModel.apply.length - 1;
     },
     deleteApply(index) {
-      this.$delete(this.vueModel.apply, index);
+      Vue.delete(this.vueModel.apply, index);
       this.$nextTick(function() {
         this.applySelected = 0;
       });
@@ -828,12 +828,12 @@ export default {
           }
         };
         this.postSlide(new_data).then(() => {
-          this.$set(
+          Vue.set(
             this.vueModel.slide_resource_ids,
             this.vueModel.slide_resource_ids.length,
             this.post_slide_result.id
           );
-          this.$set(
+          Vue.set(
             this.slide_resources,
             this.slide_resources.length,
             this.post_slide_result
@@ -845,7 +845,7 @@ export default {
       if (this.newSlide.type === "exist" && !this.newSlide.selectedSlide) {
         alert("選擇已存在投影片 / 資源");
       } else {
-        this.$set(
+        Vue.set(
           this.vueModel.slide_resource_ids,
           this.vueModel.slide_resource_ids.length,
           parseInt(this.newSlide.selectedSlide.id, 10)
@@ -853,7 +853,7 @@ export default {
       }
     },
     deleteSlide(index) {
-      this.$delete(this.vueModel.slide_resource_ids, index);
+      Vue.delete(this.vueModel.slide_resource_ids, index);
     },
     applyChange(index, key, value) {
       Vue.set(this.vueModel.apply[index], key, value);
@@ -892,9 +892,11 @@ export default {
       } else {
         // submit data
         const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
-        this.putEvent(submitData).then(() => {
-          this.$router.push("/event-list");
-        });
+        this.putEvent({ data: submitData, id: this.$route.params.id }).then(
+          () => {
+            this.$router.push("/event-list");
+          }
+        );
       }
     }
   }
