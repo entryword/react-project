@@ -14,8 +14,8 @@ export default {
             window.location.href = loginUrl;
         }
     },
-    getEvent: async function(context) {
-        const data = await api.getEvent().then(res => res.data);
+    getEvent: async function(context, id) {
+        const data = await api.getEvent(id).then(res => res.data);
         if (data.info.code == 0) {
             context.commit('SET_EVENT', data.data);
         } else {
@@ -52,7 +52,6 @@ export default {
     },
     getDefinitions: async function(context) {
         const data = await api.getDefinitions().then(res => res.data);
-        console.log(data)
         if (data.info.code == 0) {
             context.commit('SET_FIELDS', data.data.field);
         } else {
@@ -71,24 +70,28 @@ export default {
     },
     postEvent: async function({ commit, state }, data) {
         const postEventResultData = await api.postEvent(data).then(res => res.data);
-        if (data.info.code == 0) {
+        if (postEventResultData.info.code == 0) {
             commit('SET_SLIDE_RESOURCES', postEventResultData.data);
         } else {
-            alert(data.info.message);
+            alert(postEventResultData.info.message);
             // window.location.href = loginUrl;
         }
     },
     putEvent: async function({ commit, state }, data) {
-        const putEventResult = await api.putEvent(data).then(res => res.data.data);
-        commit('PUT_EVENT_RESULT', putEventResult);
+        const putEventResult = await api.putEvent(data).then(res => res.data);
+        if (putEventResult.info.code == 0) {
+            commit('PUT_EVENT_RESULT', putEventResult.data);
+        } else {
+            alert(putEventResult.info.message);
+            // window.location.href = loginUrl;
+        }
     },
     postSlide: async function({ commit, state }, data) {
         const postSlideResultData = await api.postSlide(data).then(res => res.data);
-        // commit('POST_SLIDE_RESULT', postSlideResult);
-        if (data.info.code == 0) {
+        if (postSlideResultData.info.code == 0) {
             commit('POST_SLIDE_RESULT', postSlideResultData.data);
         } else {
-            alert(data.info.message);
+            alert(postSlideResultData.info.message);
             // window.location.href = loginUrl;
         }
     }
