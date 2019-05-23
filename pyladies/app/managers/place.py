@@ -42,7 +42,8 @@ class Manager(BasePlaceManager):
             for i in places:
                 print(i)
 
-    def get_list():
+    @staticmethod
+    def get_places():
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             places = manager.get_places()
