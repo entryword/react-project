@@ -16,7 +16,7 @@ class Manager(BaseApplyManager):
         for item in event_apply_info["apply"]:
             datetime.strptime(item["start_time"], "%Y-%m-%d %H:%M")
             datetime.strptime(item["end_time"], "%Y-%m-%d %H:%M")
- 
+
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             return manager.create_event_apply(event_apply_info, autocommit=True)
