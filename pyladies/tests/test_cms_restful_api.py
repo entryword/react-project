@@ -231,6 +231,7 @@ class TestGetEvents:
         assert rv.json["data"][0]["event_apply_exist"] == 0
         assert rv.json["data"][0]["speaker_exist"] == 0
 
+
 class TestGetTopics:
         def setup(self):
         self.app = create_app('test')

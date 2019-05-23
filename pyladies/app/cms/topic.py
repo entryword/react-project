@@ -4,6 +4,7 @@ from . import api
 from ..exceptions import OK
 from ..managers.topic import Manager as TopicManager
 
+
 @api.route("/topics", methods=["GET"])
 def get_topics():
     data = TopicManager.get_topics()
