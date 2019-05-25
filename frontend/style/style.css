@@ -250,6 +250,7 @@ a,p{
 
 .footer-session a{
     display: block;
+    margin-bottom: -5px;
     color: var(--footer-text-color);
 }
 .footer-session a:hover{

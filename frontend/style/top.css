@@ -172,7 +172,7 @@ a,p{
 }
 .menu-item span{
     display: block;
-    margin: 10px 0;
+    /*margin: 10px 0;*/
     color: #fd9193;
 }
 .menu-item a:hover{
@@ -264,6 +264,7 @@ a,p{
 
 .footer-session a{
     display: block;
+    margin-bottom: -5px;
     color: var(--footer-text-color);
 }
 .footer-session a:hover{
