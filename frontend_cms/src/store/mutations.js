@@ -59,7 +59,7 @@ export default {
     state.fields = modFields;
   },
   SET_SLIDE_RESOURCES (state, resources){
-    state.slide_resources = resources.reverse();
+    state.slide_resources = resources && resources.length > 0 ? resources.reverse() : resources;
   },
   POST_EVENT_RESULT(state, postEventResult){
     state.post_event_result = postEventResult;
