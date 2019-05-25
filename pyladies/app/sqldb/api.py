@@ -209,6 +209,10 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         event_apply = self.session.merge(event_apply)
         return event_apply
 
+    def get_event_apply_one_or_none(self, sn):
+        event_apply = self.session.query(EventApply).filter_by(sn=sn).one_or_none()
+        return event_apply
+
     # TODO: pagination and filter
     def get_places(self):
         return self.session.query(Place).all()

@@ -44,6 +44,13 @@ class Manager(BaseApplyManager):
             return data
 
     @staticmethod
+    def get_event_apply_one_or_none(event_apply_sn):
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            event_apply_info = manager.get_event_apply_one_or_none(event_apply_sn)
+            return event_apply_info
+
+    @staticmethod
     def update_event_apply_info(event_apply_sn, update_info):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)

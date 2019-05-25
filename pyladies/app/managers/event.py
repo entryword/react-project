@@ -7,7 +7,9 @@ from app.sqldb import DBWrapper
 from .abstract import BaseEventManager
 from ..utils import HashableDict
 from app.managers.apply import Manager as ApplyManager
-
+from app.exceptions import (
+    APPLY_NOT_EXIST
+)
 
 # TODO: error handling & input verification
 class Manager(BaseEventManager):
@@ -150,7 +152,10 @@ class Manager(BaseEventManager):
 			manager = current_app.db_api_class(db_sess)
 			event_basic = manager.get_event_basic(e_id)
 			tm = ApplyManager()
-			event_apply_info = tm.get_event_apply_info(e_id)
+			if tm.get_event_apply_one_or_none(e_id):
+				event_apply_info = tm.get_event_apply_info(e_id)
+			else:
+				event_apply_info = None
 
 			place_info = None
 			if event_basic.place:
@@ -250,8 +255,9 @@ class Manager(BaseEventManager):
 					if sp.get("photo"): del data["slides"][ind]["photo"]
 				for ind, sp in enumerate(data["resources"]):
 					if sp.get("photo"): del data["resources"][ind]["photo"]	 
-				date["slide_resources"] = data["slides"] + data["resources"]
-				data["apply"] = event_apply_info
+				data["slide_resources"] = data["slides"] + data["resources"]
+				if event_apply_info:
+					data["apply"] = event_apply_info
 			else:
 				del data["place_info"]["id"]
 				for ind, sp in enumerate(data["slides"]):

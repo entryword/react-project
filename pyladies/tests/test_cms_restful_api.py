@@ -563,27 +563,14 @@ class TestGetEvent:
                                         place_info, speaker_info, event_apply_info)
 
         # test
-        testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
+        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
         rv = self.test_client.get(testurl)
 
         # assertion
-        expected_result = {
-            "date": event_basic_info["date"],
-            "event_apply_exist": 1,
-            "id": event_info_info["event_basic_sn"],
-            "place": {
-                "name": place_info["name"]
-            },
-            "speaker_exist": 1,
-            "title": event_info_info["title"],
-            "topic": {
-                "name": topic_info["name"]
-            },
-            "end_time": event_basic_info["end_time"],
-            "start_time": event_basic_info["start_time"]
-        }
-        assert len(rv.json["data"]) == 1
-        assert rv.json["data"][0] == expected_result
+        assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
+        assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
+        assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
+        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
 
     def test_one_event_without_apply(self, topic_info, event_basic_info, place_info):
         event_info_info = {
@@ -604,12 +591,17 @@ class TestGetEvent:
                                         place_info, speaker_info, None)
 
         # test
-        testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
+        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
         rv = self.test_client.get(testurl)
 
         # assertion
-        assert rv.json["data"][0]["event_apply_exist"] == 0
-        assert rv.json["data"][0]["speaker_exist"] == 1
+        assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
+        assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
+        assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
+        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
+        assert rv.json["data"]["title"] == event_info_info["title"]
+        assert rv.json["data"]["desc"] == event_info_info["desc"]
+        assert rv.json["data"]["fields"] == event_info_info["fields"]
 
     def test_one_event_without_speaker(self, topic_info, event_basic_info, place_info, apply_info):
         event_info_info = {
@@ -626,12 +618,16 @@ class TestGetEvent:
                                         place_info, None, event_apply_info)
 
         # test
-        testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
+        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
         rv = self.test_client.get(testurl)
-
         # assertion
-        assert rv.json["data"][0]["event_apply_exist"] == 1
-        assert rv.json["data"][0]["speaker_exist"] == 0
+        assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
+        assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
+        assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
+        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
+        assert rv.json["data"]["title"] == event_info_info["title"]
+        assert rv.json["data"]["desc"] == event_info_info["desc"]
+        assert rv.json["data"]["fields"] == event_info_info["fields"]
 
     def test_one_event_without_speaker_and_apply(self, topic_info, event_basic_info, place_info):
         event_info_info = {
@@ -643,9 +639,14 @@ class TestGetEvent:
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info, place_info)
 
         # test
-        testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
+        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
         rv = self.test_client.get(testurl)
 
         # assertion
-        assert rv.json["data"][0]["event_apply_exist"] == 0
-        assert rv.json["data"][0]["speaker_exist"] == 0
+        assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
+        assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
+        assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
+        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
+        assert rv.json["data"]["title"] == event_info_info["title"]
+        assert rv.json["data"]["desc"] == event_info_info["desc"]
+        assert rv.json["data"]["fields"] == event_info_info["fields"]
