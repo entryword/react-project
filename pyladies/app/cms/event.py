@@ -49,3 +49,16 @@ def createEvent():
     }
 
     return jsonify(res)
+
+
+@api.route("/event/<int:e_id>", methods=["GET"])
+def get_event(e_id):
+    event_service = EventManager()
+    event_info = event_service.get_event(e_id, apimode=True)
+
+    info = {
+        "code": OK.code,
+        "message": OK.message
+    }
+
+    return jsonify(data=event_info, info=info)

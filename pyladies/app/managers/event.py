@@ -6,6 +6,7 @@ from flask import current_app
 from app.sqldb import DBWrapper
 from .abstract import BaseEventManager
 from ..utils import HashableDict
+from app.managers.apply import Manager as ApplyManager
 
 
 # TODO: error handling & input verification
@@ -150,14 +151,17 @@ class Manager(BaseEventManager):
         return 1
 
     @staticmethod
-    def get_event(e_id):
+    def get_event(e_id, apimode=None):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             event_basic = manager.get_event_basic(e_id)
+            tm = ApplyManager()
+            event_apply_info = tm.get_event_apply_info(e_id)
 
             place_info = None
             if event_basic.place:
                 place_info = {
+                    "id": event_basic.place.sn,
                     "name": event_basic.place.name,
                     "addr": event_basic.place.addr,
                     "map": event_basic.place.map
@@ -207,12 +211,13 @@ class Manager(BaseEventManager):
                                 })
                             resources.add(resource_info)
 
+
             slides = sorted(slides, key=lambda x: x["id"])
-            for slide in slides:
-                del slide["id"]
+            # for slide in slides:
+            #     del slide["id"]
             resources = sorted(resources, key=lambda x: x["id"])
-            for resource in resources:
-                del resource["id"]
+            # for resource in resources:
+            #     del resource["id"]
 
             data = {
                 "topic_info": {
@@ -233,6 +238,33 @@ class Manager(BaseEventManager):
                 "slides": list(slides),
                 "resources": list(resources)
             }
+            
+            if apimode:
+                data["topic_id"] = data["topic_info"]["id"]
+                data["start_date"] = data["date"]
+                # TODO:waiting table schema and data["end_date"] will add here
+                data["end_date"] = data["date"]
+                if data.get("topic_info"): del data["topic_info"]
+                if data.get("date"): del data["date"]
+                if data["place_info"].get("addr"): del data["place_info"]["addr"]
+                if data["place_info"].get("map"): del data["place_info"]["map"]
+                for ind, sp in enumerate(data["speakers"]):
+                    if sp.get("photo"): del data["speakers"][ind]["photo"]
+                for ind, sp in enumerate(data["assistants"]):
+                    if sp.get("photo"): del data["assistants"][ind]["photo"] 
+                for ind, sp in enumerate(data["slides"]):
+                    if sp.get("photo"): del data["slides"][ind]["photo"]
+                for ind, sp in enumerate(data["resources"]):
+                    if sp.get("photo"): del data["resources"][ind]["photo"]  
+                date["slide_resources"] = data["slides"] + data["resources"]
+                data["apply"] = event_apply_info
+            else:
+                del data["place_info"]["id"]
+                for ind, sp in enumerate(data["slides"]):
+                    if sp.get("id"): del data["slides"][ind]["id"]
+                for ind, sp in enumerate(data["resources"]):
+                    if sp.get("id"): del data["resources"][ind]["id"]
+
             return data
 
     @staticmethod
