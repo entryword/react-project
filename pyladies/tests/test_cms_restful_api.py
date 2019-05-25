@@ -249,7 +249,6 @@ class TestGetPlaces:
         self.app.db.engine.dispose()
         self.app_context.pop()
 
-
     def test_get_places(self):
         places = [
             {
@@ -299,7 +298,6 @@ class TestGetSlides:
         self.app.db.drop_all()
         self.app.db.engine.dispose()
         self.app_context.pop()
-
 
     def test_get_slides(self):
         slide_1 = {
