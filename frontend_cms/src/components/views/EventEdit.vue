@@ -65,10 +65,22 @@
                         v-model="eventDateTime"
                       ></date-range-picker>
                       <div v-if="errors.eventDateTime" class="help-block">請選擇活動時間 (點選 Apply)</div>
+                      <div style="font-size: 12px;color:#aaa;">如果活動在同一天，同一個日期要按兩次代表開始和結束日期</div>
                     </div>
                   </div>
                 </div>
-
+                <div class="row">
+                  <div class="col-md-2">
+                    <font style="color:red">*活動領域</font>
+                  </div>
+                  <div class="col-md-10">
+                    <div class="form-group" v-bind:class="{ 'has-error': errors.fields }">
+                      <v-select multiple :options="fields" label="name" v-model="fieldOption"></v-select>
+                      <div v-if="errors.fields" class="help-block">請選擇活動領域</div>
+                    </div>
+                    <!-- /.form-group -->
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col-md-2">活動地點</div>
                   <div class="col-md-10">
@@ -106,18 +118,6 @@
                   <div class="col-md-10">
                     <div class="form-group">
                       <v-select :options="speakers" multiple label="name" v-model="assistantOption"></v-select>
-                    </div>
-                    <!-- /.form-group -->
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-2">
-                    <font style="color:red">*活動領域</font>
-                  </div>
-                  <div class="col-md-10">
-                    <div class="form-group" v-bind:class="{ 'has-error': errors.fields }">
-                      <v-select multiple :options="fields" label="name" v-model="fieldOption"></v-select>
-                      <div v-if="errors.fields" class="help-block">請選擇活動領域</div>
                     </div>
                     <!-- /.form-group -->
                   </div>
@@ -788,7 +788,7 @@ export default {
         this.vueModel.topic_id = this.event.topic_id;
         this.vueModel.speaker_ids = this.event.speakers.map(s => s.id);
         this.vueModel.assistant_ids = this.event.assistants.map(s => s.id);
-        this.vueModel.field_ids = this.event.field;
+        this.vueModel.field_ids = this.event.fields;
         this.vueModel.slide_resource_ids = this.event.slide_resources.map(
           s => s.id
         );
