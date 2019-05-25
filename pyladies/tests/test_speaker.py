@@ -18,6 +18,7 @@ class SpeakerTestCase(unittest.TestCase):
     def tearDown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_create_speaker_without_link(self):

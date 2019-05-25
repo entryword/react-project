@@ -20,6 +20,7 @@ class InvalidInputTestCase(unittest.TestCase):
     def tearDown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_without_host_when_create(self):
