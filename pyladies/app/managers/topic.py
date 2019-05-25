@@ -129,3 +129,17 @@ class Manager(BaseTopicManager):
                 "resources": list(resources)
             }
             return data
+
+    @staticmethod
+    def get_topics():
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            topics = manager.get_topics()
+            all_data = []
+            for topic in topics:
+                data = {
+                    "id": topic.sn,
+                    "name": topic.name
+                }
+                all_data.append(data)
+        return all_data
