@@ -1,2 +1,2 @@
 from .blueprint import api
-from . import index, event, topic, slide, authentication
+from . import index, event, place, slide, topic, authentication

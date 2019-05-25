@@ -233,7 +233,7 @@ class TestGetEvents:
         assert rv.json["data"][0]["speaker_exist"] == 0
 
 
-class TestGetTopics:
+class TestGetPlaces:
     def setup(self):
         self.app = create_app('test')
         self.app_context = self.app.app_context()
@@ -246,24 +246,41 @@ class TestGetTopics:
         self.app.db.drop_all()
         self.app_context.pop()
 
-    @pytest.mark.parametrize('topic_infos', [3], indirect=True)
-    def test_get_topics(self, topic_infos):
+
+    def test_get_places(self):
+        places = [
+            {
+                "name": "place 1",
+                "addr": "台北市信義區光復南路133號",
+                "map": "http://abc.com/map1.html",
+            },
+            {
+                "name": "place 2",
+                "addr": "台北市萬華區艋舺大道101號",
+                "map": "http://abc.com/map2.html",
+            },
+            {
+                "name": "place 3",
+                "addr": "台北市大安區和平東路二段50號",
+                "map": "http://abc.com/map3.html",
+            },
+        ]
+
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            for topic in topic_infos:
-                manager.create_topic(topic, autocommit=True)
+            for place in places:
+                manager.create_place(place, autocommit=True)
 
         # test
-        rv = self.test_client.get("/cms/api/topics")
+        rv = self.test_client.get("/cms/api/places")
 
         #assert
         assert rv.json["info"]["code"] == 0
         assert len(rv.json["data"]) == 3
-        assert rv.json["data"][0]["name"] == topic_infos[0]["name"]
-        assert rv.json["data"][1]["name"] == topic_infos[1]["name"]
-        assert rv.json["data"][2]["name"] == topic_infos[2]["name"]
-
+        assert rv.json["data"][0]["name"] == places[0]["name"]
+        assert rv.json["data"][1]["addr"] == places[1]["addr"]
+        assert rv.json["data"][2]["id"] == 3
 
 
 class TestGetSlides:
@@ -308,6 +325,38 @@ class TestGetSlides:
         assert rv.json["data"][1]["type"] == "resource"
         assert rv.json["data"][1]["title"] == "ihower 的 Git 教室"
         assert rv.json["data"][1]["url"] == "https://ihower.tw/git/"
+
+
+class TestGetTopics:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    @pytest.mark.parametrize('topic_infos', [3], indirect=True)
+    def test_get_topics(self, topic_infos):
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            for topic in topic_infos:
+                manager.create_topic(topic, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/cms/api/topics")
+
+        #assert
+        assert rv.json["info"]["code"] == 0
+        assert len(rv.json["data"]) == 3
+        assert rv.json["data"][0]["name"] == topic_infos[0]["name"]
+        assert rv.json["data"][1]["name"] == topic_infos[1]["name"]
+        assert rv.json["data"][2]["name"] == topic_infos[2]["name"]
 
 
 class TestCreateSlideResource:
