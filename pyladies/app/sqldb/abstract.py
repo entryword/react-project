@@ -47,8 +47,8 @@ class SQLDatabaseAPI():
     # def get_event_info_by_event_basic_sn(self, event_basic_sn):
     #     raise NotImplementedError()
 
-    # def get_slide_resource(self, sn):
-    #     raise NotImplementedError()
+    def get_slide_resource(self, sn):
+        raise NotImplementedError()
 
     def get_speakers(self):
         raise NotImplementedError()
@@ -60,6 +60,9 @@ class SQLDatabaseAPI():
         raise NotImplementedError()
 
     def get_event_apply(self, sn):
+        raise NotImplementedError()
+
+    def get_user_by_name(self, name):
         raise NotImplementedError()
 
     ########## update

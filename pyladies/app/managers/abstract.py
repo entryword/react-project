@@ -69,6 +69,7 @@ class BaseSpeakerManager():
     def list_speakers():
         raise NotImplementedError()
 
+
 class BaseApplyManager():
     @staticmethod
     def create_event_apply_info(event_apply_info):
@@ -88,4 +89,20 @@ class BaseApplyManager():
 
     @staticmethod
     def delete_event_apply_info(event_apply_sn):
+        raise NotImplementedError()
+
+
+class BaseSlideManager():
+    @staticmethod
+    def list_slides():
+        raise NotImplementedError()
+
+
+class BaseUserManager():
+    @staticmethod
+    def login(username, password):
+        raise NotImplementedError()
+
+    @staticmethod
+    def logout():
         raise NotImplementedError()

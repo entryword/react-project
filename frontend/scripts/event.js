@@ -19,7 +19,7 @@
         let result = "";
         if(!!url){
             url  = Handlebars.Utils.escapeExpression(url);
-            result = new Handlebars.SafeString(`<p class="color-gray">詳細路線說明<a href="/${url}"> <i class="fa fa-external-link-alt"></i></a></p>`);
+            result = new Handlebars.SafeString(`<div class="color-gray">詳細路線說明<a href="/${url}"> <i class="fa fa-external-link-alt"></i></a></div>`);
         }
         return result;
     });
@@ -90,14 +90,16 @@
         let id = getUrlParameter('id') || 1,
             url;
         if(tw_pyladies.path === 'topic'){
+            // url = `/fakedata/topic46.json`;
             url = `/v1.0/api/topic/${id}`;
         }else if(tw_pyladies.path === 'top'){
-            // url = `./fakedata/top_info.json`;
+            // url = `/fakedata/top_info.json`;
             url = `/v1.0/api/events_from_distinct_topics`;
         }else if(tw_pyladies.path === 'signup'){
-            // url = `../fakedata/apply_info.json`;
+            // url = `/fakedata/apply_info.json`;
             url = `/v1.0/api/event/${id}/apply_info`;
         }else{
+            // url = `/fakedata/event137.json`;
             url = `/v1.0/api/event/${id}`;
         }
         return axios.get(url);
@@ -146,6 +148,13 @@
         data.day = days[new Date(data.date).getUTCDay()];
         data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
         data.eventId = getUrlParameter('id') || 1;
+        if(data.speakers.length == 0){
+            data.speakers.push({
+                "id": -1, 
+                "name": "待定", 
+                "photo": null
+            });
+        }
         // template blocks
         const blocks = ['event-signup','event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
         renderHtml(blocks, data);

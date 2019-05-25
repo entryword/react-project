@@ -2,8 +2,12 @@
 
 import json
 
+from werkzeug.security import generate_password_hash
+
+import pytest
 from app import create_app
 from app.sqldb import DBWrapper
+from app.sqldb.models import User
 
 
 class TestCreateEvent:
@@ -17,6 +21,7 @@ class TestCreateEvent:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_success(self, topic_info, place_info):
@@ -101,6 +106,7 @@ class TestGetEvents:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def _preparation_for_one_event(self, topic, event_basic, event_info, place, speaker=None, apply=None):
@@ -228,7 +234,280 @@ class TestGetEvents:
         assert rv.json["data"][0]["event_apply_exist"] == 0
         assert rv.json["data"][0]["speaker_exist"] == 0
 
-		
+
+class TestGetPlaces:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app.db.engine.dispose()
+        self.app_context.pop()
+
+    def test_get_places(self):
+        places = [
+            {
+                "name": "place 1",
+                "addr": "台北市信義區光復南路133號",
+                "map": "http://abc.com/map1.html",
+            },
+            {
+                "name": "place 2",
+                "addr": "台北市萬華區艋舺大道101號",
+                "map": "http://abc.com/map2.html",
+            },
+            {
+                "name": "place 3",
+                "addr": "台北市大安區和平東路二段50號",
+                "map": "http://abc.com/map3.html",
+            },
+        ]
+
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            for place in places:
+                manager.create_place(place, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/cms/api/places")
+
+        #assert
+        assert rv.json["info"]["code"] == 0
+        assert len(rv.json["data"]) == 3
+        assert rv.json["data"][0]["name"] == places[0]["name"]
+        assert rv.json["data"][1]["addr"] == places[1]["addr"]
+        assert rv.json["data"][2]["id"] == 3
+
+
+class TestGetSlides:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app.db.engine.dispose()
+        self.app_context.pop()
+
+    def test_get_slides(self):
+        slide_1 = {
+            "title": "Dive into Pinkoi 2013 活動投影片",
+            "type": "slide",
+            "url": "https://speakerdeck.com/mosky/dive-into-pinkoi-2013"
+        }
+        slide_2 = {
+            "title": "ihower 的 Git 教室",
+            "type": "resource",
+            "url": "https://ihower.tw/git/"
+        }
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_slide_resource(slide_1, autocommit=True)
+            manager.create_slide_resource(slide_2, autocommit=True)
+        # test
+        rv = self.test_client.get("/cms/api/slides")
+
+        # assertion
+        assert rv.json["data"][0]["id"] == 1
+        assert rv.json["data"][0]["type"] == "slide"
+        assert rv.json["data"][0]["title"] == "Dive into Pinkoi 2013 活動投影片"
+        assert rv.json["data"][0]["url"] == "https://speakerdeck.com/mosky/dive-into-pinkoi-2013"
+        assert rv.json["data"][1]["id"] == 2
+        assert rv.json["data"][1]["type"] == "resource"
+        assert rv.json["data"][1]["title"] == "ihower 的 Git 教室"
+        assert rv.json["data"][1]["url"] == "https://ihower.tw/git/"
+
+
+class TestGetTopics:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    @pytest.mark.parametrize('topic_infos', [3], indirect=True)
+    def test_get_topics(self, topic_infos):
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            for topic in topic_infos:
+                manager.create_topic(topic, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/cms/api/topics")
+
+        #assert
+        assert rv.json["info"]["code"] == 0
+        assert len(rv.json["data"]) == 3
+        assert rv.json["data"][0]["name"] == topic_infos[0]["name"]
+        assert rv.json["data"][1]["name"] == topic_infos[1]["name"]
+        assert rv.json["data"][2]["name"] == topic_infos[2]["name"]
+
+
+class TestCreateSlideResource:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app.db.engine.dispose()
+        self.app_context.pop()
+
+    def test_success(self):
+        slide_info = {
+            "type":"slide",
+            "title":"TEST_SLIDE2",
+            "url":"http://789101112"
+        }
+
+        # post
+        rv = self.test_client.post(
+            "/cms/api/slide",
+            headers={"Content-Type": "application/json"},
+            content_type="application/json",
+            data=json.dumps({'data':slide_info}),
+        )
+
+        # api assertion
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["id"] == 1
+        assert rv.json["data"]["title"] == slide_info["title"]
+        assert rv.json["data"]["type"] == slide_info["type"]
+        assert rv.json["data"]["url"] == slide_info["url"]
+
+
+class TestLogin:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app.db.engine.dispose()
+        self.app_context.pop()
+
+    def create_new_user(self, login_info):
+        user_info = {
+            "name": login_info["username"],
+            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1")
+        }
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            obj = User(**user_info)
+            db_sess.add(obj)
+            db_sess.commit()
+
+    def test_invalid_input(self):
+        login_info = {
+            "username": "pyladies",
+            "password": ""
+        }
+
+        rv = self.test_client.post("/cms/api/login", json=login_info)
+
+        assert rv.json["info"]["code"] == 1
+
+    def test_user_not_exist(self):
+        login_info = {
+            "username": "pyladies",
+            "password": "test123456"
+        }
+
+        rv = self.test_client.post("/cms/api/login", json=login_info)
+
+        assert rv.json["info"]["code"] == 1701
+
+    def test_wrong_password(self):
+        login_info = {
+            "username": "pyladies",
+            "password": "test123456"
+        }
+        self.create_new_user(login_info)
+
+        login_info["password"] = "12345678"
+        rv = self.test_client.post("/cms/api/login", json=login_info)
+
+        assert rv.json["info"]["code"] == 1701
+
+    def test_success(self):
+        login_info = {
+            "username": "pyladies",
+            "password": "test123456"
+        }
+        self.create_new_user(login_info)
+
+        rv = self.test_client.post("/cms/api/login", json=login_info)
+
+        assert rv.json["info"]["code"] == 0
+
+
+class TestLogout:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app.db.engine.dispose()
+        self.app_context.pop()
+
+    def create_new_user(self, login_info):
+        user_info = {
+            "name": login_info["username"],
+            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1")
+        }
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            obj = User(**user_info)
+            db_sess.add(obj)
+            db_sess.commit()
+
+    def test_not_login(self):
+        rv = self.test_client.put("/cms/api/logout")
+
+        assert rv.json["info"]["code"] == 1702
+
+    def test_success(self):
+        login_info = {
+            "username": "pyladies",
+            "password": "test123456"
+        }
+        self.create_new_user(login_info)
+        self.test_client.post("/cms/api/login", json=login_info)
+
+        rv = self.test_client.put("/cms/api/logout")
+
+        assert rv.json["info"]["code"] == 0
+
 class TestGetEvent:
     def setup(self):
         self.app = create_app('test')
@@ -284,7 +563,7 @@ class TestGetEvent:
                                         place_info, speaker_info, event_apply_info)
 
         # test
-		testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
+        testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
         rv = self.test_client.get(testurl)
 
         # assertion
@@ -325,7 +604,7 @@ class TestGetEvent:
                                         place_info, speaker_info, None)
 
         # test
-		testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
+        testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
         rv = self.test_client.get(testurl)
 
         # assertion
@@ -347,7 +626,7 @@ class TestGetEvent:
                                         place_info, None, event_apply_info)
 
         # test
-		testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
+        testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
         rv = self.test_client.get(testurl)
 
         # assertion
@@ -364,7 +643,7 @@ class TestGetEvent:
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info, place_info)
 
         # test
-		testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
+        testurl = "/cms/api/events/"+event_info_info["event_basic_sn"]
         rv = self.test_client.get(testurl)
 
         # assertion
