@@ -133,7 +133,7 @@ const form = document.getElementById('login-form');
         alert('請填寫 user name 或 password')
         return
       }
-        axios.post('/api/cms/login', {
+        axios.post('/cms/api/login', {
             username: username,
             password: password
           })

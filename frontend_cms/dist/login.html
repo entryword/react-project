@@ -4,15 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PyLadies CMS - Login</title>
-    <link rel="shortcut icon" type="image/x-icon" href="/static/img/favicon.ico"/>
+    <link rel="shortcut icon" type="image/x-icon" href="/cms/static/img/favicon.ico"/>
     <!-- css -->
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/cms/static/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/cms/static/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href="/static/css/AdminLTE.min.css">
-    <link rel="stylesheet" href="/static/css/skin-blue.min.css">
-    <link rel="stylesheet" href="/static/js/plugins/pace/pace.min.css">
+    <link rel="stylesheet" href="/cms/static/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/cms/static/css/skin-blue.min.css">
+    <link rel="stylesheet" href="/cms/static/js/plugins/pace/pace.min.css">
     <style>
       #login {
         padding: 0 10em;
@@ -82,7 +82,7 @@
   <body class="hold-transition skin-blue sidebar-mini" style="overflow-y:scroll">
     <div id="root">
       <div id="login">
-        <img src="/static/img/logos/pyladies-circle.png" class="center-block logo">
+        <img src="/cms/static/img/logos/pyladies-circle.png" class="center-block logo">
     
         <div class="text-center col-sm-12">
           <!-- login form -->
@@ -121,7 +121,7 @@
 
     <!-- built files will be auto injected. Static files below -->
     
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/sources/axios.min.js"></script>
     <script>
 const form = document.getElementById('login-form');
    
@@ -133,17 +133,16 @@ const form = document.getElementById('login-form');
         alert('請填寫 user name 或 password')
         return
       }
-      window.location.href="http://localhost:8080"
-        // axios.post('/api/cms/login', {
-        //     username: username,
-        //     password: password
-        //   })
-        //   .then(function (response) {
-        //     window.location.href="http://localhost:8080"
-        //   })
-        //   .catch(function (error) {
-        //     alert(error.info.message)
-        //   });
+        axios.post('/cms/api/login', {
+            username: username,
+            password: password
+          })
+          .then(function (response) {
+            window.location.href="/cms/"
+          })
+          .catch(function (error) {
+            alert(error.info.message)
+          });
       }
           form.onsubmit = submit;
     </script>

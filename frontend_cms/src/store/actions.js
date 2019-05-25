@@ -2,7 +2,7 @@ import api from "../api";
 const loginUrl = '/cms/login.html';
 export default {
     logout: async function(context) {
-        const info = await api.getEvents().then(res => res.data.data);
+        const info = await api.logout().then(res => res.data);
         context.commit('LOG_OUT', info);
     },
     getEvents: async function(context) {
