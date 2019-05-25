@@ -1,7 +1,8 @@
 # coding=UTF-8
 
 import json
-
+import pytest
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash
 
 import pytest
@@ -109,46 +110,39 @@ class TestGetEvents:
         self.app.db.engine.dispose()
         self.app_context.pop()
 
-    def _preparation_for_one_event(self, topic, event_basic, event_info, place, speaker=None, apply=None):
+    @staticmethod
+    def get_future_date(interval=1):
+        future_time = datetime.utcnow() + timedelta(days=interval, hours=8)
+        return future_time.strftime("%Y-%m-%d")
+
+    def _preparation_for_event(self, topic_info, event_basic_infos, event_infos, place, speaker=None, apply=None):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            topic_sn = manager.create_topic(topic, autocommit=True)
+            topic_sn = manager.create_topic(topic_info, autocommit=True)
             place_sn = manager.create_place(place, autocommit=True)
-            event_basic.update({
-                "topic_sn": topic_sn,
-                "place_sn": place_sn
-            })
-            event_basic_sn = manager.create_event_basic(event_basic, autocommit=True)
-            event_info["event_basic_sn"] = event_basic_sn
             if speaker:
                 speaker_sn = manager.create_speaker(speaker, autocommit=True)
+            else:
+                speaker_sn = None
+            for event_basic_info, event_info in \
+                    zip(event_basic_infos, event_infos):
+                event_basic_info['topic_sn'] = topic_sn
+                event_basic_info['place_sn'] = place_sn
+                event_basic_sn = manager.create_event_basic(event_basic_info, autocommit=True)
+                if apply:
+                    apply["event_basic_sn"] = event_basic_sn
+                    manager.create_event_apply(apply, autocommit=True)
+                event_info['event_basic_sn'] = event_basic_sn
                 event_info["speaker_sns"] = [speaker_sn]
-            manager.create_event_info(event_info, autocommit=True)
-            if apply:
-                apply["event_basic_sn"] = event_basic_sn
-                manager.create_event_apply(apply, autocommit=True)
+                manager.create_event_info(event_info, autocommit=True)
 
-    def test_one_event(self, topic_info, event_basic_info, place_info, apply_info):
-        event_info_info = {
-            "event_basic_sn": None,
-            "title": "Flask class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        speaker_info = {
-            "name": "speaker 1",
-            "photo": "https://pyladies.marsw.tw/img/speaker_1_photo.png",
-            "title": "Senior Engineer",
-            "major_related": True,
-            "intro": "",
-            "fields": [3]
-        }
+    def test_one_event(self, event_info, speaker_info, topic_info, event_basic_info, place_info, apply_info):
         event_apply_info = {
             "event_basic_sn": None,
             "apply": [apply_info]
         }
-        self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
-                                        place_info, speaker_info, event_apply_info)
+        self._preparation_for_event(topic_info, [event_basic_info], [event_info],
+                                    place_info, speaker_info, event_apply_info)
 
         # test
         rv = self.test_client.get("/cms/api/events")
@@ -157,12 +151,12 @@ class TestGetEvents:
         expected_result = {
             "date": event_basic_info["date"],
             "event_apply_exist": 1,
-            "id": event_info_info["event_basic_sn"],
+            "id": event_info["event_basic_sn"],
             "place": {
                 "name": place_info["name"]
             },
             "speaker_exist": 1,
-            "title": event_info_info["title"],
+            "title": event_info["title"],
             "topic": {
                 "name": topic_info["name"]
             },
@@ -172,23 +166,8 @@ class TestGetEvents:
         assert len(rv.json["data"]) == 1
         assert rv.json["data"][0] == expected_result
 
-    def test_one_event_without_apply(self, topic_info, event_basic_info, place_info):
-        event_info_info = {
-            "event_basic_sn": None,
-            "title": "Flask class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
-        speaker_info = {
-            "name": "speaker 1",
-            "photo": "https://pyladies.marsw.tw/img/speaker_1_photo.png",
-            "title": "Senior Engineer",
-            "major_related": True,
-            "intro": "",
-            "fields": [3]
-        }
-        self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
-                                        place_info, speaker_info, None)
+    def test_one_event_without_apply(self, topic_info, event_basic_info, event_info, speaker_info, place_info):
+        self._preparation_for_event(topic_info, [event_basic_info], [event_info], place_info, speaker_info, None)
 
         # test
         rv = self.test_client.get("/cms/api/events")
@@ -197,19 +176,12 @@ class TestGetEvents:
         assert rv.json["data"][0]["event_apply_exist"] == 0
         assert rv.json["data"][0]["speaker_exist"] == 1
 
-    def test_one_event_without_speaker(self, topic_info, event_basic_info, place_info, apply_info):
-        event_info_info = {
-            "event_basic_sn": None,
-            "title": "Flask class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
-        }
+    def test_one_event_without_speaker(self, topic_info, event_basic_info, event_info, place_info, apply_info):
         event_apply_info = {
             "event_basic_sn": None,
             "apply": [apply_info]
         }
-        self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
-                                        place_info, None, event_apply_info)
+        self._preparation_for_event(topic_info, [event_basic_info], [event_info], place_info, None, event_apply_info)
 
         # test
         rv = self.test_client.get("/cms/api/events")
@@ -218,14 +190,82 @@ class TestGetEvents:
         assert rv.json["data"][0]["event_apply_exist"] == 1
         assert rv.json["data"][0]["speaker_exist"] == 0
 
-    def test_one_event_without_speaker_and_apply(self, topic_info, event_basic_info, place_info):
-        event_info_info = {
+    def test_one_event_without_speaker_and_apply(self, event_info, topic_info, event_basic_info, place_info):
+        self._preparation_for_event(topic_info, [event_basic_info], [event_info], place_info)
+
+        # test
+        rv = self.test_client.get("/cms/api/events")
+
+        # assertion
+        assert rv.json["data"][0]["event_apply_exist"] == 0
+        assert rv.json["data"][0]["speaker_exist"] == 0
+
+    @pytest.mark.parametrize('event_basic_infos', [2], indirect=True)
+    @pytest.mark.parametrize('event_infos', [2], indirect=True)
+    def test_events(self, topic_info, event_basic_infos, event_infos, place_info, speaker_info, apply_info):
+        # preparation
+        event_apply_info = {
             "event_basic_sn": None,
-            "title": "Flask class 1",
-            "desc": "This is description of class 1",
-            "fields": [0, 1]
+            "apply": [apply_info]
         }
-        self._preparation_for_one_event(topic_info, event_basic_info, event_info_info, place_info)
+        self._preparation_for_event(topic_info, event_basic_infos, event_infos,
+                                    place_info, speaker_info, event_apply_info)
+
+        # test
+        rv = self.test_client.get("/cms/api/events")
+
+        # assertion
+        assert len(rv.json["data"]) == 2
+        for i in range(2):
+            expected_result = {
+                "date": event_basic_infos[i]["date"],
+                "event_apply_exist": 1,
+                "id": event_infos[i]["event_basic_sn"],
+                "place": {
+                    "name": place_info["name"]
+                },
+                "speaker_exist": 1,
+                "title": event_infos[i]["title"],
+                "topic": {
+                    "name": topic_info["name"]
+                },
+                "end_time": event_basic_infos[i]["end_time"],
+                "start_time": event_basic_infos[i]["start_time"]
+            }
+            assert rv.json["data"][i] == expected_result
+
+    @pytest.mark.parametrize('event_basic_infos', [2], indirect=True)
+    @pytest.mark.parametrize('event_infos', [2], indirect=True)
+    def test_events_without_apply(self, event_infos, speaker_info, topic_info, event_basic_infos, place_info):
+        self._preparation_for_event(topic_info, event_basic_infos, event_infos, place_info, speaker_info, None)
+
+        # test
+        rv = self.test_client.get("/cms/api/events")
+
+        # assertion
+        assert rv.json["data"][0]["event_apply_exist"] == 0
+        assert rv.json["data"][0]["speaker_exist"] == 1
+
+    @pytest.mark.parametrize('event_basic_infos', [2], indirect=True)
+    @pytest.mark.parametrize('event_infos', [2], indirect=True)
+    def test_events_without_speaker(self, event_infos, topic_info, event_basic_infos, place_info, apply_info):
+        event_apply_info = {
+            "event_basic_sn": None,
+            "apply": [apply_info]
+        }
+        self._preparation_for_event(topic_info, event_basic_infos, event_infos, place_info, None, event_apply_info)
+
+        # test
+        rv = self.test_client.get("/cms/api/events")
+
+        # assertion
+        assert rv.json["data"][0]["event_apply_exist"] == 1
+        assert rv.json["data"][0]["speaker_exist"] == 0
+
+    @pytest.mark.parametrize('event_basic_infos', [2], indirect=True)
+    @pytest.mark.parametrize('event_infos', [2], indirect=True)
+    def test_events_without_speaker_and_apply(self, event_infos, topic_info, event_basic_infos, place_info):
+        self._preparation_for_event(topic_info, event_basic_infos, event_infos, place_info)
 
         # test
         rv = self.test_client.get("/cms/api/events")
@@ -277,7 +317,7 @@ class TestGetPlaces:
         # test
         rv = self.test_client.get("/cms/api/places")
 
-        #assert
+        # assert
         assert rv.json["info"]["code"] == 0
         assert len(rv.json["data"]) == 3
         assert rv.json["data"][0]["name"] == places[0]["name"]
@@ -329,6 +369,37 @@ class TestGetSlides:
         assert rv.json["data"][1]["url"] == "https://ihower.tw/git/"
 
 
+class TestGetSpeakers:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    @pytest.mark.parametrize('speaker_infos', [3], indirect=True)
+    def test_get_speakers(self, speaker_infos):
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            for speaker in speaker_infos:
+                manager.create_speaker(speaker, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/cms/api/speakers")
+
+        #assert
+        assert rv.json["info"]["code"] == 0
+        assert len(rv.json["data"]) == 3
+        for i in range(3):
+            assert rv.json["data"][i]["name"] == speaker_infos[i]["name"]
+
+
 class TestGetTopics:
     def setup(self):
         self.app = create_app('test')
@@ -377,9 +448,9 @@ class TestCreateSlideResource:
 
     def test_success(self):
         slide_info = {
-            "type":"slide",
-            "title":"TEST_SLIDE2",
-            "url":"http://789101112"
+            "type": "slide",
+            "title": "TEST_SLIDE2",
+            "url": "http://789101112"
         }
 
         # post
@@ -387,7 +458,7 @@ class TestCreateSlideResource:
             "/cms/api/slide",
             headers={"Content-Type": "application/json"},
             content_type="application/json",
-            data=json.dumps({'data':slide_info}),
+            data=json.dumps({'data': slide_info}),
         )
 
         # api assertion
@@ -507,3 +578,4 @@ class TestLogout:
         rv = self.test_client.put("/cms/api/logout")
 
         assert rv.json["info"]["code"] == 0
+
