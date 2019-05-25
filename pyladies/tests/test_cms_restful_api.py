@@ -5,6 +5,7 @@ import pytest
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash
 
+import pytest
 from app import create_app
 from app.sqldb import DBWrapper
 from app.sqldb.models import User
@@ -21,6 +22,7 @@ class TestCreateEvent:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_success(self, topic_info, place_info):
@@ -105,6 +107,7 @@ class TestGetEvents:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     @staticmethod
@@ -283,6 +286,7 @@ class TestGetPlaces:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_get_places(self):
@@ -332,6 +336,7 @@ class TestGetSlides:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_get_slides(self):
@@ -364,6 +369,38 @@ class TestGetSlides:
         assert rv.json["data"][1]["url"] == "https://ihower.tw/git/"
 
 
+class TestGetTopics:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    @pytest.mark.parametrize('topic_infos', [3], indirect=True)
+    def test_get_topics(self, topic_infos):
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            for topic in topic_infos:
+                manager.create_topic(topic, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/cms/api/topics")
+
+        #assert
+        assert rv.json["info"]["code"] == 0
+        assert len(rv.json["data"]) == 3
+        assert rv.json["data"][0]["name"] == topic_infos[0]["name"]
+        assert rv.json["data"][1]["name"] == topic_infos[1]["name"]
+        assert rv.json["data"][2]["name"] == topic_infos[2]["name"]
+
+
 class TestCreateSlideResource:
     def setup(self):
         self.app = create_app('test')
@@ -375,6 +412,7 @@ class TestCreateSlideResource:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_success(self):
@@ -412,6 +450,7 @@ class TestLogin:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def create_new_user(self, login_info):
@@ -479,6 +518,7 @@ class TestLogout:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def create_new_user(self, login_info):
