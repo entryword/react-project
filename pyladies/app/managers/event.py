@@ -37,9 +37,10 @@ class Manager(BaseEventManager):
             return event_basic.sn
 
     @staticmethod
-    def update_event(sn, file_path):
-        with open(file_path) as f:
-            new_info = json.loads(f.read())
+    def update_event(sn, info):
+		if not isinstance(info, dict):
+            with open(info) as f:
+                new_info = json.loads(f.read())
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)

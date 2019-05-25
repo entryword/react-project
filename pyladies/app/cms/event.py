@@ -62,3 +62,18 @@ def get_event(e_id):
     }
 
     return jsonify(data=event_info, info=info)
+	
+	
+@api.route("/event/<int:e_id>", methods=["put"])
+def put_event(e_id):
+    request_data = request.get_json()
+    data = request_data["data"]
+    event_service = EventManager()
+    event_info = event_service.update_event(e_id, data)
+
+    info = {
+        "code": OK.code,
+        "message": OK.message
+    }
+
+    return jsonify(data=event_info, info=info)
