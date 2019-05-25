@@ -36,7 +36,6 @@ export default {
     go_logout() {
       this.logout().then(() => {
         // TODO logout href
-        debugger;
         window.location.href = "/cms/login.html";
       });
     }
