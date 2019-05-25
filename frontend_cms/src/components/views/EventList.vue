@@ -83,7 +83,7 @@ export default {
     events: function(newEvents, oldEvents) {
       if (newEvents !== oldEvents) {
         this.$nextTick(() => {
-          $("#events").DataTable();
+          $("#events").DataTable({ order: [0, "desc"] });
         });
       }
     }
