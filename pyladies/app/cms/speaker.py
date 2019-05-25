@@ -5,7 +5,7 @@ from ..exceptions import OK
 from ..managers.speaker import Manager as SpeakerManager
 
 
-@api.route("/speakers", methods=["GET"])       
+@api.route("/speakers", methods=["GET"])
 def get_speakers():
     data = SpeakerManager.get_speakers()
 
@@ -15,14 +15,3 @@ def get_speakers():
     }
 
     return jsonify(data=data, info=info)
-
-# @api.route("/speakers", methods=["GET"])       
-# def get_speakers():
-#     data = {"a":"hi"}
-
-#     info = {
-#         "code": OK.code,
-#         "message": OK.message
-#     }
-
-#     return jsonify(data=data, info=info)

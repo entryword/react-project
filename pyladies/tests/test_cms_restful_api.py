@@ -329,6 +329,38 @@ class TestGetSlides:
         assert rv.json["data"][1]["url"] == "https://ihower.tw/git/"
 
 
+class TestGetSpeakers:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    @pytest.mark.parametrize('speaker_infos', [3], indirect=True)
+    def test_get_topics(self, speaker_infos):
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            for speaker in speaker_infos:
+                manager.create_speaker(speaker, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/cms/api/speakers")
+
+        #assert
+        assert rv.json["info"]["code"] == 0
+        assert len(rv.json["data"]) == 3
+        assert rv.json["data"][0]["name"] == speaker_infos[0]["name"]
+        assert rv.json["data"][1]["name"] == speaker_infos[1]["name"]
+        assert rv.json["data"][2]["name"] == speaker_infos[2]["name"]
+
+
 class TestGetTopics:
     def setup(self):
         self.app = create_app('test')
