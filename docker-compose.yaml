@@ -3,6 +3,8 @@ version: '2.1'
 services:
   mariadb:
     image: mariadb:10
+    ports:
+      - 3306:3306
     volumes:
       - ./data/mariadb_data:/var/lib/mysql
       - ./mysql.cnf:/etc/mysql/conf.d/custom.cnf

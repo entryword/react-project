@@ -62,6 +62,7 @@
 
 .event-body{
     padding: 0 50px;
+    margin-left: 50px;
 }
 .event-session{
     margin-bottom: 30px;
@@ -85,6 +86,7 @@
 .event-menu-header h1{
     font-size: 1.4rem;
     margin-bottom: 20px;
+    color: var(--dark-gray-background);
 }
 .event-menu-header h2{
     font-size: 1.2rem;
@@ -93,7 +95,7 @@
 .event-menu-header h3{
     font-size: 1.6rem;
 }
-.topic-menu-header h1{
+/*.topic-menu-header h1{
     font-size: 1.2rem;
     padding-bottom: 0;
     margin-bottom: 10px;
@@ -101,7 +103,7 @@
 .topic-menu-header h2{
     font-size: 1.4rem;
     color :#000;
-}
+}*/
 
 .tag{
     word-break: keep-all;
@@ -210,7 +212,7 @@
     .event-menu-header h3{
         font-size: 1.4rem;
     }
-    .topic-menu-header h1{
+    /*.topic-menu-header h1{
         font-size: 1rem;
         padding-bottom: 0;
         margin-bottom: 10px;
@@ -218,8 +220,7 @@
     .topic-menu-header h2{
         font-size: 1rem;
         color: #000;
-
-    }
+    }*/
     .event-menu-list{
         padding-top: 0;
         text-align: left;

@@ -1,0 +1,21 @@
+{
+    "data": [
+          {
+             "id": 36,
+             "name": "Python 入門"
+          },
+          {
+             "id": 37,
+             "name": "R Ladies 2017-09聚會"
+          },
+          {
+             "id": 38,
+             "name": "國立高雄大學統計所智慧生活整合創新學程--「大數據探勘」課程活動"
+          }
+    ], 
+    "info": {
+       "code": 0, 
+       "message": "Perform the action successfully."
+    }
+  }
+  
