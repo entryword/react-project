@@ -32,9 +32,9 @@ class Manager(BaseEventManager):
 			return event_basic.sn
 
 	@staticmethod
-	def update_event(sn, info):
-		if not isinstance(info, dict):
-			with open(info) as f:
+	def update_event(sn, new_info):
+		if not isinstance(new_info, dict):
+			with open(new_info) as f:
 				new_info = json.loads(f.read())
 
 		with DBWrapper(current_app.db.engine.url).session() as db_sess:

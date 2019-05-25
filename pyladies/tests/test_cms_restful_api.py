@@ -721,3 +721,90 @@ class TestGetEvent:
         assert rv.json["data"]["title"] == event_info_info["title"]
         assert rv.json["data"]["desc"] == event_info_info["desc"]
         assert rv.json["data"]["fields"] == event_info_info["fields"]
+
+
+class TestPutEvent:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def _preparation_for_one_event(self, topic, event_basic, event_info, place, speaker=None, apply=None):
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            topic_sn = manager.create_topic(topic, autocommit=True)
+            place_sn = manager.create_place(place, autocommit=True)
+            event_basic.update({
+                "topic_sn": topic_sn,
+                "place_sn": place_sn
+            })
+            event_basic_sn = manager.create_event_basic(event_basic, autocommit=True)
+            event_info["event_basic_sn"] = event_basic_sn
+            if speaker:
+                speaker_sn = manager.create_speaker(speaker, autocommit=True)
+                event_info["speaker_sns"] = [speaker_sn]
+            manager.create_event_info(event_info, autocommit=True)
+            if apply:
+                apply["event_basic_sn"] = event_basic_sn
+                manager.create_event_apply(apply, autocommit=True)
+
+    def test_one_event(self, topic_info, event_basic_info, place_info, apply_info):
+        event_info_info = {
+            "event_basic_sn": None,
+            "title": "Flask class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        speaker_info = {
+            "name": "speaker 1",
+            "photo": "https://pyladies.marsw.tw/img/speaker_1_photo.png",
+            "title": "Senior Engineer",
+            "major_related": True,
+            "intro": "",
+            "fields": [3]
+        }
+        event_apply_info = {
+            "event_basic_sn": None,
+            "apply": [apply_info]
+        }
+        self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
+                                        place_info, speaker_info, event_apply_info)
+        putdata = {
+            "data": {
+                "title": "XXXX",
+                "topic_id": event_basic_info["topic_sn"],
+                "start_date": "2019-03-09",
+                "start_time": "14:00",
+                "end_date": "2019-03-09",
+                "end_time": "17:00",
+                "place_id": event_basic_info["place_sn"],
+                "desc": "XXXX",
+                "speaker_ids": [1],
+                "assistant_ids": [2],
+                "field_ids": [1, 2],
+                "slide_resource_ids":[1,2,3]
+            }
+        }
+        # test
+        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
+        rv = self.test_client.put(
+            testurl,
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(putdata),
+            content_type="application/json",
+        )
+        print(rv)
+        # assertion
+        # assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
+        # assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
+        # assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
+        # assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
+
+
