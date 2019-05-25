@@ -20,6 +20,7 @@ class TestCreateEvent:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_success(self, topic_info, place_info):
@@ -104,6 +105,7 @@ class TestGetEvents:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def _preparation_for_one_event(self, topic, event_basic, event_info, place, speaker=None, apply=None):
@@ -243,6 +245,7 @@ class TestGetPlaces:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_get_places(self):
@@ -292,6 +295,7 @@ class TestGetSlides:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_get_slides(self):
@@ -335,6 +339,7 @@ class TestCreateSlideResource:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def test_success(self):
@@ -372,6 +377,7 @@ class TestLogin:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def create_new_user(self, login_info):
@@ -439,6 +445,7 @@ class TestLogout:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     def create_new_user(self, login_info):

@@ -14,6 +14,7 @@ class TestEvents:
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
     @staticmethod
