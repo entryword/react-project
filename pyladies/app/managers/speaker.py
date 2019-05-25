@@ -41,3 +41,18 @@ class Manager(BaseSpeakerManager):
             speakers = manager.get_speakers()
             for i in speakers:
                 print(i)
+
+    @staticmethod
+    def get_speakers():
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            speakers = manager.get_speakers()
+            
+            speaker_list = []
+            for speaker in speakers:
+                data = {
+                    "id": speaker.sn,
+                    "name": speaker.name
+                }
+                speaker_list.append(data)
+            return speaker_list
