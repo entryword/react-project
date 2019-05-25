@@ -4,6 +4,7 @@ import json
 
 from werkzeug.security import generate_password_hash
 
+import pytest
 from app import create_app
 from app.sqldb import DBWrapper
 from app.sqldb.models import User
@@ -233,7 +234,7 @@ class TestGetEvents:
 
 
 class TestGetTopics:
-        def setup(self):
+    def setup(self):
         self.app = create_app('test')
         self.app_context = self.app.app_context()
         self.app_context.push()
@@ -244,39 +245,13 @@ class TestGetTopics:
         self.app.db.session.remove()
         self.app.db.drop_all()
         self.app_context.pop()
-    
-        def test_get_topics(self):
-        topics = [
-            {
-                "name": "topic 1",
-                "desc": "this is topic 1",
-                "freq": 0,
-                "level": 0,
-                "host": 0,
-                "fields": [0],
-            },
-            {
-                "name": "topic 2",
-                "desc": "this is topic 2",
-                "freq": 0,
-                "level": 0,
-                "host": 0,
-                "fields": [0],
-            },
-            {
-                "name": "topic 3",
-                "desc": "this is topic 3",
-                "freq": 0,
-                "level": 0,
-                "host": 0,
-                "fields": [0],
-            },
-        ]
 
+    @pytest.mark.parametrize('topic_infos', [3], indirect=True)
+    def test_get_topics(self, topic_infos):
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            for topic in topics:
+            for topic in topic_infos:
                 manager.create_topic(topic, autocommit=True)
 
         # test
@@ -285,9 +260,10 @@ class TestGetTopics:
         #assert
         assert rv.json["info"]["code"] == 0
         assert len(rv.json["data"]) == 3
-        assert rv.json["data"][0]["name"] == topics[0]["name"]
-        assert rv.json["data"][1]["name"] == topics[1]["name"]
-        assert rv.json["data"][2]["name"] == topics[2]["name"]
+        assert rv.json["data"][0]["name"] == topic_infos[0]["name"]
+        assert rv.json["data"][1]["name"] == topic_infos[1]["name"]
+        assert rv.json["data"][2]["name"] == topic_infos[2]["name"]
+
 
 
 class TestGetSlides:
@@ -369,7 +345,7 @@ class TestCreateSlideResource:
         assert rv.json["data"]["title"] == slide_info["title"]
         assert rv.json["data"]["type"] == slide_info["type"]
         assert rv.json["data"]["url"] == slide_info["url"]
-        
+
 
 class TestLogin:
     def setup(self):

@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify
 
 from . import api
 from ..exceptions import OK
