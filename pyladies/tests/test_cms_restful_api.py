@@ -343,7 +343,7 @@ class TestGetSpeakers:
         self.app_context.pop()
 
     @pytest.mark.parametrize('speaker_infos', [3], indirect=True)
-    def test_get_topics(self, speaker_infos):
+    def test_get_speakers(self, speaker_infos):
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
@@ -356,9 +356,8 @@ class TestGetSpeakers:
         #assert
         assert rv.json["info"]["code"] == 0
         assert len(rv.json["data"]) == 3
-        assert rv.json["data"][0]["name"] == speaker_infos[0]["name"]
-        assert rv.json["data"][1]["name"] == speaker_infos[1]["name"]
-        assert rv.json["data"][2]["name"] == speaker_infos[2]["name"]
+        for i in range(3):
+            assert rv.json["data"][i]["name"] == speaker_infos[i]["name"]
 
 
 class TestGetTopics:
