@@ -294,7 +294,6 @@ class TestGetSlides:
         self.app.db.drop_all()
         self.app_context.pop()
 
-
     def test_get_slides(self):
         slide_1 = {
             "title": "Dive into Pinkoi 2013 活動投影片",
