@@ -157,7 +157,6 @@
         //data processing
         data.hostName = definition.host[data.host];
         data.freqName = definition.freq[freq];
-        data.levelName = definition.level[data.level];
         data.placeGoogleMap = !!place ? mapUrl[place] : '';
         data.day = days[new Date(data.date).getUTCDay()];
         data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
@@ -175,6 +174,7 @@
         const copy_btn = document.querySelector('.copy-btn');
         if(copy_btn){
             copy_btn.addEventListener("click", function (e) {
+                e.preventDefault();
                 function SelectText(element) {
                     var range, selection;
                     if (document.body.createTextRange) {
@@ -198,7 +198,6 @@
         //data processing
         data.hostName = definition.host[data.host];
         data.freqName = definition.freq[data.freq];
-        data.levelName = definition.level[data.level];
         data.tags = data.fields.map(field=>  "#" + definition.field[field] + " ");
         data.events.forEach(event=>{
             event.day = days[new Date(event.date).getUTCDay()];
