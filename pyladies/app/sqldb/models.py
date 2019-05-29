@@ -113,6 +113,9 @@ def validate_time_format(time_str, expected_format, err_message):
 class EventBasic(db.Model):
     __tablename__ = "event_basic"
 
+    def default_place_sn():
+        return 37
+
     sn = db.Column(db.Integer, primary_key=True)
     topic_sn = db.Column(db.Integer,
                          db.ForeignKey("topic.sn", ondelete="CASCADE"),
@@ -121,8 +124,9 @@ class EventBasic(db.Model):
     start_time = db.Column(db.String(5), nullable=False)
     end_time = db.Column(db.String(5), nullable=False)
     place_sn = db.Column(db.Integer,
-                         db.ForeignKey("place.sn", ondelete="SET NULL"),
-                         nullable=True)
+                         db.ForeignKey("place.sn", ondelete="SET DEFAULT"),
+                         default=default_place_sn,
+                         nullable=False)
 
     topic = db.relationship("Topic",
                             backref=db.backref("event_basics", uselist=True))
