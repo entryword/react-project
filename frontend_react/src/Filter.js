@@ -105,7 +105,7 @@ class Filter extends Component {
         return (
             <React.Fragment>
                 <div className="fitler-box">
-                    <div className="filter-label">Filter</div>
+                    <div className="filter-label">篩選器</div>
                     <div>
                         <span className="filter-button" onClick={handleFiler}>
                             {filterOpen ? 'Close' : 'Open'}

@@ -60,7 +60,7 @@ p {
     font-size: 1.2rem;
 }
 .top-nav {
-    z-index: 2;
+    z-index: 5;
     background: #fff;
     margin-right: 0;
     padding-right: 0;

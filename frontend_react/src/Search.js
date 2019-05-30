@@ -16,10 +16,10 @@ class Search extends Component {
         } = this.props;
         return (
             <div className="search-box">
-                <div className="search-label">Search</div>
+                <div className="search-label">搜尋</div>
 
                 <Query value={keyword} onChange={handleQueryChange} />
-                <div className="search-label-year-month">Year-Month</div>
+                <div className="search-label-year-month">年份-月份</div>
                 <Year
                     value={year}
                     onChange={handleYearChange}
@@ -32,7 +32,7 @@ class Search extends Component {
                 />
                 <div className="search-button">
                     <button className="btn pyladies-btn" onClick={handleFind}>
-                        <span className="text">Find Events</span>{' '}
+                        <span className="text">搜尋活動</span>{' '}
                         <i className="fa fa-search" />
                     </button>
                 </div>
