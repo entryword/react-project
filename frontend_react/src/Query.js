@@ -8,7 +8,7 @@ function Query(props) {
             onChange={props.onChange}
             id="query"
             value={props.value}
-            placeholder="Topic/Keyword"
+            placeholder="主題/關鍵字"
             maxLength="30"
         />
     );

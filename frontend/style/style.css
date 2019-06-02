@@ -251,7 +251,7 @@ a,p{
 .footer-session a{
     display: block;
     margin-bottom: -5px;
-    color: var(--footer-text-color);
+    color: var(--footer-text-color) !important;
 }
 .footer-session a:hover{
     color: var(--footer-text-color);

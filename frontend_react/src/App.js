@@ -19,7 +19,7 @@ class App extends Component {
             year: moment().year(),
             month: moment().month() + 1,
             filterOpen: false,
-            viewOptionOpen: true,
+            viewOptionOpen: (new URL(window.location.href).searchParams.get('m') === 'false')? false:true,
             events: {
                 count: 0,
                 events: [],
@@ -256,10 +256,10 @@ class App extends Component {
                         filterReset={filterReset}
                     />
                     <div className="view-box">
-                        <div className="view-label">View As</div>
+                        <div className="view-label">顯示模式</div>
                         <div>
                             <span
-                                className="filter-button"
+                                className="view-button"
                                 onClick={this.handleviewOption}>
                                 <i
                                     className={`fa ${
@@ -268,7 +268,6 @@ class App extends Component {
                                             : 'fa-list-alt'
                                     }`}
                                 />
-                                <i className="fa fa-caret-down" />
                             </span>
                         </div>
                     </div>
