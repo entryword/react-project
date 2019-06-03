@@ -800,11 +800,9 @@ class TestPutEvent:
             data=json.dumps(putdata),
             content_type="application/json",
         )
-        print(rv)
+
         # assertion
-        # assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
-        # assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
-        # assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
-        # assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
+        assert rv.json["data"]["id"] == event_info_info["event_basic_sn"]
+
 
 
