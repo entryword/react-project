@@ -213,7 +213,6 @@ class Manager(BaseEventManager):
                                 })
                             resources.add(resource_info)
 
-
             slides = sorted(slides, key=lambda x: x["id"])
             resources = sorted(resources, key=lambda x: x["id"])
 
