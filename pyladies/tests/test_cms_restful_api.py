@@ -579,6 +579,7 @@ class TestLogout:
 
         assert rv.json["info"]["code"] == 0
 
+
 class TestGetEvent:
     def setup(self):
         self.app = create_app('test')
@@ -642,6 +643,13 @@ class TestGetEvent:
         assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
         assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
         assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
+        assert rv.json["data"]["title"] == event_info_info["title"]
+        assert rv.json["data"]["desc"] == event_info_info["desc"]
+        assert rv.json["data"]["fields"] == event_info_info["fields"]
+        assert rv.json["data"]["speakers"][0]["name"] == speaker_info["name"]
+        assert rv.json["data"]["apply"][0]["host"] == apply_info["host"]
+        assert rv.json["data"]["apply"][0]["channel"] == apply_info["channel"]
+        assert rv.json["data"]["slide_resources"] == []
 
     def test_one_event_without_apply(self, topic_info, event_basic_info, place_info):
         event_info_info = {
@@ -673,6 +681,9 @@ class TestGetEvent:
         assert rv.json["data"]["title"] == event_info_info["title"]
         assert rv.json["data"]["desc"] == event_info_info["desc"]
         assert rv.json["data"]["fields"] == event_info_info["fields"]
+        assert rv.json["data"]["speakers"][0]["name"] == speaker_info["name"]
+        assert rv.json["data"]["apply"] == []
+        assert rv.json["data"]["slide_resources"] == []
 
     def test_one_event_without_speaker(self, topic_info, event_basic_info, place_info, apply_info):
         event_info_info = {
@@ -699,6 +710,10 @@ class TestGetEvent:
         assert rv.json["data"]["title"] == event_info_info["title"]
         assert rv.json["data"]["desc"] == event_info_info["desc"]
         assert rv.json["data"]["fields"] == event_info_info["fields"]
+        assert rv.json["data"]["speakers"] == []
+        assert rv.json["data"]["apply"][0]["host"] == apply_info["host"]
+        assert rv.json["data"]["apply"][0]["channel"] == apply_info["channel"]
+        assert rv.json["data"]["slide_resources"] == []
 
     def test_one_event_without_speaker_and_apply(self, topic_info, event_basic_info, place_info):
         event_info_info = {
@@ -721,6 +736,9 @@ class TestGetEvent:
         assert rv.json["data"]["title"] == event_info_info["title"]
         assert rv.json["data"]["desc"] == event_info_info["desc"]
         assert rv.json["data"]["fields"] == event_info_info["fields"]
+        assert rv.json["data"]["speakers"] == []
+        assert rv.json["data"]["apply"] == []
+        assert rv.json["data"]["slide_resources"] == []
 
 
 class TestPutEvent:
@@ -792,7 +810,7 @@ class TestPutEvent:
                 "slide_resource_ids":[1,2,3]
             }
         }
-        # test
+        # test 1
         testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
         rv = self.test_client.put(
             testurl,
@@ -801,8 +819,25 @@ class TestPutEvent:
             content_type="application/json",
         )
 
-        # assertion
+        # assertion 1
         assert rv.json["data"]["id"] == event_info_info["event_basic_sn"]
 
+        # test 2
+        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
+        rv = self.test_client.get(testurl)
 
-
+        # assertion 2
+        assert rv.json["data"]["start_time"] == putdata["data"]["start_time"]
+        assert rv.json["data"]["end_time"] == putdata["data"]["end_time"]
+        assert rv.json["data"]["topic_id"] == putdata["data"]["topic_id"]
+        assert rv.json["data"]["place_info"]["id"] == putdata["data"]["place_id"]
+        assert rv.json["data"]["title"] == putdata["data"]["title"]
+        assert rv.json["data"]["desc"] == putdata["data"]["desc"]
+        assert rv.json["data"]["fields"] == putdata["data"]["field_ids"]
+        assert len(rv.json["data"]["speakers"]) == 1
+        assert rv.json["data"]["speakers"][0]["name"] == speaker_info["name"]
+        assert rv.json["data"]["assistants"] == []
+        assert len(rv.json["data"]["apply"]) == 1
+        assert rv.json["data"]["apply"][0]["host"] == apply_info["host"]
+        assert rv.json["data"]["apply"][0]["channel"] == apply_info["channel"]
+        assert rv.json["data"]["slide_resources"] == []

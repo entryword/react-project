@@ -3,13 +3,12 @@ from datetime import datetime, timedelta
 
 from flask import current_app
 
+from app.exceptions import PyLadiesException, APPLY_NOT_EXIST
+from app.managers.apply import Manager as ApplyManager
 from app.sqldb import DBWrapper
 from .abstract import BaseEventManager
 from ..utils import HashableDict
-from app.managers.apply import Manager as ApplyManager
-from app.exceptions import (
-    APPLY_NOT_EXIST
-)
+
 
 # TODO: error handling & input verification
 class Manager(BaseEventManager):
@@ -26,10 +25,10 @@ class Manager(BaseEventManager):
             event_basic_sn = manager.create_event_basic(info["event_basic"], autocommit=True)
 
             if info["event_info"]:
-                info["event_info"]["event_basic_sn"] = event_basic.sn
+                info["event_info"]["event_basic_sn"] = event_basic_sn
                 manager.create_event_info(info["event_info"], autocommit=True)
 
-            return event_basic.sn
+            return event_basic_sn
 
     @staticmethod
     def update_event(sn, new_info):
@@ -151,11 +150,15 @@ class Manager(BaseEventManager):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             event_basic = manager.get_event_basic(e_id)
-            tm = ApplyManager()
-            if tm.get_event_apply_one_or_none(e_id):
+            try:
+                tm = ApplyManager()
                 event_apply_info = tm.get_event_apply_info(e_id)
-            else:
-                event_apply_info = None
+                event_apply_info = event_apply_info["apply"]
+            except PyLadiesException as e:
+                if e.code == APPLY_NOT_EXIST.code:
+                    event_apply_info = None
+                else:
+                    raise
 
             place_info = None
             if event_basic.place:
@@ -212,11 +215,7 @@ class Manager(BaseEventManager):
 
 
             slides = sorted(slides, key=lambda x: x["id"])
-            # for slide in slides:
-            #     del slide["id"]
             resources = sorted(resources, key=lambda x: x["id"])
-            # for resource in resources:
-            #     del resource["id"]
 
             data = {
                 "topic_info": {
@@ -258,6 +257,8 @@ class Manager(BaseEventManager):
                 data["slide_resources"] = data["slides"] + data["resources"]
                 if event_apply_info:
                     data["apply"] = event_apply_info
+                else:
+                    data["apply"] = []
             else:
                 del data["place_info"]["id"]
                 for ind, sp in enumerate(data["slides"]):

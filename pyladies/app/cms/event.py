@@ -3,7 +3,7 @@ from flask import jsonify, request
 from . import api
 from ..exceptions import OK
 from ..managers.event import Manager as EventManager
-from ..managers.apply import Manager as ApplyManager
+
 
 @api.route("/events", methods=["GET"])
 def get_events():
@@ -64,7 +64,7 @@ def get_event(e_id):
     return jsonify(data=event_info, info=info)
     
     
-@api.route("/event/<int:e_id>", methods=["put"])
+@api.route("/event/<int:e_id>", methods=["PUT"])
 def put_event(e_id):
     request_data = request.get_json()
     data = request_data["data"]
@@ -83,13 +83,8 @@ def put_event(e_id):
     if  data["speaker_ids"]: eventinfo["event_info"]["speaker_sns"] =  data["speaker_ids"]
     if  data["assistant_ids"]: eventinfo["event_info"]["assistant_sns"] =  data["assistant_ids"]
 
-
-
     event_service = EventManager()
     event_info = event_service.update_event(e_id, eventinfo)
-
-    #apply_service = ApplyManager()
-    #apply_info = apply_service.update_event_apply_info(e_id, data["apply"])
 
     data ={
         "id":e_id
