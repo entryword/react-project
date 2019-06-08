@@ -788,12 +788,8 @@ class TestPutEvent:
             "intro": "",
             "fields": [3]
         }
-        event_apply_info = {
-            "event_basic_sn": None,
-            "apply": [apply_info]
-        }
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
-                                        place_info, speaker_info, event_apply_info)
+                                        place_info, speaker_info)
         putdata = {
             "data": {
                 "title": "XXXX",
@@ -807,9 +803,11 @@ class TestPutEvent:
                 "speaker_ids": [1],
                 "assistant_ids": [2],
                 "field_ids": [1, 2],
-                "slide_resource_ids":[1,2,3]
+                "slide_resource_ids":[1,2,3],
+                "apply": [apply_info]
             }
         }
+
         # test 1
         testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
         rv = self.test_client.put(
