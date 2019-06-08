@@ -153,5 +153,15 @@ export default {
       url = `${prefix}/slide`
     }
     return axios({ method, url, data })
+  },
+  logout(){
+    let method = "PUT";
+    let url = "";
+    if (process.env.NODE_ENV === 'development'){
+      url = `${devPrefix}/logout`
+    } else {
+      url = `${prefix}/logout`
+    }
+    return axios({ method, url })
   }
 }

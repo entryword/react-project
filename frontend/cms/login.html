@@ -121,7 +121,7 @@
 
     <!-- built files will be auto injected. Static files below -->
     
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/sources/axios.min.js"></script>
     <script>
 const form = document.getElementById('login-form');
    
@@ -133,17 +133,16 @@ const form = document.getElementById('login-form');
         alert('請填寫 user name 或 password')
         return
       }
-      window.location.href="http://localhost:8080"
-        // axios.post('/api/cms/login', {
-        //     username: username,
-        //     password: password
-        //   })
-        //   .then(function (response) {
-        //     window.location.href="http://localhost:8080"
-        //   })
-        //   .catch(function (error) {
-        //     alert(error.info.message)
-        //   });
+        axios.post('/cms/api/login', {
+            username: username,
+            password: password
+          })
+          .then(function (response) {
+            window.location.href="/cms/"
+          })
+          .catch(function (error) {
+            alert(error.info.message)
+          });
       }
           form.onsubmit = submit;
     </script>
