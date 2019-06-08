@@ -12,8 +12,6 @@ from ..utils import HashableDict
 
 # TODO: error handling & input verification
 class Manager(BaseEventManager):
-
-
     @staticmethod
     def create_event(info):
         if not isinstance(info, dict):
@@ -41,14 +39,20 @@ class Manager(BaseEventManager):
             if new_info["event_basic"]:
                 manager.update_event_basic(sn, new_info["event_basic"], autocommit=True)
 
+            event_basic = manager.get_event_basic(sn)
             if new_info["event_info"]:
-                event_basic = manager.get_event_basic(sn)
                 if event_basic.event_info:
                     manager.update_event_info(event_basic.event_info.sn, new_info["event_info"],
                                               autocommit=True)
                 else:
                     new_info["event_info"]["event_basic_sn"] = event_basic.sn
                     manager.create_event_info(new_info["event_info"], autocommit=True)
+
+            if "apply_info" in new_info and new_info["apply_info"]:
+                for i in event_basic.apply:
+                    manager.delete_event_apply(i.sn, autocommit=True)
+                new_info["apply_info"]["event_basic_sn"] = event_basic.sn
+                manager.create_event_apply(new_info["apply_info"], autocommit=True)
 
     @staticmethod
     def delete_event(sn):
@@ -152,7 +156,7 @@ class Manager(BaseEventManager):
             event_basic = manager.get_event_basic(e_id)
             try:
                 tm = ApplyManager()
-                event_apply_info = tm.get_event_apply_info(e_id)
+                event_apply_info = tm.get_event_apply_info_by_event_basic_sn(e_id)
                 event_apply_info = event_apply_info["apply"]
             except PyLadiesException as e:
                 if e.code == APPLY_NOT_EXIST.code:
