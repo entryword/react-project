@@ -7,7 +7,7 @@ from app.sqldb.models import User
 
 class TestLoginRequired:
     def setup(self):
-        self.app = create_app('test')
+        self.app = create_app('test2')
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.app.db.create_all()
