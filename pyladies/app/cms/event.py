@@ -1,4 +1,5 @@
 from flask import jsonify, request
+from flask_login import login_required
 
 from . import api
 from ..exceptions import OK
@@ -6,6 +7,7 @@ from ..managers.event import Manager as EventManager
 
 
 @api.route("/events", methods=["GET"])
+@login_required
 def get_events():
     data = EventManager.get_events()
 
@@ -18,6 +20,7 @@ def get_events():
 
 
 @api.route("/event", methods=["POST"])
+@login_required
 def createEvent():
     request_data = request.get_json()
 
@@ -52,6 +55,7 @@ def createEvent():
 
 
 @api.route("/event/<int:e_id>", methods=["GET"])
+@login_required
 def get_event(e_id):
     event_service = EventManager()
     event_info = event_service.get_event(e_id, apimode=True)
@@ -65,6 +69,7 @@ def get_event(e_id):
     
     
 @api.route("/event/<int:e_id>", methods=["PUT"])
+@login_required
 def put_event(e_id):
     request_data = request.get_json()
     data = request_data["data"]
