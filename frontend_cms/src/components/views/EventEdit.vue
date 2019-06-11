@@ -645,7 +645,9 @@ export default {
     topicOption: {
       get: function() {
         if (this.vueModel.topic_id) {
-          const topic = this.topics.filter(t => t.id === this.event.topic_id);
+          const topic = this.topics.filter(
+            t => t.id === this.vueModel.topic_id
+          );
           if (topic.length > 0) {
             return topic;
           } else {
