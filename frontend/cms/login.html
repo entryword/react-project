@@ -138,10 +138,15 @@ const form = document.getElementById('login-form');
             password: password
           })
           .then(function (response) {
-            window.location.href="/cms/"
+            if(response.data.info.code !== 0){
+              alert(response.data.info.message)
+            }else{
+              window.location.href="/cms/"
+            }
+           
           })
           .catch(function (error) {
-            alert(error.info.message)
+            alert(error.data.info.message)
           });
       }
           form.onsubmit = submit;
