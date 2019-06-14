@@ -49,10 +49,11 @@ class Manager(BaseEventManager):
                     manager.create_event_info(new_info["event_info"], autocommit=True)
 
             if "apply_info" in new_info and new_info["apply_info"]:
-                for i in event_basic.apply:
-                    manager.delete_event_apply(i.sn, autocommit=True)
                 new_info["apply_info"]["event_basic_sn"] = event_basic.sn
-                manager.create_event_apply(new_info["apply_info"], autocommit=True)
+                if event_basic.apply:
+                    manager.update_event_apply(event_basic.apply.sn, new_info["apply_info"], autocommit=True)
+                else:
+                    manager.create_event_apply(new_info["apply_info"], autocommit=True)
 
     @staticmethod
     def delete_event(sn):
@@ -316,7 +317,7 @@ class Manager(BaseEventManager):
                     "start_time": event_basic.start_time,
                     "end_time": event_basic.end_time
                 }
-                if event_basic.apply:
+                if event_basic.apply and event_basic.apply.apply:
                     data["event_apply_exist"] = 1
                 else:
                     data["event_apply_exist"] = 0
