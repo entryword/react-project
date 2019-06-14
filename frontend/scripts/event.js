@@ -166,6 +166,7 @@
         //data processing
         data.hostName = definition.host[data.host];
         data.freqName = definition.freq[freq];
+        data.levelName = definition.level[data.level];
         data.placeGoogleMap = !!place ? mapUrl[place] : '';
         data.day = days[new Date(data.date).getUTCDay()];
         data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
