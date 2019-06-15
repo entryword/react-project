@@ -81,9 +81,11 @@ export default {
   },
   watch: {
     events: function(newEvents, oldEvents) {
+      $("#events").css({ visibility: "hidden" });
       if (newEvents !== oldEvents) {
         this.$nextTick(() => {
           $("#events").DataTable({ order: [0, "desc"] });
+          $("#events").css({ visibility: "visible" });
         });
       }
     }
