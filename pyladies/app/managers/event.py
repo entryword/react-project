@@ -3,52 +3,57 @@ from datetime import datetime, timedelta
 
 from flask import current_app
 
+from app.exceptions import PyLadiesException, APPLY_NOT_EXIST
+from app.managers.apply import Manager as ApplyManager
 from app.sqldb import DBWrapper
 from .abstract import BaseEventManager
 from ..utils import HashableDict
 
+
 # TODO: error handling & input verification
 class Manager(BaseEventManager):
     @staticmethod
-    def create_event(file_path):
-        with open(file_path) as f:
-            info = json.loads(f.read())
+    def create_event(info):
+        if not isinstance(info, dict):
+            with open(info) as f:
+                info = json.loads(f.read())
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.create_event_basic(info["event_basic"], autocommit=True)
-            event_basics = manager.get_event_basics_by_topic(info["event_basic"]["topic_sn"])
-            for i in event_basics:
-                if i.date == info["event_basic"]["date"] \
-                        and i.start_time == info["event_basic"]["start_time"] \
-                        and i.end_time == info["event_basic"]["end_time"]:
-                    event_basic = i
-                    break
+            event_basic_sn = manager.create_event_basic(info["event_basic"], autocommit=True)
 
             if info["event_info"]:
-                info["event_info"]["event_basic_sn"] = event_basic.sn
+                info["event_info"]["event_basic_sn"] = event_basic_sn
                 manager.create_event_info(info["event_info"], autocommit=True)
 
-            return event_basic.sn
+            return event_basic_sn
 
     @staticmethod
-    def update_event(sn, file_path):
-        with open(file_path) as f:
-            new_info = json.loads(f.read())
+    def update_event(sn, new_info):
+        if not isinstance(new_info, dict):
+            with open(new_info) as f:
+                new_info = json.loads(f.read())
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             if new_info["event_basic"]:
                 manager.update_event_basic(sn, new_info["event_basic"], autocommit=True)
 
+            event_basic = manager.get_event_basic(sn)
             if new_info["event_info"]:
-                event_basic = manager.get_event_basic(sn)
                 if event_basic.event_info:
                     manager.update_event_info(event_basic.event_info.sn, new_info["event_info"],
                                               autocommit=True)
                 else:
                     new_info["event_info"]["event_basic_sn"] = event_basic.sn
                     manager.create_event_info(new_info["event_info"], autocommit=True)
+
+            if "apply_info" in new_info and new_info["apply_info"]:
+                new_info["apply_info"]["event_basic_sn"] = event_basic.sn
+                if event_basic.apply:
+                    manager.update_event_apply(event_basic.apply.sn, new_info["apply_info"], autocommit=True)
+                else:
+                    manager.create_event_apply(new_info["apply_info"], autocommit=True)
 
     @staticmethod
     def delete_event(sn):
@@ -138,21 +143,32 @@ class Manager(BaseEventManager):
     @staticmethod
     def _get_status(event_date, event_start_time):
         """get event status"""
-        event_time = datetime.strptime('{} {}'.format(event_date, event_start_time), '%Y-%m-%d %H:%M')
+        event_time = datetime.strptime(
+            '{} {}'.format(event_date, event_start_time), '%Y-%m-%d %H:%M')
         current_time = datetime.utcnow() + timedelta(hours=8)
         if current_time >= event_time:
             return 0
         return 1
 
     @staticmethod
-    def get_event(e_id):
+    def get_event(e_id, apimode=None):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             event_basic = manager.get_event_basic(e_id)
+            try:
+                tm = ApplyManager()
+                event_apply_info = tm.get_event_apply_info_by_event_basic_sn(e_id)
+                event_apply_info = event_apply_info["apply"]
+            except PyLadiesException as e:
+                if e.code == APPLY_NOT_EXIST.code:
+                    event_apply_info = None
+                else:
+                    raise
 
             place_info = None
             if event_basic.place:
                 place_info = {
+                    "id": event_basic.place.sn,
                     "name": event_basic.place.name,
                     "addr": event_basic.place.addr,
                     "map": event_basic.place.map
@@ -203,11 +219,7 @@ class Manager(BaseEventManager):
                             resources.add(resource_info)
 
             slides = sorted(slides, key=lambda x: x["id"])
-            for slide in slides:
-                del slide["id"]
             resources = sorted(resources, key=lambda x: x["id"])
-            for resource in resources:
-                del resource["id"]
 
             data = {
                 "topic_info": {
@@ -228,6 +240,36 @@ class Manager(BaseEventManager):
                 "slides": list(slides),
                 "resources": list(resources)
             }
+            
+            if apimode:
+                data["topic_id"] = data["topic_info"]["id"]
+                data["start_date"] = data["date"]
+                # TODO:waiting table schema and data["end_date"] will add here
+                data["end_date"] = data["date"]
+                if data.get("topic_info"): del data["topic_info"]
+                if data.get("date"): del data["date"]
+                if data["place_info"].get("addr"): del data["place_info"]["addr"]
+                if data["place_info"].get("map"): del data["place_info"]["map"]
+                for ind, sp in enumerate(data["speakers"]):
+                    if sp.get("photo"): del data["speakers"][ind]["photo"]
+                for ind, sp in enumerate(data["assistants"]):
+                    if sp.get("photo"): del data["assistants"][ind]["photo"] 
+                for ind, sp in enumerate(data["slides"]):
+                    if sp.get("photo"): del data["slides"][ind]["photo"]
+                for ind, sp in enumerate(data["resources"]):
+                    if sp.get("photo"): del data["resources"][ind]["photo"]  
+                data["slide_resources"] = data["slides"] + data["resources"]
+                if event_apply_info:
+                    data["apply"] = event_apply_info
+                else:
+                    data["apply"] = []
+            else:
+                del data["place_info"]["id"]
+                for ind, sp in enumerate(data["slides"]):
+                    if sp.get("id"): del data["slides"][ind]["id"]
+                for ind, sp in enumerate(data["resources"]):
+                    if sp.get("id"): del data["resources"][ind]["id"]
+
             return data
 
     @staticmethod
@@ -253,4 +295,37 @@ class Manager(BaseEventManager):
                         }
                     }
                     events.append(info_event)
+            return events
+
+    @staticmethod
+    def get_events():
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            event_basics = manager.get_event_basics()
+            events = []
+            for event_basic in event_basics:
+                data = {
+                    "id": event_basic.sn,
+                    "title": event_basic.event_info.title,
+                    "topic": {
+                        "name": event_basic.topic.name
+                    },
+                    "place": {
+                        "name": event_basic.place.name
+                    },
+                    "date": event_basic.date,
+                    "start_time": event_basic.start_time,
+                    "end_time": event_basic.end_time
+                }
+                if event_basic.apply and event_basic.apply.apply:
+                    data["event_apply_exist"] = 1
+                else:
+                    data["event_apply_exist"] = 0
+
+                if event_basic.event_info.speakers:
+                    data["speaker_exist"] = 1
+                else:
+                    data["speaker_exist"] = 0
+
+                events.append(data)
             return events

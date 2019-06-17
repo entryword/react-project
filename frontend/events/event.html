@@ -13,7 +13,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>活動</title>
+    <title>Event 活動</title>
     <link rel="shortcut icon" href="../images/favicon.ico">
     <link rel="stylesheet" href="../sources/all.min.css">
     <link rel="stylesheet" href="../sources/bootstrap.min.css">
@@ -96,7 +96,7 @@
 </script>
 <!--Template header-->
 <script id="event-header-content-template" type="text/x-handlebars-template">
-    <h1>{{hostName}}</h1>
+    <h1>{{hostName}}・{{freqName}}</h1>
     <a href="topic.html?id={{topic_info.id}}" target="_blank"><h2>{{topic_info.name}}</h2></a>
     <h3>{{title}}</h3>
 </script>
@@ -105,15 +105,17 @@
     <h3>時間</h3>
     <p><span class="color-gray">{{date}} ({{day}}) {{start_time}}-{{end_time}}</span></p>
     <h3>場地</h3>
-    <p>{{place_info.name}}</p>
-    <p class="color-gray">{{place_info.addr}}
+    <div>{{place_info.name}}</div>
+    <div class="color-gray">
+        <span>{{place_info.addr}}</span>
+        {{setCopyBtn place_info.addr}}
         {{setGoogleMapLink placeGoogleMap}}
-    </p>
+    </div>
     {{setMapPageLink place_info.map}}
 </script>
 <!-- Template 內容說明 -->
 <script id="event-content-template" type="text/x-handlebars-template">
-    <h6>適合程度：{{levelName}}</h6>
+    <span>適合程度：{{levelName}}</span>
     <p>{{{desc}}}</p>
     <div class="tags">
         {{#each tags}}

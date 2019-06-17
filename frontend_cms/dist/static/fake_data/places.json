@@ -1,0 +1,25 @@
+
+{
+    "data": [
+          {
+             "id": 21,
+             "name": "美國創新中心AIC",
+             "addr": "台北市信義區光復南路133號1樓"
+          },
+          {
+             "id": 31,
+             "name": "五倍紅寶石",
+             "addr": "台北市中正區衡陽路7號5樓"
+          },
+          {
+             "id": 37,
+             "name": "未定",
+             "addr": "未定"
+          }
+    ], 
+    "info": {
+       "code": 0, 
+       "message": "Perform the action successfully."
+    }
+  }
+  

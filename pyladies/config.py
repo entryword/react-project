@@ -21,6 +21,14 @@ class Config():
 class TestConfig(Config):
     DEBUG = True
     TESTING = True
+    LOGIN_DISABLED = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
+
+
+class Test2Config(Config):
+    DEBUG = True
+    TESTING = True
+    LOGIN_DISABLED = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL')
 
 
@@ -35,6 +43,7 @@ class ProductionConfig(Config):
 
 config = {
     'test': TestConfig,
+    'test2': Test2Config,
     'development': DevelopmentConfig,
     'production': ProductionConfig,
 

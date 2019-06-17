@@ -1,4 +1,4 @@
-import unittest
+import pytest
 
 from sqlalchemy.exc import IntegrityError
 
@@ -7,61 +7,57 @@ from app.exceptions import PyLadiesException
 from app.exceptions import TOPIC_NOT_EXIST
 from app.sqldb import DBWrapper
 
-
-class TopicTestCase(unittest.TestCase):
-    def setUp(self):
+class TestTopic:
+    def setup(self):
         self.app = create_app('test')
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.app.db.create_all()
 
-    def tearDown(self):
+    def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
+        self.app.db.engine.dispose()
         self.app_context.pop()
 
-    def test_create_topic(self):
-        info = {
-            "name": "topic 1",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
+    @staticmethod
+    def assert_topic(tp1, tp2):
+        assert tp1.name == tp2["name"]
+        assert tp1.desc == tp2["desc"]
+        assert tp1.freq == tp2["freq"]
+        assert tp1.level == tp2["level"]
+        assert tp1.host == tp2["host"]
+        assert tp1.fields == tp2["fields"]
+
+    @staticmethod
+    def assert_topic_name(tp1, tp2):
+        assert tp1.name == tp2["name"]
+
+    @staticmethod
+    def assert_topics_length(topics, length):
+        assert len(topics) == length
+
+    @staticmethod
+    def assert_exception(ex1, ex2):
+        assert ex1 == ex2
+
+    def test_create_topic(self, topic_info):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
 
             # test
-            manager.create_topic(info, autocommit=True)
+            manager.create_topic(topic_info, autocommit=True)
 
             # assertion
-            topic = manager.get_topic_by_name(info["name"])
-            self.assertEquals(topic.name, info["name"])
-            self.assertEquals(topic.desc, info["desc"])
-            self.assertEquals(topic.freq, info["freq"])
-            self.assertEquals(topic.level, info["level"])
-            self.assertEquals(topic.host, info["host"])
-            self.assertEquals(topic.fields, info["fields"])
+            topic = manager.get_topic_by_name(topic_info["name"])
+            self.assert_topic(topic, topic_info)
 
-    def test_unique_topic_name(self):
-        info_1 = {
-            "name": "topic 1",
-            "desc": "This is description 1",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
-        info_2 = {
-            "name": "topic 1",
-            "desc": "This is description 2",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
+    def test_unique_topic_name(self, topic_infos):
+        info_1 = topic_infos[0]
+        info_2 = topic_infos[1]
+        info_2["name"] = info_1["name"]
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -70,78 +66,35 @@ class TopicTestCase(unittest.TestCase):
             manager.create_topic(info_1, autocommit=True)
 
             # assertion
-            with self.assertRaises(IntegrityError) as cm:
+            with pytest.raises(IntegrityError) as cm:
                 manager.create_topic(info_2, autocommit=True)
-            error_msg = str(cm.exception)
-            self.assertIn("duplicate", error_msg.lower())
+            error_msg = str(cm.value)
+            assert "duplicate" in error_msg.lower()
 
-    def test_update_topic_with_same_topic_name(self):
-        info = {
-            "name": "topic 1",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
-        new_info = {
-            "name": "topic 1",
-            "desc": "This is description 2",
-            "freq": 0,
-            "level": 2,
-            "host": 0,
-            "fields": [1, 2]
-        }
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
+    def test_update_topic_with_same_topic_name(self, topic_infos):
+        info_1 = topic_infos[0]
+        info_2 = topic_infos[1]
+        info_2["name"] = info_1["name"]
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            manager.create_topic(info, autocommit=True)
+            manager.create_topic(info_1, autocommit=True)
 
             # test
-            manager.update_topic(1, new_info, autocommit=True)
+            manager.update_topic(1, info_2, autocommit=True)
 
             # assertion
             topic = manager.get_topic(1)
-            self.assertEquals(topic.name, new_info["name"])
-            self.assertEquals(topic.desc, new_info["desc"])
-            self.assertEquals(topic.freq, new_info["freq"])
-            self.assertEquals(topic.level, new_info["level"])
-            self.assertEquals(topic.host, new_info["host"])
-            self.assertEquals(topic.fields, new_info["fields"])
+            self.assert_topic(topic, info_2)
 
-    def test_update_topic_with_different_topic_name(self):
-        info_1 = {
-            "name": "topic 1",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
-        info_2 = {
-            "name": "topic 2",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
-        new_info_dp = {
-            "name": "topic 2",
-            "desc": "This is description 2",
-            "freq": 0,
-            "level": 2,
-            "host": 0,
-            "fields": [1, 2]
-        }
-        new_info_un = {
-            "name": "topic 3",
-            "desc": "This is description 2",
-            "freq": 0,
-            "level": 2,
-            "host": 0,
-            "fields": [1, 2]
-        }
+    @pytest.mark.parametrize('topic_infos', [4], indirect=True)
+    def test_update_topic_with_different_topic_name(self, topic_infos):
+        info_1 = topic_infos[0]
+        info_2 = topic_infos[1]
+        new_info_un = topic_infos[2]
+        new_info_dp = topic_infos[3]
+        new_info_dp["name"] = info_2["name"]
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -151,105 +104,63 @@ class TopicTestCase(unittest.TestCase):
             # test & assertion 1
             manager.update_topic(1, new_info_un, autocommit=True)
             topic = manager.get_topic(1)
-            self.assertEquals(topic.name, new_info_un["name"])
-            self.assertEquals(topic.desc, new_info_un["desc"])
-            self.assertEquals(topic.freq, new_info_un["freq"])
-            self.assertEquals(topic.level, new_info_un["level"])
-            self.assertEquals(topic.host, new_info_un["host"])
-            self.assertEquals(topic.fields, new_info_un["fields"])
+            self.assert_topic(topic, new_info_un)
 
             # test & assertion 2
-            with self.assertRaises(IntegrityError) as cm:
+            with pytest.raises(IntegrityError) as cm:
                 manager.update_topic(1, new_info_dp, autocommit=True)
-            error_msg = str(cm.exception)
-            self.assertIn("duplicate", error_msg.lower())
+            error_msg = str(cm.value)
+            assert "duplicate" in error_msg.lower()
 
-    def test_delete_topic(self):
-        info = {
-            "name": "topic 1",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
+    def test_delete_topic(self, topic_info):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            manager.create_topic(info, autocommit=True)
-            topic = manager.get_topic_by_name(info["name"])
+            manager.create_topic(topic_info, autocommit=True)
+            topic = manager.get_topic_by_name(topic_info["name"])
 
             # test
             manager.delete_topic(topic.sn, autocommit=True)
 
             # assertion
-            with self.assertRaises(PyLadiesException) as cm:
-                manager.get_topic_by_name(info["name"])
-            self.assertEquals(cm.exception, TOPIC_NOT_EXIST)
+            with pytest.raises(PyLadiesException) as cm:
+                manager.get_topic_by_name(topic_info["name"])
+            self.assert_exception(cm.value, TOPIC_NOT_EXIST)
 
-    def test_get_topic_by_name(self):
-        info = {
-            "name": "topic 1",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
+    def test_get_topic_by_name(self, topic_info):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            manager.create_topic(info, autocommit=True)
+            manager.create_topic(topic_info, autocommit=True)
 
             # test & assertion 1
-            topic = manager.get_topic_by_name(info["name"])
-            self.assertEquals(topic.name, info["name"])
+            topic = manager.get_topic_by_name(topic_info["name"])
+            self.assert_topic_name(topic, topic_info)
 
             # test & assertion 2
-            with self.assertRaises(PyLadiesException) as cm:
+            with pytest.raises(PyLadiesException) as cm:
                 manager.get_topic_by_name("topic 2")
-            self.assertEquals(cm.exception, TOPIC_NOT_EXIST)
+            self.assert_exception(cm.value, TOPIC_NOT_EXIST)
 
-    def test_get_topic_by_sn(self):
-        info = {
-            "name": "topic 1",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
+    def test_get_topic_by_sn(self, topic_info):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            manager.create_topic(info, autocommit=True)
+            manager.create_topic(topic_info, autocommit=True)
 
             # test & assertion 1
             topic = manager.get_topic(1)
-            self.assertEquals(topic.name, info["name"])
+            self.assert_topic_name(topic, topic_info)
 
             # test & assertion 2
-            with self.assertRaises(PyLadiesException) as cm:
+            with pytest.raises(PyLadiesException) as cm:
                 manager.get_topic(2)
-            self.assertEquals(cm.exception, TOPIC_NOT_EXIST)
+            self.assert_exception(cm.value, TOPIC_NOT_EXIST)
 
-    def test_get_topics(self):
-        info_1 = {
-            "name": "topic 1",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
-        info_2 = {
-            "name": "topic 2",
-            "desc": "This is description",
-            "freq": 1,
-            "level": 2,
-            "host": 1,
-            "fields": [3]
-        }
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
+    def test_get_topics(self, topic_infos):
+        info_1 = topic_infos[0]
+        info_2 = topic_infos[1]
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -260,35 +171,18 @@ class TopicTestCase(unittest.TestCase):
             topics = manager.get_topics()
 
             # assertion
-            self.assertEquals(len(topics), 2)
-            self.assertEquals(topics[0].name, info_1["name"])
-            self.assertEquals(topics[1].name, info_2["name"])
+            self.assert_topics_length(topics, 2)
+            self.assert_topic_name(topics[0], info_1)
+            self.assert_topic_name(topics[1], info_2)
 
-    def test_get_topics_by_keyword(self):
-        info_1 = {
-            "name": "abc 1",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
-        info_2 = {
-            "name": "def 2",
-            "desc": "This is description",
-            "freq": 1,
-            "level": 2,
-            "host": 1,
-            "fields": [3]
-        }
-        info_3 = {
-            "name": "efg 1",
-            "desc": "This is description",
-            "freq": 0,
-            "level": 1,
-            "host": 0,
-            "fields": [0, 1, 2]
-        }
+    @pytest.mark.parametrize('topic_infos', [3], indirect=True)
+    def test_get_topics_by_keyword(self, topic_infos):
+        info_1 = topic_infos[0]
+        info_1["name"] = "abc 1"
+        info_2 = topic_infos[1]
+        info_2["name"] = "def 2"
+        info_3 = topic_infos[2]
+        info_3["name"] = "efg 1"
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -298,11 +192,11 @@ class TopicTestCase(unittest.TestCase):
 
             # test & assertion 1
             topics = manager.get_topics_by_keyword("b")
-            self.assertEquals(len(topics), 1)
-            self.assertEquals(topics[0].name, info_1["name"])
+            self.assert_topics_length(topics, 1)
+            self.assert_topic_name(topics[0], info_1)
 
             # test & assertion 2
             topics = manager.get_topics_by_keyword("ef")
-            self.assertEquals(len(topics), 2)
-            self.assertEquals(topics[0].name, info_2["name"])
-            self.assertEquals(topics[1].name, info_3["name"])
+            self.assert_topics_length(topics, 2)
+            self.assert_topic_name(topics[0], info_2)
+            self.assert_topic_name(topics[1], info_3)

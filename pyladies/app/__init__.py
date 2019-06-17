@@ -1,9 +1,25 @@
 from flask import Flask, jsonify, current_app
+from flask_login import LoginManager
+from jsonschema.exceptions import ValidationError
+from werkzeug.exceptions import Unauthorized
 
 from config import config
 
-from app.exceptions import PyLadiesException, ROUTING_NOT_FOUND, UNEXPECTED_ERROR
-from app.sqldb.models import db
+from app.exceptions import (
+    PyLadiesException, ROUTING_NOT_FOUND, UNEXPECTED_ERROR,
+    USER_LOGIN_REQUIRED, INVALID_INPUT,
+)
+from app.sqldb.models import db, AnonymousUser, User
+
+
+login_manager = LoginManager()
+login_manager.session_protection = 'strong'
+login_manager.anonymous_user = AnonymousUser
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 def create_app(config_name):
@@ -14,12 +30,18 @@ def create_app(config_name):
     db.init_app(app)
     app.db = db
 
+    login_manager.init_app(app)
+
     # blueprint registration
     from .api_1_0 import api as api_1_0_blueprint
+    from .cms import api as cms_api_blueprint
     app.register_blueprint(api_1_0_blueprint, url_prefix='/v1.0/api')
+    app.register_blueprint(cms_api_blueprint, url_prefix='/cms/api')
 
     app.register_error_handler(404, handle_not_found_error)
     app.register_error_handler(PyLadiesException, handle_pyladies_error)
+    app.register_error_handler(ValidationError, handle_validation_error)
+    app.register_error_handler(Unauthorized, handle_unauthorized_error)
     app.register_error_handler(Exception, handle_unexpected_error)
 
     return app
@@ -39,6 +61,25 @@ def handle_pyladies_error(error):
     info = {
         "code": error.code,
         "message": error.message
+    }
+    return jsonify(info=info)
+
+
+def handle_validation_error(error):
+    # TODO: logging
+    import traceback
+    print(traceback.format_exc())
+    info = {
+        "code": INVALID_INPUT.code,
+        "message": INVALID_INPUT.message
+    }
+    return jsonify(info=info)
+
+
+def handle_unauthorized_error(error):
+    info = {
+        "code": USER_LOGIN_REQUIRED.code,
+        "message": USER_LOGIN_REQUIRED.message
     }
     return jsonify(info=info)
 

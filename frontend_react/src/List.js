@@ -31,14 +31,13 @@ class List extends Component {
                         <header className="event-card-title">
                             <h3>
                                 <a
-                                    href={`/events/event.html?id=${
-                                        item.event.id
+                                    href={`/events/topic.html?id=${
+                                        item.topic.id
                                     }`}
                                     rel="noopener noreferrer"
                                     target="_blank">
                                     {item.topic && item.topic.name}
                                 </a>
-                                -
                             </h3>
                             <h2>
                                 <a

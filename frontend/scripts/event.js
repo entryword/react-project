@@ -19,7 +19,7 @@
         let result = "";
         if(!!url){
             url  = Handlebars.Utils.escapeExpression(url);
-            result = new Handlebars.SafeString(`<p class="color-gray">詳細路線說明<a href="/${url}"> <i class="fa fa-external-link-alt"></i></a></p>`);
+            result = new Handlebars.SafeString(`<div class="color-gray">詳細路線說明<a href="/${url}"> <i class="fa fa-external-link-alt"></i></a></div>`);
         }
         return result;
     });
@@ -28,7 +28,7 @@
         let result = "";
         if(!!url){
             url  = Handlebars.Utils.escapeExpression(url);
-            result = new Handlebars.SafeString(`<a href="${url}"><i class="fa fa-clone"></i></a>`);
+            result = new Handlebars.SafeString(`<a href="${url}"><i class="fa fa-map-marked-alt"></i></a>`);
         }
         return result;
     });
@@ -49,6 +49,22 @@
         if(Date.parse(date) > Date.parse(new Date())){
             eventId  = Handlebars.Utils.escapeExpression(eventId);
             result = new Handlebars.SafeString(`<a class="sign-up-btn" href="/signup/signup.html?id=${eventId}">按此報名</a>`);
+        }
+        return result;
+    });
+    Handlebars.registerHelper('setCopyBtn', function(addr){
+        let result = "";
+        if(addr && addr != '未定'){
+            result = new Handlebars.SafeString(`<a class="copy-btn" href="#"><i class="fa fa-clone"></i></a>`);
+        }
+        return result;
+    });
+    Handlebars.registerHelper('setAllEvent', function(events){
+        let result = "";
+        if(events.length < 4){
+            result = new Handlebars.SafeString(`<div class="col-lg-3 col-md-6 item"><div class="topic-title">
+                    <span>其他</span></div><div class="event-title"><a class="pink-link" href="/eventlist/index.html" target="_blank">所有活動</a></div></div>`);
+            document.getElementById('eventlist_link').style.display = "none";
         }
         return result;
     });
@@ -81,6 +97,7 @@
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     }
     function getDefinition() {
+        // return axios.get(`/fakedata/definition.json`);
         return axios.get('/v1.0/api/definitions');
     }
 
@@ -88,13 +105,18 @@
     function getEvent() {
         let id = getUrlParameter('id') || 1,
             url;
+        tw_pyladies.path = getPath();
         if(tw_pyladies.path === 'topic'){
+            // url = `/fakedata/topic46.json`;
             url = `/v1.0/api/topic/${id}`;
         }else if(tw_pyladies.path === 'top'){
+            // url = `/fakedata/top_info.json`;
             url = `/v1.0/api/events_from_distinct_topics`;
         }else if(tw_pyladies.path === 'signup'){
+            // url = `/fakedata/apply_info.json`;
             url = `/v1.0/api/event/${id}/apply_info`;
         }else{
+            // url = `/fakedata/event137.json`;
             url = `/v1.0/api/event/${id}`;
         }
         return axios.get(url);
@@ -102,7 +124,12 @@
     axios.all([getDefinition(), getEvent()])
         .then(axios.spread(function (definition, event) {
             if(tw_pyladies.path === 'event'){
-                eventTemplating(definition.data.data, event.data.data);
+                axios.get(`/v1.0/api/topic/${event.data.data.topic_info.id}`).then(function(response){
+                    eventTemplating(definition.data.data, event.data.data, response.data.data.freq);
+                })
+                .catch(function (error) {
+                    window.location = '/error/error.html';
+                });
             }else if(tw_pyladies.path === 'top'){
                 topTemplating(definition.data.data, event.data.data);
             }else if(tw_pyladies.path === 'signup'){
@@ -129,7 +156,7 @@
         const blocks = ['event'];
         renderHtml(blocks, data);
     }
-    function eventTemplating(definition, data) {
+    function eventTemplating(definition, data, freq) {
         let place = '';
         if(data.place_info.name.toLowerCase().indexOf('aic')>=0){
             place = 'aic';
@@ -138,20 +165,49 @@
         }
         //data processing
         data.hostName = definition.host[data.host];
+        data.freqName = definition.freq[freq];
         data.levelName = definition.level[data.level];
         data.placeGoogleMap = !!place ? mapUrl[place] : '';
         data.day = days[new Date(data.date).getUTCDay()];
         data.tags = data.fields.map(field=> "#" + definition.field[field] + " ");
         data.eventId = getUrlParameter('id') || 1;
+        if(data.speakers.length == 0){
+            data.speakers.push({
+                "id": -1, 
+                "name": "待定", 
+                "photo": null
+            });
+        }
         // template blocks
         const blocks = ['event-signup','event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
         renderHtml(blocks, data);
+        const copy_btn = document.querySelector('.copy-btn');
+        if(copy_btn){
+            copy_btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                function SelectText(element) {
+                    var range, selection;
+                    if (document.body.createTextRange) {
+                        range = document.body.createTextRange();
+                        range.moveToElementText(element);
+                        range.select();
+                    } else if (window.getSelection) {
+                        selection = window.getSelection();
+                        range = document.createRange();
+                        range.selectNodeContents(element);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    }
+                    document.execCommand("copy");
+                }
+                SelectText(this.previousElementSibling);
+            }, false);
+        }
     }
     function topicTemplating(definition, data) {
         //data processing
         data.hostName = definition.host[data.host];
         data.freqName = definition.freq[data.freq];
-        data.levelName = definition.level[data.level];
         data.tags = data.fields.map(field=>  "#" + definition.field[field] + " ");
         data.events.forEach(event=>{
             event.day = days[new Date(event.date).getUTCDay()];
@@ -163,14 +219,14 @@
     function signupTemplating(definition, data) {
         //data processing
         const channel_urls = ['meetup.html', 'accupass.html'];
-        data.start_day = days[new Date(data.start_time).getUTCDay()];
-        data.start_date = data.start_time.split(" ")[0];
-        data.start_time = data.start_time.split(" ")[1];
-
-        data.end_day = days[new Date(data.end_time).getUTCDay()];
-        data.end_date = data.end_time.split(" ")[0];
-        data.end_time = data.end_time.split(" ")[1];
         data.apply.forEach((a, index)=>{
+            a.start_day = days[new Date(a.start_time).getUTCDay()];
+            a.start_date = a.start_time.split(" ")[0];
+            a.start_time = a.start_time.split(" ")[1];
+
+            a.end_day = days[new Date(a.end_time).getUTCDay()];
+            a.end_date = a.end_time.split(" ")[0];
+            a.end_time = a.end_time.split(" ")[1];
             a.eventId = definition.channel[a.channel];
             a.channelName = definition.channel[a.channel];
             a.channelNum = a.channel+1;
