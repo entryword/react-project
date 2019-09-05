@@ -1,15 +1,15 @@
-from flask import jsonify
+from flask import current_app, jsonify
 from flask_login import login_required
 
 from . import api
 from ..exceptions import OK
-from ..managers.topic import Manager as TopicManager
+from ..managers.speaker import Manager as SpeakerManager
 
 
-@api.route("/topics", methods=["GET"])
+@api.route("/speakers", methods=["GET"])
 @login_required
-def get_topics():
-    data = TopicManager.get_topics()
+def get_speakers():
+    data = SpeakerManager.get_speakers()
 
     info = {
         "code": OK.code,

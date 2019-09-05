@@ -96,7 +96,7 @@
 </script>
 <!--Template header-->
 <script id="event-header-content-template" type="text/x-handlebars-template">
-    <h1>{{hostName}}</h1>
+    <h1>{{hostName}}・{{freqName}}</h1>
     <a href="topic.html?id={{topic_info.id}}" target="_blank"><h2>{{topic_info.name}}</h2></a>
     <h3>{{title}}</h3>
 </script>
@@ -106,7 +106,9 @@
     <p><span class="color-gray">{{date}} ({{day}}) {{start_time}}-{{end_time}}</span></p>
     <h3>場地</h3>
     <div>{{place_info.name}}</div>
-    <div class="color-gray">{{place_info.addr}}
+    <div class="color-gray">
+        <span>{{place_info.addr}}</span>
+        {{setCopyBtn place_info.addr}}
         {{setGoogleMapLink placeGoogleMap}}
     </div>
     {{setMapPageLink place_info.map}}

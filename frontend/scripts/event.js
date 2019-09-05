@@ -28,7 +28,7 @@
         let result = "";
         if(!!url){
             url  = Handlebars.Utils.escapeExpression(url);
-            result = new Handlebars.SafeString(`<a href="${url}"><i class="fa fa-clone"></i></a>`);
+            result = new Handlebars.SafeString(`<a href="${url}"><i class="fa fa-map-marked-alt"></i></a>`);
         }
         return result;
     });
@@ -49,6 +49,22 @@
         if(Date.parse(date) > Date.parse(new Date())){
             eventId  = Handlebars.Utils.escapeExpression(eventId);
             result = new Handlebars.SafeString(`<a class="sign-up-btn" href="/signup/signup.html?id=${eventId}">按此報名</a>`);
+        }
+        return result;
+    });
+    Handlebars.registerHelper('setCopyBtn', function(addr){
+        let result = "";
+        if(addr && addr != '未定'){
+            result = new Handlebars.SafeString(`<a class="copy-btn" href="#"><i class="fa fa-clone"></i></a>`);
+        }
+        return result;
+    });
+    Handlebars.registerHelper('setAllEvent', function(events){
+        let result = "";
+        if(events.length < 4){
+            result = new Handlebars.SafeString(`<div class="col-lg-3 col-md-6 item"><div class="topic-title">
+                    <span>其他</span></div><div class="event-title"><a class="pink-link" href="/eventlist/index.html" target="_blank">所有活動</a></div></div>`);
+            document.getElementById('eventlist_link').style.display = "none";
         }
         return result;
     });
@@ -89,6 +105,7 @@
     function getEvent() {
         let id = getUrlParameter('id') || 1,
             url;
+        tw_pyladies.path = getPath();
         if(tw_pyladies.path === 'topic'){
             // url = `/fakedata/topic46.json`;
             url = `/v1.0/api/topic/${id}`;
@@ -107,7 +124,12 @@
     axios.all([getDefinition(), getEvent()])
         .then(axios.spread(function (definition, event) {
             if(tw_pyladies.path === 'event'){
-                eventTemplating(definition.data.data, event.data.data);
+                axios.get(`/v1.0/api/topic/${event.data.data.topic_info.id}`).then(function(response){
+                    eventTemplating(definition.data.data, event.data.data, response.data.data.freq);
+                })
+                .catch(function (error) {
+                    window.location = '/error/error.html';
+                });
             }else if(tw_pyladies.path === 'top'){
                 topTemplating(definition.data.data, event.data.data);
             }else if(tw_pyladies.path === 'signup'){
@@ -134,7 +156,7 @@
         const blocks = ['event'];
         renderHtml(blocks, data);
     }
-    function eventTemplating(definition, data) {
+    function eventTemplating(definition, data, freq) {
         let place = '';
         if(data.place_info.name.toLowerCase().indexOf('aic')>=0){
             place = 'aic';
@@ -143,6 +165,7 @@
         }
         //data processing
         data.hostName = definition.host[data.host];
+        data.freqName = definition.freq[freq];
         data.levelName = definition.level[data.level];
         data.placeGoogleMap = !!place ? mapUrl[place] : '';
         data.day = days[new Date(data.date).getUTCDay()];
@@ -158,12 +181,33 @@
         // template blocks
         const blocks = ['event-signup','event-header-content', 'event-time', 'event-content','event-tutor','event-material'];
         renderHtml(blocks, data);
+        const copy_btn = document.querySelector('.copy-btn');
+        if(copy_btn){
+            copy_btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                function SelectText(element) {
+                    var range, selection;
+                    if (document.body.createTextRange) {
+                        range = document.body.createTextRange();
+                        range.moveToElementText(element);
+                        range.select();
+                    } else if (window.getSelection) {
+                        selection = window.getSelection();
+                        range = document.createRange();
+                        range.selectNodeContents(element);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    }
+                    document.execCommand("copy");
+                }
+                SelectText(this.previousElementSibling);
+            }, false);
+        }
     }
     function topicTemplating(definition, data) {
         //data processing
         data.hostName = definition.host[data.host];
         data.freqName = definition.freq[data.freq];
-        data.levelName = definition.level[data.level];
         data.tags = data.fields.map(field=>  "#" + definition.field[field] + " ");
         data.events.forEach(event=>{
             event.day = days[new Date(event.date).getUTCDay()];

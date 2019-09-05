@@ -65,10 +65,22 @@
                         v-model="eventDateTime"
                       ></date-range-picker>
                       <div v-if="errors.eventDateTime" class="help-block">請選擇活動時間 (點選 Apply)</div>
+                      <div style="font-size: 12px;color:#aaa;">如果活動在同一天，同一個日期要按兩次代表開始和結束日期</div>
                     </div>
                   </div>
                 </div>
-
+                <div class="row">
+                  <div class="col-md-2">
+                    <font style="color:red">*活動領域</font>
+                  </div>
+                  <div class="col-md-10">
+                    <div class="form-group" v-bind:class="{ 'has-error': errors.fields }">
+                      <v-select multiple :options="fields" label="name" v-model="fieldOption"></v-select>
+                      <div v-if="errors.fields" class="help-block">請選擇活動領域</div>
+                    </div>
+                    <!-- /.form-group -->
+                  </div>
+                </div>
                 <div class="row">
                   <div class="col-md-2">活動地點</div>
                   <div class="col-md-10">
@@ -106,15 +118,6 @@
                   <div class="col-md-10">
                     <div class="form-group">
                       <v-select :options="speakers" multiple label="name" v-model="assistantOption"></v-select>
-                    </div>
-                    <!-- /.form-group -->
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-2">活動領域</div>
-                  <div class="col-md-10">
-                    <div class="form-group">
-                      <v-select multiple :options="fields" label="name" v-model="fieldOption"></v-select>
                     </div>
                     <!-- /.form-group -->
                   </div>
@@ -474,7 +477,8 @@ export default {
       errors: {
         title: false,
         topic: false,
-        eventDateTime: false
+        eventDateTime: false,
+        fields: false
       },
       vueModel: {
         title: null,
@@ -641,7 +645,9 @@ export default {
     topicOption: {
       get: function() {
         if (this.vueModel.topic_id) {
-          const topic = this.topics.filter(t => t.id === this.event.topic_id);
+          const topic = this.topics.filter(
+            t => t.id === this.vueModel.topic_id
+          );
           if (topic.length > 0) {
             return topic;
           } else {
@@ -713,6 +719,7 @@ export default {
         return [];
       },
       set: function(newValue) {
+        this.errors.fields = false;
         if (newValue) {
           this.vueModel.field_ids = newValue.map(s => s.id);
         } else {
@@ -783,7 +790,7 @@ export default {
         this.vueModel.topic_id = this.event.topic_id;
         this.vueModel.speaker_ids = this.event.speakers.map(s => s.id);
         this.vueModel.assistant_ids = this.event.assistants.map(s => s.id);
-        this.vueModel.field_ids = this.event.field;
+        this.vueModel.field_ids = this.event.fields;
         this.vueModel.slide_resource_ids = this.event.slide_resources.map(
           s => s.id
         );
@@ -833,11 +840,8 @@ export default {
             this.vueModel.slide_resource_ids.length,
             this.post_slide_result.id
           );
-          Vue.set(
-            this.slide_resources,
-            this.slide_resources.length,
-            this.post_slide_result
-          );
+          // 新增的資源是第一筆資料
+          this.slide_resources.unshift(this.post_slide_result);
         });
       }
     },
@@ -875,6 +879,10 @@ export default {
       }
       if (!this.vueModel.topic_id || this.vueModel.topic_id.length <= 0) {
         this.errors.topic = true;
+        hasError = true;
+      }
+      if (!this.vueModel.field_ids || this.vueModel.field_ids.length <= 0) {
+        this.errors.fields = true;
         hasError = true;
       }
       if (

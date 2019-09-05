@@ -36,7 +36,7 @@ export default {
     go_logout() {
       this.logout().then(() => {
         // TODO logout href
-        window.location.href = "http://127.0.0.1:8081/login.html";
+        window.location.href = "/cms/login.html";
       });
     }
   }
