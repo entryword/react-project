@@ -2,6 +2,8 @@ import json
 
 from flask import current_app
 
+from app.constant import DEFAULT_PLACE_SN
+from app.exceptions import PLACE_DELETE_FAILED
 from app.sqldb import DBWrapper
 from .abstract import BasePlaceManager
 
@@ -30,6 +32,8 @@ class Manager(BasePlaceManager):
 
     @staticmethod
     def delete_place(sn):
+        if sn == DEFAULT_PLACE_SN:
+            raise PLACE_DELETE_FAILED
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             manager.delete_place(sn, autocommit=True)

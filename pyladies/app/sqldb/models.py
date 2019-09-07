@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import types, String
 from sqlalchemy.ext.declarative import declarative_base
 
+from app.constant import DEFAULT_PLACE_SN
 
 Base = declarative_base(name='Model')
 db = SQLAlchemy()
@@ -113,9 +114,6 @@ def validate_time_format(time_str, expected_format, err_message):
 class EventBasic(db.Model):
     __tablename__ = "event_basic"
 
-    def default_place_sn():
-        return 37
-
     sn = db.Column(db.Integer, primary_key=True)
     topic_sn = db.Column(db.Integer,
                          db.ForeignKey("topic.sn", ondelete="CASCADE"),
@@ -124,8 +122,8 @@ class EventBasic(db.Model):
     start_time = db.Column(db.String(5), nullable=False)
     end_time = db.Column(db.String(5), nullable=False)
     place_sn = db.Column(db.Integer,
-                         db.ForeignKey("place.sn", ondelete="SET DEFAULT"),
-                         default=default_place_sn,
+                         db.ForeignKey("place.sn", ondelete="NO ACTION"),
+                         default=DEFAULT_PLACE_SN,
                          nullable=False)
 
     topic = db.relationship("Topic",

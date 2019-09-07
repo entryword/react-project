@@ -6,6 +6,7 @@ import jsonschema
 from pytest import raises
 
 from app import create_app
+from app.constant import DEFAULT_PLACE_SN
 from app.managers.apply import Manager as ApplyManager
 from app.sqldb import DBWrapper
 
@@ -16,12 +17,24 @@ class InvalidInputTestCase(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.app.db.create_all()
+        self.create_default_place()
 
     def tearDown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
         self.app.db.engine.dispose()
         self.app_context.pop()
+
+    def create_default_place(self):
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            place_info = {
+                "sn": DEFAULT_PLACE_SN,
+                "name": "default place",
+                "addr": "default place addr",
+                "map": "default place map",
+            }
+            manager.create_place(place_info, autocommit=True)
 
     def test_without_host_when_create(self):
         topic_info = {
