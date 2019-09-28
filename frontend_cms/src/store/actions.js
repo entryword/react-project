@@ -71,9 +71,18 @@ export default {
     postEvent: async function({ commit, state }, data) {
         const postEventResultData = await api.postEvent(data).then(res => res.data);
         if (postEventResultData.info.code == 0) {
-            commit('SET_SLIDE_RESOURCES', postEventResultData.data);
+            commit('POST_EVENT_RESULT', postEventResultData.data);
         } else {
             alert(postEventResultData.info.message);
+            // window.location.href = loginUrl;
+        }
+    },
+    postPlace: async function({ commit, state }, data) {
+        const postPlaceResultData = await api.postPlace(data).then(res => res.data);
+        if (postPlaceResultData.info.code == 0) {
+            commit('POST_PLACE_RESULT', postPlaceResultData.data);
+        } else {
+            alert(postPlaceResultData.info.message);
             // window.location.href = loginUrl;
         }
     },

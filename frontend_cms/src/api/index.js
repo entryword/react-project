@@ -127,6 +127,19 @@ export default {
     }
     return axios({ method, url, data })
   },
+  postPlace(data){
+    let method = "POST";
+    let url = "";
+    if (useFakeData && process.env.NODE_ENV === 'development'){
+      method = "get";
+      url = "/static/fake_data/post_place_result.json"
+    } else if (!useFakeData && process.env.NODE_ENV === 'development'){
+      url = `${devPrefix}/place`
+    } else {
+      url = `${prefix}/place`
+    }
+    return axios({ method, url, data })
+  },
   putEvent({data, id}){
     let method = "PUT";
     let url = "";

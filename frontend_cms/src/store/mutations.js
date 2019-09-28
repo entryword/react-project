@@ -64,6 +64,9 @@ export default {
   POST_EVENT_RESULT(state, postEventResult){
     state.post_event_result = postEventResult;
   },
+  POST_PLACE_RESULT(state, postPlaceResult){
+    state.post_place_result = postPlaceResult;
+  },
   PUT_EVENT_RESULT(state, putEventResult){
     state.put_event_result = putEventResult;
   },
