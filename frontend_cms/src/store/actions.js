@@ -95,6 +95,15 @@ export default {
             // window.location.href = loginUrl;
         }
     },
+    putPlace: async function({ commit, state }, data) {
+        const putPlaceResult = await api.putPlace(data).then(res => res.data);
+        if (putPlaceResult.info.code == 0) {
+            commit('PUT_PLACE_RESULT', putPlaceResult.data);
+        } else {
+            alert(putPlaceResult.info.message);
+            // window.location.href = loginUrl;
+        }
+    },
     postSlide: async function({ commit, state }, data) {
         const postSlideResultData = await api.postSlide(data).then(res => res.data);
         if (postSlideResultData.info.code == 0) {

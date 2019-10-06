@@ -70,6 +70,9 @@ export default {
   PUT_EVENT_RESULT(state, putEventResult){
     state.put_event_result = putEventResult;
   },
+  PUT_PLACE_RESULT(state, putPlaceResult){
+    state.put_place_result = putPlaceResult;
+  },
   POST_SLIDE_RESULT(state, postSlideResult){
     state.post_slide_result = postSlideResult;
   }

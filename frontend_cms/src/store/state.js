@@ -14,6 +14,7 @@ export default {
   post_event_result: null,
   post_place_result: null,
   put_event_result: null,
+  put_place_result: null,
   post_slide_result: null,
   log_out_info: null
 }
