@@ -18,3 +18,16 @@ def get_places():
     }
 
     return jsonify(data=data, info=info)
+
+
+@api.route("/place/<int:p_id>", methods=["GET"])
+@login_required
+def get_place(p_id):
+    data = PlaceManager.get_place(p_id)
+
+    info = {
+        "code": OK.code,
+        "message": OK.message
+    }
+
+    return jsonify(data=data, info=info)

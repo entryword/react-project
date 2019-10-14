@@ -57,3 +57,18 @@ class Manager(BasePlaceManager):
                 }
                 places_list.append(data)
             return places_list
+
+    @staticmethod
+    def get_place(sn):
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            place = manager.get_place(sn)
+
+
+            data = {
+                "addr": place.addr,
+                "id": place.sn,
+                "name": place.name
+            }
+                
+            return data
