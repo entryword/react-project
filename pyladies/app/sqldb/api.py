@@ -263,7 +263,6 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         return user
 
     def get_all_users(self):
-        user_list = []
         user_list = self.session.query(User).all()
         return user_list
 
