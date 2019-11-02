@@ -19,7 +19,10 @@ class App extends Component {
             year: moment().year(),
             month: moment().month() + 1,
             filterOpen: false,
-            viewOptionOpen: (new URL(window.location.href).searchParams.get('m') === 'false')? false:true,
+            viewOptionOpen:
+                new URL(window.location.href).searchParams.get('m') === 'false'
+                    ? false
+                    : true,
             events: {
                 count: 0,
                 events: [],
@@ -31,6 +34,11 @@ class App extends Component {
             filterReset: false,
         };
         this.queryEvent = {};
+        setTimeout(() => {
+            if (!this.state.viewOptionOpen) {
+                this.handdleSearchAll();
+            }
+        }, 0);
     }
 
     filterEvents(events, filters) {
@@ -124,9 +132,22 @@ class App extends Component {
     };
     // change between calendar and list view
     handleviewOption = () => {
-        this.setState({
-            viewOptionOpen: !this.state.viewOptionOpen,
-        });
+        this.setState(
+            {
+                viewOptionOpen: !this.state.viewOptionOpen,
+            },
+            () => {
+                // 轉回日曆 重拉該月份資料
+                if (this.state.viewOptionOpen) {
+                    const opt = {
+                        keyword: this.state.keyword,
+                        year: this.state.year,
+                        month: this.state.month,
+                    };
+                    this.fetchEventsData(opt);
+                }
+            }
+        );
     };
     // change order
     handleOrder = e => {
@@ -138,6 +159,15 @@ class App extends Component {
             order: this.state.order === 'asc' ? 'desc' : 'asc',
             events: newEvents,
         });
+    };
+    // 搜尋全部活動
+    handdleSearchAll = () => {
+        const opt = {
+            keyword: this.state.keyword,
+            year: 'all-year',
+            month: 'all-month',
+        };
+        this.fetchEventsData(opt);
     };
     // query
     handleFind = () => {
@@ -185,7 +215,12 @@ class App extends Component {
     fetchEventsData(opt) {
         const now = `${moment().year()}-${moment().month() + 1}`;
         const keyword = opt.keyword || '';
-        const date = opt.year && opt.month ? `${opt.year}-${opt.month}` : now;
+        let date;
+        if (opt.year === 'all-year' || opt.month === 'all-month') {
+            date = null;
+        } else {
+            date = opt.year && opt.month ? `${opt.year}-${opt.month}` : now;
+        }
         const sort = 'date';
         const order = 'asc';
         const apiUrl = '/v1.0/api/events';
@@ -242,10 +277,12 @@ class App extends Component {
                         keyword={this.state.keyword}
                         month={this.state.month}
                         year={this.state.year}
+                        viewOptionOpen={this.state.viewOptionOpen}
                         handleQueryChange={this.handleQueryChange}
                         handleYearChange={this.handleYearChange}
                         handleMonthChange={this.handleMonthChange}
                         handleFind={this.handleFind}
+                        handdleSearchAll={this.handdleSearchAll}
                     />
                     <Filter
                         definitions={definitions}

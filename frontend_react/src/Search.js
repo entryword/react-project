@@ -10,16 +10,26 @@ class Search extends Component {
             handleYearChange,
             handleMonthChange,
             handleFind,
+            handdleSearchAll,
             keyword,
             year,
             month,
+            viewOptionOpen,
         } = this.props;
         return (
             <div className="search-box">
                 <div className="search-label">搜尋</div>
-
                 <Query value={keyword} onChange={handleQueryChange} />
-                <div className="search-label-year-month">年份-月份</div>
+                <div className="search-label-year-month">
+                    年份-月份
+                    {!viewOptionOpen && (
+                        <span
+                            className="search-all pyladies-btn"
+                            onClick={handdleSearchAll}>
+                            搜尋全部活動
+                        </span>
+                    )}
+                </div>
                 <Year
                     value={year}
                     onChange={handleYearChange}
