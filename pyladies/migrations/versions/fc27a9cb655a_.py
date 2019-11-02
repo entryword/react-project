@@ -40,7 +40,7 @@ def upgrade():
     rows = conn.execute("SELECT * FROM user").fetchall()
     for i, row in enumerate(rows, 1):
         status = 0
-        mail = "migration_{}@pyladies.com".format(str(i))
+        mail = "migration_{}@pyladies.com".format(i)
 
         op.execute(sa.text("""
             UPDATE user
