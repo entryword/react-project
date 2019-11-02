@@ -262,6 +262,11 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         user = self.session.merge(user)
         return user
 
+    def get_all_users(self):
+        user_list = []
+        user_list = self.session.query(User).all()
+        return user_list
+
     ########## update
 
     # TODO: not finished yet
