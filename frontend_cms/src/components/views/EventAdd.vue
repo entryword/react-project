@@ -396,7 +396,9 @@ export default {
         // submit data
         const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
         this.postEvent(submitData).then(() => {
-          this.$router.push("/event-list");
+          // this.$router.push("/event-list");
+          alert("新增完成");
+          this.$router.push("/event-edit/" + this.post_event_result.id);
         });
       }
     }

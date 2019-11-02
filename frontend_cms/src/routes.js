@@ -36,6 +36,12 @@ const routes = [
         meta: {description: '', requiresAuth: true}
       },
       {
+        path: '/event-copy/:id',
+        component: EventEditView,
+        name: '活動複製',
+        meta: {description: '', requiresAuth: true}
+      },
+      {
         path: '/event-add',
         component: EventAddView,
         name: '建立活動',
