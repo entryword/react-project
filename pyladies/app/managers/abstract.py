@@ -106,3 +106,7 @@ class BaseUserManager():
     @staticmethod
     def logout():
         raise NotImplementedError()
+
+    @staticmethod
+    def get_all_users():
+        raise NotImplementedError()
