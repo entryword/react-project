@@ -65,6 +65,9 @@ class SQLDatabaseAPI():
     def get_user_by_name(self, name):
         raise NotImplementedError()
 
+    def get_all_users(self):
+        raise NotImplementedError()
+
     ########## update
 
     def update_topic(self, sn, info, autocommit=False):

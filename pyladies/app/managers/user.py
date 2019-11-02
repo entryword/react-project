@@ -27,3 +27,36 @@ class Manager(BaseUserManager):
     @staticmethod
     def logout():
         logout_user()
+
+    @staticmethod
+    def get_all_users():
+        '''
+        return list of users
+        e.g., [
+            {
+                'name': 'test_name',
+                'roles':[
+                    {'name': 'r1', 'sn': 1},
+                    {'name': 'r2', 'sn': 2}
+                ],
+                'status': 0,
+                'sn': 123
+            },
+        ]
+        '''
+        user_list = []
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            try:
+                query_res = manager.get_all_users()
+                for user in query_res:
+                    user_info = {
+                        'name': user.name,
+                        'status': user.status,
+                        'sn': user.id,
+                        'roles': [{'name': r.name, 'sn': r.sn} for r in user.roles],
+                    }
+                    user_list.append(user_info)
+            except PyLadiesException as e:
+                raise e
+        return user_list
