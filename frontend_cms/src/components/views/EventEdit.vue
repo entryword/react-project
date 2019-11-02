@@ -9,7 +9,13 @@
           <div class="col-lg-12">
             <div class="box" id="basic_info">
               <div class="box-header">
-                <h3 class="box-title">活動內容編輯</h3>
+                <h3 class="box-title" v-if="isEdit">活動內容編輯</h3>
+                <button
+                  v-if="isEdit"
+                  class="btn btn-primary pull-right"
+                  @click.stop.prevent="goCopy"
+                >複製此活動</button>
+                <h3 class="box-title" v-if="!isEdit">活動內容複製 - 從活動 {{id}} 複製</h3>
               </div>
               <div class="box-body">
                 <div class="row">
@@ -25,7 +31,7 @@
                         placeholder="活動名稱(限150字)"
                         maxlength="150"
                         v-model="title"
-                      >
+                      />
                       <div v-if="errors.title" class="help-block">請填寫活動名稱</div>
                     </div>
                   </div>
@@ -172,7 +178,7 @@
                           placeholder="主辦單位(限150字)"
                           v-model="apply.host"
                           v-on:keyup="applyChange(index, 'host', apply.host)"
-                        >
+                        />
                       </div>
                     </div>
                   </div>
@@ -190,7 +196,7 @@
                               :checked="apply.channel == type.key"
                               v-model="apply.channel"
                               @change="applyChange(index, 'channel', type.key)"
-                            >
+                            />
                             {{type.name}}
                           </label>
                         </div>
@@ -211,7 +217,7 @@
                               :checked="apply.type == type.key"
                               v-model="apply.type"
                               @change="applyChange(index, 'type', type.key)"
-                            >
+                            />
                             {{type.name}}
                           </label>
                         </div>
@@ -229,7 +235,7 @@
                           placeholder="報名網址"
                           v-model="apply.url"
                           v-on:keyup="applyChange(index, 'url', apply.url)"
-                        >
+                        />
                       </div>
                     </div>
                   </div>
@@ -264,7 +270,7 @@
                           placeholder="報名費用"
                           v-model="apply.price"
                           v-on:keyup="applyChange(index, 'price', apply.price)"
-                        >
+                        />
                       </div>
                     </div>
                   </div>
@@ -279,7 +285,7 @@
                           placeholder="報名對象"
                           v-model="apply.limit"
                           v-on:keyup="applyChange(index, 'limit', apply.limit)"
-                        >
+                        />
                       </div>
                     </div>
                   </div>
@@ -367,7 +373,7 @@
                     value="slide"
                     :checked="newSlide.type == 'slide'"
                     v-model="newSlide.type"
-                  >
+                  />
                   新投影片
                 </div>
               </div>
@@ -380,7 +386,7 @@
                     value="resource"
                     :checked="newSlide.type == 'resource'"
                     v-model="newSlide.type"
-                  >
+                  />
                   新資源
                 </div>
               </div>
@@ -396,7 +402,7 @@
                       name="signup_price"
                       placeholder="投影片名稱"
                       v-model="newSlide.title"
-                    >
+                    />
                   </label>
                 </div>
               </div>
@@ -411,7 +417,7 @@
                     name="signup_price"
                     placeholder="投影片網址"
                     v-model="newSlide.url"
-                  >
+                  />
                 </div>
               </div>
             </div>
@@ -424,7 +430,7 @@
                   id="optionsRadios3"
                   value="exist"
                   v-model="newSlide.type"
-                >
+                />
                 從已有投影片/資源選擇
                 <v-select :options="slide_resources" label="title" v-model="newSlide.selectedSlide"></v-select>
               </label>
@@ -474,6 +480,8 @@ export default {
       RESOURCE_TYPE: RESOURCE_TYPE,
       APPLY_TYPE: APPLY_TYPE,
       CHANNEL_TYPE: CHANNEL_TYPE,
+      id: this.$route.params.id,
+      isEdit: /event-edit/.test(this.$route.path),
       errors: {
         title: false,
         topic: false,
@@ -525,6 +533,7 @@ export default {
       "slide_resources",
       "event",
       "put_event_result",
+      "post_event_result",
       "post_slide_result"
     ]),
     applyChannelType: function() {
@@ -762,6 +771,7 @@ export default {
       "getDefinitions",
       "getSlideResources",
       "getEvent",
+      "postEvent",
       "putEvent",
       "postSlide"
     ]),
@@ -897,15 +907,35 @@ export default {
       //call api
       if (hasError) {
         document.getElementById("basic_info").scrollIntoView();
-      } else {
-        // submit data
+      } else if (this.isEdit) {
+        // submit data 編輯
         const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
         this.putEvent({ data: submitData, id: this.$route.params.id }).then(
           () => {
-            this.$router.push("/event-list");
+            alert("編輯完成");
+            this.$router.push("/event-edit/" + this.put_event_result.id);
+            this.$nextTick(() => {
+              window.location.reload();
+            });
           }
         );
+      } else {
+        // 複製 變成新增一筆
+        const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
+        this.postEvent(submitData).then(() => {
+          alert("複製完成");
+          this.$router.push("/event-edit/" + this.post_event_result.id);
+          this.$nextTick(() => {
+            window.location.reload();
+          });
+        });
       }
+    },
+    goCopy() {
+      this.$router.push("/event-copy/" + this.id);
+      this.$nextTick(() => {
+        window.location.reload();
+      });
     }
   }
 };
