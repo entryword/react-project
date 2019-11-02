@@ -71,7 +71,7 @@ export default {
     postEvent: async function({ commit, state }, data) {
         const postEventResultData = await api.postEvent(data).then(res => res.data);
         if (postEventResultData.info.code == 0) {
-            commit('SET_SLIDE_RESOURCES', postEventResultData.data);
+            commit('POST_EVENT_RESULT', postEventResultData.data);
         } else {
             alert(postEventResultData.info.message);
             // window.location.href = loginUrl;
