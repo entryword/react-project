@@ -25,7 +25,7 @@
                         placeholder="名稱(限150字)"
                         maxlength="150"
                         v-model="name"
-                      >
+                      />
                       <div v-if="errors.name" class="help-block">請填寫名稱</div>
                     </div>
                   </div>
@@ -42,7 +42,7 @@
                         name="place_addr"
                         placeholder="地址"
                         v-model="addr"
-                      >
+                      />
                       <div v-if="errors.addr" class="help-block">請填寫地址</div>
                     </div>
                   </div>
@@ -59,7 +59,13 @@
                         name="place_map"
                         placeholder="地圖網址"
                         v-model="map"
-                      >
+                      />
+                    </div>
+                    <div style="font-size: 12px; color: rgb(170, 170, 170);">
+                      有靜態頁的地點使用以下 url:
+                      <br />美國創新中心 AIC: venue/aic.html
+                      <br />臺北市婦女館: venue/tpewomen.html
+                      <br />
                     </div>
                   </div>
                 </div>
@@ -102,9 +108,7 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      "post_place_result"
-    ]),
+    ...mapState(["post_place_result"]),
     name: {
       get: function() {
         return this.vueModel.name;
@@ -133,9 +137,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      "postPlace"
-    ]),
+    ...mapActions(["postPlace"]),
     clearInput(vueModel) {
       vueModel = {};
     },
