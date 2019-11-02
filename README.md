@@ -162,6 +162,7 @@ pytest ./tests/{file}
 * [API 文件](https://docs.google.com/document/d/1qCN153gmU7bjnoKshdwh9ZsE11Cd4TX5Ob8e-p1z1Vw/edit)
 * [籽籽的開發環境文章](https://medium.com/ichitsai/docker-note-pyladies-tw-%E5%AE%98%E6%96%B9%E7%B6%B2%E7%AB%99%E9%96%8B%E7%99%BC%E7%92%B0%E5%A2%83%E8%A3%BD%E4%BD%9C-%E9%96%8B%E7%99%BC%E7%AD%86%E8%A8%98-6cb795d35c8e?fbclid=IwAR1oQ7ccgiQtSivGrevEf6PpWao8FdM5Dh3kacdhuoK5kStazAad5O-we-0)
 * [毛毛提供的官網組文件](https://www.facebook.com/groups/1910063375747037/files/)
+* [籽籽的測試 model script](https://hackmd.io/tW3QdYK4TISrJUETLmJ-Hg)
 
 前端開發紀錄文章
 
