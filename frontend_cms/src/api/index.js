@@ -6,7 +6,7 @@ const prefix_officialSite = ' /v1.0/api'
 const devPrefix = '/api'
 const devPrefix_officialSite = '/fapi'
 
-const useFakeData = false;
+const useFakeData = true;
 
 export default {
   request (method, uri, data = null) {

@@ -47,14 +47,21 @@
                     </div>
                   </div>
                 </div>
-                <div>
-                  場地指引
-                  <trumbowyg
-                    v-model="desc"
-                    :config="editorConfig"
-                    class="form-control"
-                    name="content"
-                  ></trumbowyg>
+                <div class="row">
+                  <div class="col-md-2">
+                    <font>地圖網址</font>
+                  </div>
+                  <div class="col-md-10">
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="place_map"
+                        placeholder="地圖網址"
+                        v-model="map"
+                      >
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="box-footer">
@@ -89,7 +96,7 @@ export default {
       vueModel: {
         name: null,
         addr: null,
-        desc: null
+        map: null
       },
       editorConfig: {}
     };
@@ -116,12 +123,12 @@ export default {
         this.vueModel.addr = newValue;
       }
     },
-    desc: {
+    map: {
       get: function() {
-        return this.vueModel.desc;
+        return this.vueModel.map;
       },
       set: function(newValue) {
-        this.vueModel.desc = newValue;
+        this.vueModel.map = newValue;
       }
     }
   },
