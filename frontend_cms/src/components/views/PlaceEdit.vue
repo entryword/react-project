@@ -24,7 +24,7 @@
                         name="place_title"
                         placeholder="名稱(限150字)"
                         maxlength="150"
-                        v-model="title"
+                        v-model="name"
                       >
                       <div v-if="errors.title" class="help-block">請填寫名稱</div>
                     </div>
@@ -47,14 +47,21 @@
                     </div>
                   </div>
                 </div>
-                <div>
-                  路線指引
-                  <trumbowyg
-                    v-model="desc"
-                    :config="editorConfig"
-                    class="form-control"
-                    name="content"
-                  ></trumbowyg>
+                <div class="row">
+                  <div class="col-md-2">
+                    <font>地圖網址</font>
+                  </div>
+                  <div class="col-md-10">
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        class="form-control"
+                        name="place_map"
+                        placeholder="地圖網址"
+                        v-model="map"
+                      >
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="box-footer">
@@ -89,18 +96,19 @@ export default {
   },
   components: { "v-select": vSelect, DateRangePicker, Trumbowyg },
   created() {
+    console.log("id", this.$route.params.id);
     this.getData(this.$route.params.id);
   },
   data: function() {
     return {
       errors: {
-        title: false,
+        name: false,
         addr: false
       },
       vueModel: {
-        title: null,
+        name: null,
         addr: null,
-        desc: null
+        map: null
       },
       editorConfig: {}
     };
@@ -110,13 +118,13 @@ export default {
       "place",
       "put_place_result"
     ]),
-    title: {
+    name: {
       get: function() {
-        return this.vueModel.title;
+        return this.vueModel.name;
       },
       set: function(newValue) {
-        this.errors.title = false;
-        this.vueModel.title = newValue;
+        this.errors.name = false;
+        this.vueModel.name = newValue;
       }
     },
     addr: {
@@ -128,12 +136,12 @@ export default {
         this.vueModel.addr = newValue;
       }
     },
-    desc: {
+    map: {
       get: function() {
-        return this.vueModel.desc;
+        return this.vueModel.map;
       },
       set: function(newValue) {
-        this.vueModel.desc = newValue;
+        this.vueModel.map = newValue;
       }
     }
   },
@@ -147,18 +155,17 @@ export default {
     },
     getData(id) {
       this.getPlace(id).then(() => {
-        // console.log(this.place);
-        this.title = this.vueModel.title;
-        this.addr = this.vueModel.addr;
-        this.desc = this.vueModel.desc;
+        this.name = this.place.name;
+        this.addr = this.place.addr;
+        this.map = this.place.map;
       });
     },
     submit(e) {
       e.preventDefault();
       // check required data
       let hasError = false;
-      if (!this.vueModel.title || this.vueModel.title.trim().length <= 0) {
-        this.errors.title = true;
+      if (!this.vueModel.name || this.vueModel.name.trim().length <= 0) {
+        this.errors.name = true;
         hasError = true;
       }
       if (!this.vueModel.addr || this.vueModel.addr.trim().length <= 0) {
@@ -172,6 +179,7 @@ export default {
       } else {
         // submit data
         const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
+        console.log(submitData);
         this.putPlace({ data: submitData, id: this.$route.params.id }).then(
           () => {
             this.$router.push("/place-list");

@@ -46,6 +46,9 @@ export default {
     })
     state.places = modPlaces;
   },
+  SET_PLACE (state, place){
+    state.place = place;
+  },
   SET_SPEAKERS (state, speakers){
     state.speakers = speakers;
   },

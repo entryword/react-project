@@ -75,6 +75,19 @@ export default {
     }
     return axios({ method, url, data })
   },
+  getPlace(id) {
+    let method = "get";
+    let url = "";
+    let data = null;
+    if (useFakeData && process.env.NODE_ENV === 'development'){
+      url = "/static/fake_data/place.json"
+    } else if (!useFakeData && process.env.NODE_ENV === 'development'){
+      url = `${devPrefix}/place/${id}`
+    } else {
+      url = `${prefix}/place/${id}`
+    }
+    return axios({ method, url, data })
+  },
   getSpeakers() {
     let method = "get";
     let url = "";

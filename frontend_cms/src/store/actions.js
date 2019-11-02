@@ -41,6 +41,15 @@ export default {
             window.location.href = loginUrl;
         }
     },
+    getPlace: async function(context, id) {
+        const data = await api.getPlace(id).then(res => res.data);
+        if (data.info.code == 0) {
+            context.commit('SET_PLACE', data.data);
+        } else {
+            alert(data.info.message);
+            window.location.href = loginUrl;
+        }
+    },
     getSpeakers: async function(context) {
         const data = await api.getSpeakers().then(res => res.data);
         if (data.info.code == 0) {
