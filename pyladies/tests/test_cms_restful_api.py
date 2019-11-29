@@ -891,17 +891,10 @@ class TestPutPlace:
 
 
     def test_one_place(self, place_info):
-        places = {
-                "name": "place 1",
-                "addr": "台北市信義區光復南路133號",
-                "map": "http://abc.com/map1.html",
-            }
-
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            place_sn = manager.create_place(place, autocommit=True)
-
+            place_sn = manager.create_place(place_info, autocommit=True)
 
         putdata = {
             "data": {
@@ -928,6 +921,7 @@ class TestPutPlace:
         # test 2
         testurl = "/cms/api/place/"+str(place_sn)
         rv = self.test_client.get(testurl)
+        print(rv.json)
 
         # assertion 2
         assert rv.status_code == 200
@@ -952,7 +946,7 @@ class TestGetPlace:
 
     def test_get_place(self):
 
-        places = {
+        place = {
                 "name": "place 1",
                 "addr": "台北市信義區光復南路133號",
                 "map": "http://abc.com/map1.html",
@@ -967,7 +961,7 @@ class TestGetPlace:
 
         # assert
         assert rv.json["info"]["code"] == 0
-        assert len(rv.json["data"]) == 3
+        assert len(rv.json["data"]) == 4
         assert rv.json["data"]["name"] == place["name"]
-        assert rv.json["data"]]["addr"] == place["addr"]
-        assert rv.json["data"]["id"] == str(place_sn)
+        assert rv.json["data"]["addr"] == place["addr"]
+        assert rv.json["data"]["id"] == place_sn

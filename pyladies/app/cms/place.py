@@ -1,4 +1,4 @@
-from flask import current_app, jsonify
+from flask import current_app, jsonify, request
 from flask_login import login_required
 
 from . import api
@@ -42,7 +42,7 @@ def create_place():
     return jsonify(data=data, info=info)
 
 
-@api.route("/place/<int:e_id>", methods=["PUT"])
+@api.route("/place/<int:p_id>", methods=["PUT"])
 @login_required
 def update_place(p_id):
     request_data = request.get_json()

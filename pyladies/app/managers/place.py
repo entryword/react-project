@@ -55,7 +55,8 @@ class Manager(BasePlaceManager):
                 data = {
                     "addr": place.addr,
                     "id": place.sn,
-                    "name": place.name
+                    "name": place.name,
+                    "map":place.map
                 }
                 places_list.append(data)
             return places_list
@@ -70,7 +71,8 @@ class Manager(BasePlaceManager):
             data = {
                 "addr": place.addr,
                 "id": place.sn,
-                "name": place.name
+                "name": place.name,
+                "map":place.map
             }
                 
             return data
