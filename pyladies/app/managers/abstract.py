@@ -22,7 +22,7 @@ class BaseEventManager():
         raise NotImplementedError()
 
     @staticmethod
-    def update_event(sn, file_path):
+    def update_event(sn, new_info):
         raise NotImplementedError()
 
     @staticmethod
@@ -36,11 +36,11 @@ class BaseEventManager():
 
 class BasePlaceManager():
     @staticmethod
-    def create_place(file_path):
+    def create_place(info):
         raise NotImplementedError()
 
     @staticmethod
-    def update_place(sn, file_path):
+    def update_place(sn, new_info):
         raise NotImplementedError()
 
     @staticmethod

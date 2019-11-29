@@ -839,3 +839,135 @@ class TestPutEvent:
         assert rv.json["data"]["apply"][0]["host"] == apply_info["host"]
         assert rv.json["data"]["apply"][0]["channel"] == apply_info["channel"]
         assert rv.json["data"]["slide_resources"] == []
+
+
+class TestCreatePlace:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app.db.engine.dispose()
+        self.app_context.pop()
+
+    def test_success(self):
+        place_info = {
+            "name": "place 1",
+            "addr": "台北市信義區光復南路133號",
+            "map": "http://abc.com/map1.html"
+        }
+
+        # post
+        rv = self.test_client.post(
+            "/cms/api/place",
+            headers={"Content-Type": "application/json"},
+            content_type="application/json",
+            data=json.dumps({'data': place_info}),
+        )
+
+        # api assertion
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["id"] == 1
+
+
+class TestPutPlace:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+
+    def test_one_place(self, place_info):
+        places = {
+                "name": "place 1",
+                "addr": "台北市信義區光復南路133號",
+                "map": "http://abc.com/map1.html",
+            }
+
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            place_sn = manager.create_place(place, autocommit=True)
+
+
+        putdata = {
+            "data": {
+                "name": "place 2",
+                "addr": "台北市萬華區艋舺大道101號",
+                "map": "http://abc.com/map2.html"
+            }
+        }
+
+        # test 1
+        testurl = "/cms/api/place/"+str(place_sn)
+        rv = self.test_client.put(
+            testurl,
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(putdata),
+            content_type="application/json",
+        )
+
+        # api assertion
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+
+
+        # test 2
+        testurl = "/cms/api/place/"+str(place_sn)
+        rv = self.test_client.get(testurl)
+
+        # assertion 2
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["name"] == putdata["data"]["name"]
+        assert rv.json["data"]["addr"] == putdata["data"]["addr"]
+        assert rv.json["data"]["map"] == putdata["data"]["map"]
+
+class TestGetPlace:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app.db.engine.dispose()
+        self.app_context.pop()
+
+    def test_get_place(self):
+
+        places = {
+                "name": "place 1",
+                "addr": "台北市信義區光復南路133號",
+                "map": "http://abc.com/map1.html",
+         }
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            place_sn = manager.create_place(place, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/cms/api/place/"+str(place_sn))
+
+        # assert
+        assert rv.json["info"]["code"] == 0
+        assert len(rv.json["data"]) == 3
+        assert rv.json["data"]["name"] == place["name"]
+        assert rv.json["data"]]["addr"] == place["addr"]
+        assert rv.json["data"]["id"] == str(place_sn)
