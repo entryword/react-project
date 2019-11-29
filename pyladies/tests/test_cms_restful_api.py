@@ -487,7 +487,8 @@ class TestLogin:
     def create_new_user(self, login_info):
         user_info = {
             "name": login_info["username"],
-            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1")
+            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1"),
+            "mail": login_info["mail"],
         }
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             obj = User(**user_info)
@@ -497,7 +498,8 @@ class TestLogin:
     def test_invalid_input(self):
         login_info = {
             "username": "pyladies",
-            "password": ""
+            "password": "",
+            "mail": "ut@pyladies.com",
         }
 
         rv = self.test_client.post("/cms/api/login", json=login_info)
@@ -507,7 +509,8 @@ class TestLogin:
     def test_user_not_exist(self):
         login_info = {
             "username": "pyladies",
-            "password": "test123456"
+            "password": "test123456",
+            "mail": "ut@pyladies.com",
         }
 
         rv = self.test_client.post("/cms/api/login", json=login_info)
@@ -517,7 +520,8 @@ class TestLogin:
     def test_wrong_password(self):
         login_info = {
             "username": "pyladies",
-            "password": "test123456"
+            "password": "test123456",
+            "mail": "ut@pyladies.com",
         }
         self.create_new_user(login_info)
 
@@ -529,7 +533,8 @@ class TestLogin:
     def test_success(self):
         login_info = {
             "username": "pyladies",
-            "password": "test123456"
+            "password": "test123456",
+            "mail": "ut@pyladies.com",
         }
         self.create_new_user(login_info)
 
@@ -555,7 +560,8 @@ class TestLogout:
     def create_new_user(self, login_info):
         user_info = {
             "name": login_info["username"],
-            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1")
+            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1"),
+            "mail": login_info["mail"],
         }
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             obj = User(**user_info)
@@ -570,7 +576,8 @@ class TestLogout:
     def test_success(self):
         login_info = {
             "username": "pyladies",
-            "password": "test123456"
+            "password": "test123456",
+            "mail": "ut@pyladies.com",
         }
         self.create_new_user(login_info)
         self.test_client.post("/cms/api/login", json=login_info)

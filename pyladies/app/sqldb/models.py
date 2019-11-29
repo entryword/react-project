@@ -263,12 +263,33 @@ class EventApply(db.Model):
                 ", apply: {obj.apply}").format(obj=self)
 
 
+user_to_role = db.Table(
+    "user_to_role",
+    db.Column(
+        "user_id",
+        db.Integer,
+        db.ForeignKey("user.id", ondelete="CASCADE")
+    ),
+    db.Column(
+        "role_sn",
+        db.Integer,
+        db.ForeignKey("role.sn", ondelete="CASCADE")
+    ),
+    db.PrimaryKeyConstraint("user_id", "role_sn")
+)
+
+
 class User(UserMixin, db.Model):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
+    mail = db.Column(db.String(128), unique=True, nullable=False)
+    status = db.Column(db.Integer, nullable=False, default=0)
+    roles = db.relationship("Role",
+                            secondary=user_to_role,
+                            uselist=True)
 
     # @property
     # def password(self):
@@ -278,8 +299,40 @@ class User(UserMixin, db.Model):
     # def password(self, password):
     #     self.password_hash = generate_password_hash(password, method="pbkdf2:sha1")
 
+    @property
+    def role_ids(self):
+        return [r.sn for r in self.roles]
+
+    def __str__(self):
+        return ("<User sn: {obj.id}"
+                ", name: {obj.name}"
+                ", mail: {obj.mail}"
+                ", status: {obj.status}"
+                ", role_ids: {obj.role_ids}").format(obj=self)
+
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class Role(db.Model):
+    __tablename__ = "role"
+
+    sn = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), unique=True, nullable=False)
+    permission = db.Column(types.JSON, nullable=False)
+    users = db.relationship("User",
+                            secondary=user_to_role,
+                            uselist=True)
+
+    @property
+    def user_ids(self):
+        return [u.id for u in self.users]
+
+    def __str__(self):
+        return ("<Role sn: {obj.sn}"
+                ", name: {obj.name}"
+                ", permission: {obj.permission}"
+                ", user_ids: {obj.user_ids}").format(obj=self)
 
 
 class AnonymousUser(AnonymousUserMixin):

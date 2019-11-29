@@ -33,11 +33,13 @@ class TestLoginRequired:
         # preparation
         login_info = {
             "username": "pyladies",
-            "password": "test123456"
+            "password": "test123456",
+            "mail": "ut@pyladies.com",
         }
         user_info = {
             "name": login_info["username"],
-            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1")
+            "password_hash": generate_password_hash(login_info["password"], method="pbkdf2:sha1"),
+            "mail": login_info["mail"],
         }
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             obj = User(**user_info)
