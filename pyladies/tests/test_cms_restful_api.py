@@ -899,15 +899,17 @@ class TestDeleteEvent:
 
         # test
         rv = self.test_client.delete(testurl)
+
+        # assertion
         assert rv.json["info"]["code"] == 0
+        rv = self.test_client.get(testurl)
+        assert rv.json["info"]["code"] == EVENTBASIC_NOT_EXIST.code
 
     def test_no_event(self):
-        # preparation
         testurl = "/cms/api/event/1234"
         rv = self.test_client.get(testurl)
         assert rv.json["info"]["code"] == EVENTBASIC_NOT_EXIST.code
 
-        # test
         rv = self.test_client.delete(testurl)
         assert rv.json["info"]["code"] == 0
 
