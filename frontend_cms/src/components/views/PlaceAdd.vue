@@ -22,7 +22,7 @@
                         type="text"
                         class="form-control"
                         name="place_name"
-                        placeholder="名稱(限150字)"
+                        placeholder="名稱(限150字，不得與已存在的名稱相同。)"
                         maxlength="150"
                         v-model="name"
                       />
@@ -102,7 +102,7 @@ export default {
       vueModel: {
         name: null,
         addr: null,
-        map: null
+        map: ""
       },
       editorConfig: {}
     };
@@ -132,7 +132,7 @@ export default {
         return this.vueModel.map;
       },
       set: function(newValue) {
-        this.vueModel.map = newValue;
+        this.vueModel.map = newValue || "";
       }
     }
   },

@@ -1,0 +1,12 @@
+{
+    "data": {
+        "id": 31,
+        "name": "五倍紅寶石",
+        "addr": "台北市中正區衡陽路7號5樓",
+        "map": "http://abc.com/map1.html"
+    },
+    "info":{
+        "code":0,
+        "message":"Perform the action successfully."
+    }
+ }
