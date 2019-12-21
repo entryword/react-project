@@ -2,6 +2,7 @@
 
 import unittest
 from app import create_app
+from app.constant import DEFAULT_PLACE_SN
 from app.sqldb import DBWrapper
 from app.exceptions import (
     EVENTLIST_INVALID_KEYWORD,
@@ -18,12 +19,24 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.app_context.push()
         self.app.db.create_all()
         self.test_client = self.app.test_client()
+        self.create_default_place()
 
     def tearDown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
         self.app.db.engine.dispose()
         self.app_context.pop()
+
+    def create_default_place(self):
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            place_info = {
+                "sn": DEFAULT_PLACE_SN,
+                "name": "default place",
+                "addr": "default place addr",
+                "map": "default place map",
+            }
+            manager.create_place(place_info, autocommit=True)
 
     def test_routing_not_found(self):
         rv = self.test_client.get("/topic/1")
@@ -127,8 +140,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             event_basic_info["topic_sn"] = 1
-            manager.create_place(place_info, autocommit=True)
-            event_basic_info["place_sn"] = 1
+            place_sn = manager.create_place(place_info, autocommit=True)
+            event_basic_info["place_sn"] = place_sn
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_info_info["event_basic_sn"] = 1
             manager.create_speaker(speaker_info, autocommit=True)
@@ -193,8 +206,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             event_basic_info["topic_sn"] = 1
-            manager.create_place(place_info, autocommit=True)
-            event_basic_info["place_sn"] = 1
+            place_sn = manager.create_place(place_info, autocommit=True)
+            event_basic_info["place_sn"] = place_sn
             manager.create_event_basic(event_basic_info, autocommit=True)
 
         # test
@@ -279,8 +292,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             event_basic_info["topic_sn"] = 1
-            manager.create_place(place_info, autocommit=True)
-            event_basic_info["place_sn"] = 1
+            place_sn = manager.create_place(place_info, autocommit=True)
+            event_basic_info["place_sn"] = place_sn
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_info_info["event_basic_sn"] = 1
             manager.create_speaker(speaker_info, autocommit=True)
@@ -367,7 +380,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             for topic in topics:
                 manager.create_topic(topic, autocommit=True)
-            manager.create_place(place_info, autocommit=True)
+            place_sn = manager.create_place(place_info, autocommit=True)
+            event_basics[0]["place_sn"] = place_sn
             for event_basic in event_basics:
                 manager.create_event_basic(event_basic, autocommit=True)
             for event_info in event_infos:
@@ -517,10 +531,10 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         rv = self.test_client.get("/v1.0/api/places")
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], 0)
-        self.assertEqual(rv.json["data"]["places"][1]["name"], places[1]["name"])
-        self.assertEqual(rv.json["data"]["places"][1]["addr"], places[1]["addr"])
-        self.assertEqual(rv.json["data"]["places"][1]["map"], places[1]["map"])
-        self.assertEqual(len(rv.json["data"]["places"]), 3)
+        self.assertEqual(rv.json["data"]["places"][-1]["name"], places[-1]["name"])
+        self.assertEqual(rv.json["data"]["places"][-1]["addr"], places[-1]["addr"])
+        self.assertEqual(rv.json["data"]["places"][-1]["map"], places[-1]["map"])
+        self.assertEqual(len(rv.json["data"]["places"]), 3 + 1) # default place is also counted
 
     def test_get_event_apply_info(self):
         topic_info = {

@@ -44,12 +44,6 @@ class Manager(BasePlaceManager):
                 raise e
 
     @staticmethod
-    def delete_place(sn):
-        with DBWrapper(current_app.db.engine.url).session() as db_sess:
-            manager = current_app.db_api_class(db_sess)
-            manager.delete_place(sn, autocommit=True)
-
-    @staticmethod
     def list_places():
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)

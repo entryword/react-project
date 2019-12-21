@@ -123,7 +123,6 @@ def speaker(create, update_sn, delete_sn, f, ls):
 @manager.option('-c', '--create', action='count', help='create place (must be used with -f)')
 @manager.option('-u', '--update', dest='update_sn', metavar='ID', type=int,
                 help='update place (must be used with -f)')
-@manager.option('-d', '--delete', dest='delete_sn', metavar='ID', type=int, help='delete place')
 @manager.option('-f', '--file', dest='f', metavar='FILE')
 @manager.option('-l', '--list', dest='ls', action='count', help='list places')
 def place(create, update_sn, delete_sn, f, ls):
@@ -141,10 +140,6 @@ def place(create, update_sn, delete_sn, f, ls):
         else:
             tm.update_place(update_sn, f)
             print("Update place (sn={}) successfully.".format(update_sn))
-
-    if delete_sn:
-        tm.delete_place(delete_sn)
-        print("Delete place (sn={}) successfully.".format(delete_sn))
 
     if ls:
         tm.list_places()

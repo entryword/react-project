@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import types, String
 from sqlalchemy.ext.declarative import declarative_base
 
+from app.constant import DEFAULT_PLACE_SN
 
 Base = declarative_base(name='Model')
 db = SQLAlchemy()
@@ -121,8 +122,9 @@ class EventBasic(db.Model):
     start_time = db.Column(db.String(5), nullable=False)
     end_time = db.Column(db.String(5), nullable=False)
     place_sn = db.Column(db.Integer,
-                         db.ForeignKey("place.sn", ondelete="SET NULL"),
-                         nullable=True)
+                         db.ForeignKey("place.sn", ondelete="NO ACTION"),
+                         default=DEFAULT_PLACE_SN,
+                         nullable=False)
 
     topic = db.relationship("Topic",
                             backref=db.backref("event_basics", uselist=True))

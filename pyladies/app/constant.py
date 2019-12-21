@@ -76,3 +76,5 @@ DEFINITION_1_0 = {
     "channel": CHANNEL_1_0,
     "type": TYPE_1_0
 }
+
+DEFAULT_PLACE_SN = 37
