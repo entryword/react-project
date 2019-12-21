@@ -9,9 +9,10 @@ from .abstract import BasePlaceManager
 # TODO: error handling & input verification
 class Manager(BasePlaceManager):
     @staticmethod
-    def create_place(file_path):
-        with open(file_path) as f:
-            info = json.loads(f.read())
+    def create_place(info):
+        if not isinstance(info, dict):
+            with open(info) as f:
+                info = json.loads(f.read())
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
@@ -20,9 +21,10 @@ class Manager(BasePlaceManager):
             return place.sn
 
     @staticmethod
-    def update_place(sn, file_path):
-        with open(file_path) as f:
-            new_info = json.loads(f.read())
+    def update_place(sn, new_info):
+        if not isinstance(new_info, dict):
+            with open(new_info) as f:
+                new_info = json.loads(f.read())
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
@@ -53,7 +55,24 @@ class Manager(BasePlaceManager):
                 data = {
                     "addr": place.addr,
                     "id": place.sn,
-                    "name": place.name
+                    "name": place.name,
+                    "map":place.map
                 }
                 places_list.append(data)
             return places_list
+
+    @staticmethod
+    def get_place(sn):
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            place = manager.get_place(sn)
+
+
+            data = {
+                "addr": place.addr,
+                "id": place.sn,
+                "name": place.name,
+                "map":place.map
+            }
+                
+            return data
