@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 """empty message
 
 Revision ID: 65bd75fa4d4a
@@ -14,7 +16,7 @@ from app.constant import DEFAULT_PLACE_SN
 
 # revision identifiers, used by Alembic.
 revision = '65bd75fa4d4a'
-down_revision = '6473925ac6ef'
+down_revision = 'fc27a9cb655a'
 branch_labels = None
 depends_on = None
 
@@ -24,14 +26,14 @@ def upgrade():
     # insert default place if it does not exist in table place
     op.execute(text("""
         INSERT IGNORE INTO place (sn, name, addr, map)
-            VALUES(%s, 'default place', 'default place addr', 'default place map');
-        """ % DEFAULT_PLACE_SN))
+            VALUES(:default_sn, '未定', '未定', '');
+        """).bindparams(default_sn=DEFAULT_PLACE_SN))
     # set place_sn to default for those which set to NULL before in table event_basic
     op.execute(text("""
         UPDATE event_basic
-            SET place_sn = %s
+            SET place_sn = :default_sn
             WHERE place_sn IS NULL;
-        """ % DEFAULT_PLACE_SN))
+        """).bindparams(default_sn=DEFAULT_PLACE_SN))
     op.drop_constraint('event_basic_ibfk_1', 'event_basic', type_='foreignkey')
     op.alter_column('event_basic', 'place_sn',
                     existing_type=mysql.INTEGER(display_width=11),
