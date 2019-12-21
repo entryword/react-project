@@ -869,7 +869,7 @@ class TestCreatePlace:
             "map": "http://abc.com/map1.html"
         }
 
-        # post
+        # test 1
         rv = self.test_client.post(
             "/cms/api/place",
             headers={"Content-Type": "application/json"},
@@ -881,6 +881,17 @@ class TestCreatePlace:
         assert rv.status_code == 200
         assert rv.json["info"]["code"] == 0
         assert rv.json["data"]["id"] == 1
+
+        # test 2
+        testurl = "/cms/api/place/1"
+        rv = self.test_client.get(testurl)
+
+        # assertion 2
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["name"] == place_info["name"]
+        assert rv.json["data"]["addr"] == place_info["addr"]
+        assert rv.json["data"]["map"] == place_info["map"]
 
 
 class TestPutPlace:
@@ -895,7 +906,6 @@ class TestPutPlace:
         self.app.db.session.remove()
         self.app.db.drop_all()
         self.app_context.pop()
-
 
     def test_one_place(self, place_info):
         # preparation
@@ -912,7 +922,7 @@ class TestPutPlace:
         }
 
         # test 1
-        testurl = "/cms/api/place/"+str(place_sn)
+        testurl = "/cms/api/place/" + str(place_sn)
         rv = self.test_client.put(
             testurl,
             headers={"Content-Type": "application/json"},
@@ -924,9 +934,8 @@ class TestPutPlace:
         assert rv.status_code == 200
         assert rv.json["info"]["code"] == 0
 
-
         # test 2
-        testurl = "/cms/api/place/"+str(place_sn)
+        testurl = "/cms/api/place/" + str(place_sn)
         rv = self.test_client.get(testurl)
         print(rv.json)
 
@@ -936,6 +945,7 @@ class TestPutPlace:
         assert rv.json["data"]["name"] == putdata["data"]["name"]
         assert rv.json["data"]["addr"] == putdata["data"]["addr"]
         assert rv.json["data"]["map"] == putdata["data"]["map"]
+
 
 class TestGetPlace:
     def setup(self):
@@ -952,7 +962,6 @@ class TestGetPlace:
         self.app_context.pop()
 
     def test_get_place(self):
-
         place = {
                 "name": "place 1",
                 "addr": "台北市信義區光復南路133號",
@@ -969,6 +978,7 @@ class TestGetPlace:
         # assert
         assert rv.json["info"]["code"] == 0
         assert len(rv.json["data"]) == 4
+        assert rv.json["data"]["id"] == place_sn
         assert rv.json["data"]["name"] == place["name"]
         assert rv.json["data"]["addr"] == place["addr"]
-        assert rv.json["data"]["id"] == place_sn
+        assert rv.json["data"]["map"] == place["map"]

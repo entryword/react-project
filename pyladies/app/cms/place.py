@@ -55,7 +55,7 @@ def update_place(p_id):
     }
 
     manager = PlaceManager()
-    p_id = manager.update_place(p_id, place_data)
+    manager.update_place(p_id, place_data)
     info = {"code": OK.code, "message": OK.message}
 
     return jsonify(info=info)
