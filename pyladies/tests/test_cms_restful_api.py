@@ -7,7 +7,7 @@ from werkzeug.security import generate_password_hash
 
 import pytest
 from app import create_app
-from app.exceptions import PLACE_NAME_DUPLICATE
+from app.exceptions import PLACE_NAME_DUPLICATE, EVENTBASIC_NOT_EXIST
 from app.sqldb import DBWrapper
 from app.sqldb.models import User
 
@@ -847,6 +847,71 @@ class TestPutEvent:
         assert rv.json["data"]["apply"][0]["host"] == apply_info["host"]
         assert rv.json["data"]["apply"][0]["channel"] == apply_info["channel"]
         assert rv.json["data"]["slide_resources"] == []
+
+
+class TestDeleteEvent:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def _preparation_for_one_event(self, topic, event_basic, event_info, place, speaker=None, apply=None):
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            topic_sn = manager.create_topic(topic, autocommit=True)
+            place_sn = manager.create_place(place, autocommit=True)
+            event_basic.update({
+                "topic_sn": topic_sn,
+                "place_sn": place_sn
+            })
+            event_basic_sn = manager.create_event_basic(event_basic, autocommit=True)
+            event_info["event_basic_sn"] = event_basic_sn
+            if speaker:
+                speaker_sn = manager.create_speaker(speaker, autocommit=True)
+                event_info["speaker_sns"] = [speaker_sn]
+            manager.create_event_info(event_info, autocommit=True)
+            if apply:
+                apply["event_basic_sn"] = event_basic_sn
+                manager.create_event_apply(apply, autocommit=True)
+
+    def test_one_event(self, topic_info, event_basic_info, place_info, apply_info):
+        # preparation
+        event_info_info = {
+            "event_basic_sn": None,
+            "title": "Flask class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1]
+        }
+        self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
+                                        place_info)
+
+        testurl = "/cms/api/event/" + str(event_info_info["event_basic_sn"])
+        rv = self.test_client.get(testurl)
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]
+
+        # test
+        rv = self.test_client.delete(testurl)
+
+        # assertion
+        assert rv.json["info"]["code"] == 0
+        rv = self.test_client.get(testurl)
+        assert rv.json["info"]["code"] == EVENTBASIC_NOT_EXIST.code
+
+    def test_no_event(self):
+        testurl = "/cms/api/event/1234"
+        rv = self.test_client.get(testurl)
+        assert rv.json["info"]["code"] == EVENTBASIC_NOT_EXIST.code
+
+        rv = self.test_client.delete(testurl)
+        assert rv.json["info"]["code"] == 0
 
 
 class TestCreatePlace:
