@@ -44,10 +44,6 @@ class BasePlaceManager():
         raise NotImplementedError()
 
     @staticmethod
-    def delete_place(sn):
-        raise NotImplementedError()
-
-    @staticmethod
     def list_places():
         raise NotImplementedError()
 

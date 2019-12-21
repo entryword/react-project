@@ -7,6 +7,7 @@ from werkzeug.security import generate_password_hash
 
 import pytest
 from app import create_app
+from app.exceptions import PLACE_NAME_DUPLICATE
 from app.sqldb import DBWrapper
 from app.sqldb.models import User
 
@@ -893,6 +894,34 @@ class TestCreatePlace:
         assert rv.json["data"]["addr"] == place_info["addr"]
         assert rv.json["data"]["map"] == place_info["map"]
 
+    def test_duplicate_place_name(self):
+        # preparation
+        place_info = {
+            "name": "place 1",
+            "addr": "台北市信義區光復南路133號",
+            "map": "http://abc.com/map1.html"
+        }
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_place(place_info, autocommit=True)
+
+        # test
+        place_info_2 = {
+            "name": "place 1",
+            "addr": "台北市信義區光復南路134號",
+            "map": "http://abc.com/map2.html"
+        }
+        rv = self.test_client.post(
+            "/cms/api/place",
+            headers={"Content-Type": "application/json"},
+            content_type="application/json",
+            data=json.dumps({'data': place_info_2}),
+        )
+
+        # assertion
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == PLACE_NAME_DUPLICATE.code
+
 
 class TestPutPlace:
     def setup(self):
@@ -945,6 +974,39 @@ class TestPutPlace:
         assert rv.json["data"]["name"] == putdata["data"]["name"]
         assert rv.json["data"]["addr"] == putdata["data"]["addr"]
         assert rv.json["data"]["map"] == putdata["data"]["map"]
+
+    def test_duplicate_place_name(self):
+        # preparation
+        place_info = {
+            "name": "place 1",
+            "addr": "台北市信義區光復南路133號",
+            "map": "http://abc.com/map1.html"
+        }
+        place_info_2 = {
+            "name": "place 2",
+            "addr": "台北市信義區光復南路134號",
+            "map": "http://abc.com/map2.html"
+        }
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_place(place_info, autocommit=True)
+            place_sn = manager.create_place(place_info_2, autocommit=True)
+
+        # test
+        putdata = {}
+        putdata["data"] = place_info_2
+        putdata["data"]["name"] = place_info["name"]
+        testurl = "/cms/api/place/" + str(place_sn)
+        rv = self.test_client.put(
+            testurl,
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(putdata),
+            content_type="application/json",
+        )
+
+        # assertion
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == PLACE_NAME_DUPLICATE.code
 
 
 class TestGetPlace:
