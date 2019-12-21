@@ -3,7 +3,7 @@ import json
 from flask import current_app
 
 from app.constant import DEFAULT_PLACE_SN
-from app.exceptions import PLACE_NAME_DUPLICATE, PLACE_DELETE_FAILED
+from app.exceptions import PLACE_NAME_DUPLICATE
 from app.sqldb import DBWrapper
 from .abstract import BasePlaceManager
 

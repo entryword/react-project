@@ -43,8 +43,6 @@ _msg = "Unable to perform the action. Place doesn't exist."
 PLACE_NOT_EXIST = PyLadiesException(1500, _msg)
 _msg = "Unable to perform the action. Place name is duplicate."
 PLACE_NAME_DUPLICATE = PyLadiesException(1501, _msg)
-_msg = "Unable to perform the action. Default place cannot be deleted."
-PLACE_DELETE_FAILED = PyLadiesException(1502, _msg)
 
 # [1600~1699] apply
 _msg = "Unable to perform the action. Apply doesn't exist."
