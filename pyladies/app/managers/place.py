@@ -36,7 +36,12 @@ class Manager(BasePlaceManager):
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.update_place(sn, new_info, autocommit=True)
+            try:
+                manager.update_place(sn, new_info, autocommit=True)
+            except Exception as e:
+                if "duplicate" in str(e).lower():
+                    raise PLACE_NAME_DUPLICATE
+                raise e
 
     @staticmethod
     def list_places():
