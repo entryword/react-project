@@ -7,7 +7,7 @@
         <div class="row">
           <!-- 場地資訊編輯 -->
           <div class="col-lg-12">
-            <div class="box" id="basic_info">
+            <div class="box" id="place_info">
               <div class="box-header">
                 <h3 class="box-title">場地資訊編輯</h3>
               </div>
@@ -17,16 +17,16 @@
                     <font style="color:red">*名稱</font>
                   </div>
                   <div class="col-md-10">
-                    <div class="form-group" v-bind:class="{ 'has-error': errors.title }">
+                    <div class="form-group" v-bind:class="{ 'has-error': errors.name }">
                       <input
                         type="text"
                         class="form-control"
-                        name="place_title"
-                        placeholder="名稱(限150字)"
+                        name="place_name"
+                        placeholder="名稱(限150字，不得與已存在的名稱相同。)"
                         maxlength="150"
                         v-model="name"
                       >
-                      <div v-if="errors.title" class="help-block">請填寫名稱</div>
+                      <div v-if="errors.name" class="help-block">請填寫名稱</div>
                     </div>
                   </div>
                 </div>
@@ -61,11 +61,18 @@
                         v-model="map"
                       >
                     </div>
+                    <div style="font-size: 12px; color: rgb(170, 170, 170);">
+                      有靜態頁的地點使用以下 url:
+                      <br />美國創新中心 AIC: venue/aic.html
+                      <br />臺北市婦女館: venue/tpewomen.html
+                      <br />
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="box-footer">
                 <button type="submit" class="btn btn-primary">儲存</button>
+                <button @click="redirect" class="btn btn-warning">取消</button>
               </div>
             </div>
           </div>
@@ -79,7 +86,7 @@
 import moment from "moment";
 import Vue from "vue";
 import vSelect from "vue-select";
-import DateRangePicker from "vue2-daterange-picker";
+
 import Trumbowyg from "vue-trumbowyg";
 import { RESOURCE_TYPE, APPLY_TYPE, CHANNEL_TYPE } from "../../config/constant";
 
@@ -88,13 +95,7 @@ import { mapState, mapActions } from "vuex";
 
 export default {
   name: "PlaceEdit",
-  filters: {
-    date(value) {
-      let options = { year: "numeric", month: "long", day: "numeric" };
-      return Intl.DateTimeFormat("en-US", options).format(value);
-    }
-  },
-  components: { "v-select": vSelect, DateRangePicker, Trumbowyg },
+  components: { "v-select": vSelect, Trumbowyg },
   created() {
     console.log("id", this.$route.params.id);
     this.getData(this.$route.params.id);
@@ -108,7 +109,7 @@ export default {
       vueModel: {
         name: null,
         addr: null,
-        map: null
+        map: ""
       },
       editorConfig: {}
     };
@@ -141,7 +142,7 @@ export default {
         return this.vueModel.map;
       },
       set: function(newValue) {
-        this.vueModel.map = newValue;
+        this.vueModel.map = newValue || "";
       }
     }
   },
@@ -175,7 +176,7 @@ export default {
 
       //call api
       if (hasError) {
-        document.getElementById("basic_info").scrollIntoView();
+        document.getElementById("place_info").scrollIntoView();
       } else {
         // submit data
         const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
@@ -186,6 +187,10 @@ export default {
           }
         );
       }
+    },
+    redirect() {
+      console.log("redirect")
+      this.$router.push("/place-list");
     }
   }
 };

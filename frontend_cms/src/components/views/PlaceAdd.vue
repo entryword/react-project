@@ -25,7 +25,7 @@
                         placeholder="名稱(限150字，不得與已存在的名稱相同。)"
                         maxlength="150"
                         v-model="name"
-                      />
+                      >
                       <div v-if="errors.name" class="help-block">請填寫名稱</div>
                     </div>
                   </div>
@@ -42,7 +42,7 @@
                         name="place_addr"
                         placeholder="地址"
                         v-model="addr"
-                      />
+                      >
                       <div v-if="errors.addr" class="help-block">請填寫地址</div>
                     </div>
                   </div>
@@ -59,7 +59,7 @@
                         name="place_map"
                         placeholder="地圖網址"
                         v-model="map"
-                      />
+                      >
                     </div>
                     <div style="font-size: 12px; color: rgb(170, 170, 170);">
                       有靜態頁的地點使用以下 url:
@@ -71,7 +71,8 @@
                 </div>
               </div>
               <div class="box-footer">
-                <button type="submit" class="btn btn-primary pull-right">新增</button>
+                <button type="submit" class="btn btn-primary">新增</button>
+                <button @click="redirect" class="btn btn-warning">取消</button>
               </div>
             </div>
           </div>
@@ -142,7 +143,9 @@ export default {
       vueModel = {};
     },
     submit(e) {
+      console.log("submit", e)
       e.preventDefault();
+      // check required data
       let hasError = false;
       if (!this.vueModel.name || this.vueModel.name.trim().length <= 0) {
         this.errors.name = true;
@@ -152,15 +155,24 @@ export default {
         this.errors.addr = true;
         hasError = true;
       }
+
+      //call api
       if (hasError) {
         document.getElementById("place_info").scrollIntoView();
       } else {
         // submit data
         const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
-        this.postPlace(submitData).then(() => {
-          this.$router.push("/place-list");
-        });
+        console.log(submitData);
+        this.postPlace(submitData).then(
+          () => {
+            this.$router.push("/place-list");
+          }
+        );
       }
+    },
+    redirect(e) {
+      console.log("redirect", e)
+      this.$router.push("/place-list");
     }
   }
 };
