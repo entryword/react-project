@@ -112,21 +112,6 @@ class TestPlace:
             error_msg = str(cm.value)
             assert "duplicate" in error_msg.lower()
 
-    def test_delete_place(self, place_info):
-        with DBWrapper(self.app.db.engine.url).session() as db_sess:
-            # preparation
-            manager = self.app.db_api_class(db_sess)
-            manager.create_place(place_info, autocommit=True)
-            place = manager.get_place_by_name(place_info["name"])
-
-            # test
-            manager.delete_place(place.sn, autocommit=True)
-
-            # assertion
-            with pytest.raises(PyLadiesException) as cm:
-                manager.get_place_by_name(place_info["name"])
-            assert cm.value == PLACE_NOT_EXIST
-
     def test_get_place_by_name(self, place_info):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation

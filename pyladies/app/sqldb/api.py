@@ -415,18 +415,6 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def delete_place(self, sn, autocommit=False):
-        # place = self.session.query(Place).filter_by(sn=sn).one_or_none()
-        # if place:
-        #     self.session.delete(place)
-
-        #     if autocommit:
-        #         self.session.commit()
-        stmt = text("DELETE FROM place WHERE sn=:sn").bindparams(sn=sn)
-        self.session.execute(stmt)
-        if autocommit:
-            self.session.commit()
-
     def delete_speaker(self, sn, autocommit=False):
         # speaker = self.session.query(Speaker).filter_by(sn=sn).one_or_none()
         # if speaker:

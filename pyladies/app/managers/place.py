@@ -33,14 +33,6 @@ class Manager(BasePlaceManager):
             manager.update_place(sn, new_info, autocommit=True)
 
     @staticmethod
-    def delete_place(sn):
-        if sn == DEFAULT_PLACE_SN:
-            raise PLACE_DELETE_FAILED
-        with DBWrapper(current_app.db.engine.url).session() as db_sess:
-            manager = current_app.db_api_class(db_sess)
-            manager.delete_place(sn, autocommit=True)
-
-    @staticmethod
     def list_places():
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
