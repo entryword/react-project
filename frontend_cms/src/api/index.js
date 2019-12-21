@@ -75,6 +75,19 @@ export default {
     }
     return axios({ method, url, data })
   },
+  getPlace(id) {
+    let method = "get";
+    let url = "";
+    let data = null;
+    if (useFakeData && process.env.NODE_ENV === 'development'){
+      url = "/static/fake_data/place.json"
+    } else if (!useFakeData && process.env.NODE_ENV === 'development'){
+      url = `${devPrefix}/place/${id}`
+    } else {
+      url = `${prefix}/place/${id}`
+    }
+    return axios({ method, url, data })
+  },
   getSpeakers() {
     let method = "get";
     let url = "";
@@ -127,6 +140,19 @@ export default {
     }
     return axios({ method, url, data })
   },
+  postPlace(data){
+    let method = "POST";
+    let url = "";
+    if (useFakeData && process.env.NODE_ENV === 'development'){
+      method = "get";
+      url = "/static/fake_data/post_place_result.json"
+    } else if (!useFakeData && process.env.NODE_ENV === 'development'){
+      url = `${devPrefix}/place`
+    } else {
+      url = `${prefix}/place`
+    }
+    return axios({ method, url, data })
+  },
   putEvent({data, id}){
     let method = "PUT";
     let url = "";
@@ -138,6 +164,20 @@ export default {
       url = `${devPrefix}/event/${id}`
     } else {
       url = `${prefix}/event/${id}`
+    }
+    return axios({ method, url, data })
+  },
+  putPlace({data, id}){
+    let method = "PUT";
+    let url = "";
+    if (useFakeData && process.env.NODE_ENV === 'development'){
+      //console.log(data)
+      method = "get";
+      url = "/static/fake_data/put_place_result.json"
+    } else if (!useFakeData && process.env.NODE_ENV === 'development'){
+      url = `${devPrefix}/place/${id}`
+    } else {
+      url = `${prefix}/place/${id}`
     }
     return axios({ method, url, data })
   },

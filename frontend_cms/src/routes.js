@@ -10,6 +10,8 @@ import EventAddView from './components/views/EventAdd.vue'
 import EventListView from './components/views/EventList.vue'
 import TopicListView from './components/views/TopicList.vue'
 import FieldListView from './components/views/FieldList.vue'
+import PlaceEditView from './components/views/PlaceEdit.vue'
+import PlaceAddView from './components/views/PlaceAdd.vue'
 import PlaceListView from './components/views/PlaceList.vue'
 import TutorListView from './components/views/TutorList.vue'
 
@@ -69,6 +71,18 @@ const routes = [
         path: '/field-list',
         component: FieldListView,
         name: '領域列表',
+        meta: {description: '', requiresAuth: true}
+      },
+      {
+        path: '/place-edit/:id',
+        component: PlaceEditView,
+        name: '場地編輯',
+        meta: {description: '', requiresAuth: true}
+      },
+      {
+        path: '/place-add',
+        component: PlaceAddView,
+        name: '建立場地',
         meta: {description: '', requiresAuth: true}
       },
       {

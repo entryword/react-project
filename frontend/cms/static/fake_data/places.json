@@ -16,10 +16,9 @@
              "name": "未定",
              "addr": "未定"
           }
-    ], 
+    ],
     "info": {
-       "code": 0, 
+       "code": 0,
        "message": "Perform the action successfully."
     }
   }
-  
