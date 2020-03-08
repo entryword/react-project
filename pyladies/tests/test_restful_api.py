@@ -1,6 +1,9 @@
 # coding=UTF-8
 
+from datetime import datetime
 import unittest
+from unittest.mock import patch
+
 from app import create_app
 from app.constant import DEFAULT_PLACE_SN
 from app.sqldb import DBWrapper
@@ -673,7 +676,9 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], 1600)
 
-    def test_get_events_from_distinct_topics(self):
+    @patch("app.sqldb.api.datetime")
+    def test_get_events_from_distinct_topics(self, mock_datetime):
+        mock_datetime.utcnow.return_value = datetime(2019, 12, 12)
         topic_info_1 = {
             "name": "topic 1",
             "desc": "This is description",
@@ -841,7 +846,5 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 "event_basic_id": event_basic_4_id,
             },
         }
-        self.assertEqual(rv.json["data"]["events"][0], ans_1)
-        self.assertEqual(rv.json["data"]["events"][1], ans_2)
-        self.assertEqual(rv.json["data"]["events"][2], ans_3)
-        self.assertEqual(rv.json["data"]["events"][3], ans_4)
+
+        self.assertCountEqual(rv.json["data"]["events"], [ans_1, ans_2, ans_3, ans_4])
