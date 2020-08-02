@@ -1,2 +1,2 @@
 from .blueprint import api
-from . import topic, event, definition, place, apply
+from . import topic, event, definition, place, apply, speaker

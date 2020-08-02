@@ -252,6 +252,10 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         speaker = self.session.merge(speaker)
         return speaker
 
+    def search_speakers(self, keyword):
+        key = "%" + keyword + "%"
+        return self.session.query(Speaker).filter(Speaker.name.like(key)).all()
+
     def get_slides(self):
         return self.session.query(SlideResource).all()
 

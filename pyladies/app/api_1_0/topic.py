@@ -12,7 +12,6 @@ from ..exceptions import (
     TOPICLIST_ERROR
 )
 
-
 @api.route("/topic/<int:t_id>", methods=["GET"])
 def get_topic(t_id):
     topic_service = TopicManager()

@@ -47,6 +47,12 @@ SLIDERESOURCE_NOT_EXIST = PyLadiesException(1300, _msg)
 _msg = "Unable to perform the action. Speaker doesn't exist."
 SPEAKER_NOT_EXIST = PyLadiesException(1400, _msg)
 
+_invalid_msg = "Invalid parameter '%s' to perform the action."
+_msg = "Unable to perform the action."
+SPEAKERLIST_INVALID_KEYWORD = PyLadiesException(1450, _invalid_msg % "keyword")
+SPEAKERLIST_INVALID_FIELDS = PyLadiesException(1451, _invalid_msg % "fields")
+SPEAKERLIST_ERROR = PyLadiesException(1452, _msg)
+
 # [1500~1599] place
 _msg = "Unable to perform the action. Place doesn't exist."
 PLACE_NOT_EXIST = PyLadiesException(1500, _msg)

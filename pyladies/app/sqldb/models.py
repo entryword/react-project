@@ -234,7 +234,8 @@ class EventInfo(db.Model):
                                       uselist=True)
     speakers = db.relationship("Speaker",
                                secondary=event_info_to_speaker,
-                               uselist=True)
+                               uselist=True,
+                               backref=db.backref("event_infos", uselist=True))
     assistants = db.relationship("Speaker",
                                  secondary=event_info_to_assistant,
                                  uselist=True)

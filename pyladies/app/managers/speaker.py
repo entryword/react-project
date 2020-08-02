@@ -52,7 +52,56 @@ class Manager(BaseSpeakerManager):
             for speaker in speakers:
                 data = {
                     "id": speaker.sn,
-                    "name": speaker.name
+                    "name": speaker.name,
                 }
                 speaker_list.append(data)
             return speaker_list
+
+    @staticmethod
+    def search_speakers(keyword, fields):
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            speakers = manager.search_speakers(keyword)
+
+            speaker_list = []
+            for speaker in speakers:
+                if (not fields) or (fields.intersection(set(speaker.fields))):
+                    speaker_list.append({
+                        "id": speaker.sn,
+                        "name": speaker.name,
+                        "photo": speaker.photo,
+                        "title": speaker.title,
+                        "fields": speaker.fields
+                    })
+            return speaker_list
+
+    @staticmethod
+    def get_speaker_profile(sn):
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            speaker = manager.get_speaker(sn)
+            links = [{"type": link.type, "url": link.url} for link in speaker.links]
+            events = sorted(speaker.event_infos, key=lambda e: e.sn)
+            topics = sorted(set(map(lambda e: e.event_basic.topic, events)), key=lambda t: t.sn)
+            talks = [
+                {
+                    "topic_id": topic.sn,
+                    "topic_name": topic.name,
+                    "events": [
+                        {"title": event.title, "id": event.sn}
+                        for event in events if event.event_basic.topic.sn == topic.sn
+                    ]
+                } for topic in topics
+            ]
+
+            data = {
+                "name": speaker.name,
+                "photo": speaker.photo,
+                "title": speaker.title,
+                "major_related": speaker.major_related,
+                "intro": speaker.intro,
+                "fields": speaker.fields,
+                "links": links,
+                "talks": talks
+            }
+            return data

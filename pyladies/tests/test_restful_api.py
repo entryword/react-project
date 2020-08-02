@@ -12,11 +12,16 @@ from app.exceptions import (
     EVENTLIST_INVALID_DATE,
     EVENTLIST_INVALID_SORT,
     EVENTLIST_INVALID_ORDER,
+<<<<<<< HEAD
+    SPEAKERLIST_INVALID_KEYWORD,
+    SPEAKERLIST_INVALID_FIELDS,
+=======
     TOPICLIST_INVALID_KEYWORD,
     TOPICLIST_INVALID_LEVEL,
     TOPICLIST_INVALID_FREQ,
     TOPICLIST_INVALID_HOST,
     TOPICLIST_INVALID_FIELDS,
+>>>>>>> dev
 )
 
 
@@ -851,8 +856,162 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 "event_basic_id": event_basic_4_id,
             },
         }
-
         self.assertCountEqual(rv.json["data"]["events"], [ans_1, ans_2, ans_3, ans_4])
+
+    def test_get_speaker_profile(self):
+        links = [{
+            "type": "Github",
+            "url": "http://github.com/speaker"
+        }]
+        speaker_info = {
+            "name": "speaker 1",
+            "photo": "https://pyladies.marsw.tw/img/speaker_1_photo.png",
+            "title": "speaker 1 title",
+            "major_related": True,
+            "intro": "speaker 1 intro",
+            "fields": [1, 2],
+            "links": links
+        }
+        topic_info = {
+            "name": "topic 1",
+            "desc": "This is description of topic 1",
+            "freq": 0,
+            "level": 0,
+            "host": 0,
+            "fields": [0, 1]
+        }
+        event_basic_info = {
+            "topic_sn": None,
+            "date": "2020-01-01",
+            "start_time": "14:00",
+            "end_time": "16:00"
+        }
+        event_info = {
+            "event_basic_sn": None,
+            "title": "class 1",
+            "desc": "This is description of class 1",
+            "fields": [0, 1],
+        }
+
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+
+            manager.create_speaker(speaker_info, autocommit=True)
+            speaker = manager.get_speaker_by_name(speaker_info["name"])
+
+            manager.create_topic(topic_info, autocommit=True)
+            topic = manager.get_topic_by_name(topic_info["name"])
+
+            event_basic_info["topic_sn"] = topic.sn
+            manager.create_event_basic(event_basic_info, autocommit=True)
+
+            event_info["event_basic_sn"] = topic.event_basics[0].sn
+            event_info["speaker_sns"] = [speaker.sn]
+
+            manager.create_event_info(event_info, autocommit=True)
+
+            expected_talks = [
+                {'topic_name': topic.name, 'topic_id': topic.sn,
+                 'events': [{'id': 1, 'title': event_info["title"]}]},
+            ]
+
+            # test & assertion 1
+            rv = self.test_client.get("/v1.0/api/speaker/1")
+
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], 0)
+
+            self.assertEqual(rv.json["data"]["name"], speaker_info["name"])
+            self.assertEqual(rv.json["data"]["photo"], speaker_info["photo"])
+            self.assertEqual(rv.json["data"]["title"], speaker_info["title"])
+            self.assertEqual(rv.json["data"]["major_related"], speaker_info["major_related"])
+            self.assertEqual(rv.json["data"]["intro"], speaker_info["intro"])
+            self.assertEqual(rv.json["data"]["fields"], speaker_info["fields"])
+            self.assertEqual(rv.json["data"]["links"], links)
+            self.assertEqual(rv.json["data"]["talks"], expected_talks)
+
+    def test_get_speaker_profile_but_speaker_not_exist(self):
+        rv = self.test_client.get("/v1.0/api/speaker/1")
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], 1400)
+
+    def test_get_speakers(self):
+        info_1 = {
+            "name": "speaker apple",
+            "photo": "https://pyladies.marsw.tw/img/speaker_1_photo.png",
+            "title": "Senior Engineer",
+            "major_related": True,
+            "intro": "",
+            "fields": [3]
+        }
+        ans_1 = {
+            "id": 1,
+            "name": "speaker apple",
+            "photo": "https://pyladies.marsw.tw/img/speaker_1_photo.png",
+            "title": "Senior Engineer",
+            "fields": [3]
+        }
+        info_2 = {
+            "name": "speaker banana",
+            "photo": "https://pyladies.marsw.tw/img/speaker_3_photo.png",
+            "title": "Senior Engineer",
+            "major_related": False,
+            "intro": "",
+            "fields": [1, 2]
+        }
+        ans_2 = {
+            "id": 2,
+            "name": "speaker banana",
+            "photo": "https://pyladies.marsw.tw/img/speaker_3_photo.png",
+            "title": "Senior Engineer",
+            "fields": [1, 2]
+        }
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_speaker(info_1, autocommit=True)
+            manager.create_speaker(info_2, autocommit=True)
+
+            # no filter
+            rv = self.test_client.get("/v1.0/api/speakers")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["data"]["count"], 2)
+            self.assertEqual(rv.json["data"]["speakers"][0], ans_1)
+            self.assertEqual(rv.json["data"]["speakers"][1], ans_2)
+
+            # filter keyword
+            rv = self.test_client.get("/v1.0/api/speakers?keyword=apple")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["data"]["count"], 1)
+            self.assertEqual(rv.json["data"]["speakers"][0], ans_1)
+
+            # filter fields
+            rv = self.test_client.get("/v1.0/api/speakers?fields=2")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["data"]["count"], 1)
+            self.assertEqual(rv.json["data"]["speakers"][0], ans_2)
+
+            # filter keyword and fields (found)
+            rv = self.test_client.get("/v1.0/api/speakers?keyword=banana&fields=2")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["data"]["count"], 1)
+            self.assertEqual(rv.json["data"]["speakers"][0], ans_2)
+
+            # filter keyword and fields (not found)
+            rv = self.test_client.get("/v1.0/api/speakers?keyword=banana&fields=3")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["data"]["count"], 0)
+
+    def test_get_speakers_but_keyword_is_invalid(self):
+        rv = self.test_client.get("/v1.0/api/speakers?keyword=1234567890123456789012345678901")
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], SPEAKERLIST_INVALID_KEYWORD.code)
+
+    def test_get_speakers_but_fields_is_invalid(self):
+        rv = self.test_client.get("/v1.0/api/speakers?fields=not_a_number")
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], SPEAKERLIST_INVALID_FIELDS.code)
     
     def test_list_topics(self):
         topics = [
