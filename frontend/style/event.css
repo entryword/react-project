@@ -187,6 +187,70 @@
 .topic-title a:visited {
     color: var(--pyladies-pink);
 }
+.pyladies-list, .pyladies-list a{
+    color: var(--pyladies-pink)
+}
+.speaker-intro-desc{
+    color: var(--dark-gray-background);
+}
+.speaker-header{
+    position: relative;
+    height: 300px;
+    padding: 50px 0 0 2rem;
+}
+.speaker-header-content{
+    position: absolute;
+    bottom: -30px;
+    text-align: left;
+}
+.speaker-header-content h2{
+    text-align: left;
+    color: var(--dark-gray-background);
+}
+.speaker-header-content h1{
+    text-align: left;
+    color: #000;
+    font-size: 2rem;
+}
+.speaker-image{
+    background-color: var(--pyladies-pink);
+        width: 200px;
+        margin: 60px auto;
+        height: 120px;
+        position: relative;
+        z-index: 1;
+}
+.speaker-image:before,
+.speaker-image:after {
+        content: '';
+        position: absolute;
+        top: -50px;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        border-bottom: 50px solid var(--pyladies-pink);
+        border-left: 100px solid transparent;
+        border-right: 100px solid transparent;
+}
+.speaker-image:after {
+    top: auto;
+    bottom: -50px;
+    border-bottom: none;
+    border-top: 50px solid var(--pyladies-pink);
+}
+.speaker-image img {
+    width: 100%;
+    height: auto;            
+    padding: 10%;
+    margin-top: -40px;
+    z-index: 2;
+    position: relative;
+}
+.speaker-tags .tag{
+    color: var(--pyladies-pink);
+    background-color: #fff;
+    padding: 0;
+}
 /* 小螢幕 */
 @media only screen and (max-width: 720px) {
     .top-nav{
@@ -235,5 +299,46 @@
     }
     .event-pictures{
         width: 100%;
+    }
+    .speaker-image{
+        width: 160px;
+        margin: 60px auto;
+        height: 96px;
+        z-index: 1;
+    }
+    .speaker-image:before,
+    .speaker-image:after {
+        top: -40px;
+        width: 100%;
+        height: 40px;
+        border-bottom: 40px solid var(--pyladies-pink);
+        border-left: 80px solid transparent;
+        border-right: 80px solid transparent;
+    }
+    .speaker-image:after {
+        top: auto;
+        bottom: -40px;
+        border-bottom: none;
+        border-top: 40px solid var(--pyladies-pink);
+    }
+    .speaker-image img {
+        margin-top: -30px;
+    }
+    .speaker-header-content{
+        bottom: 0;
+    }
+    .speaker-header-content h2{
+        text-align: left;
+        color: var(--dark-gray-background);
+        font-size: 1rem;
+        margin: 0;
+    }
+    .speaker-header-content h1{
+        text-align: left;
+        color: #000;
+        font-size: 1.2rem;
+    }
+    .speaker-body{
+        margin-left: 0;
     }
 }

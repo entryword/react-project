@@ -27,18 +27,22 @@ a {
     text-overflow: ellipsis;
 }
 .list-filter {
-    padding: 0 10px 10px;
+    padding: 10px 10px;
     display: grid;
     grid-template-columns: auto 100px 100px;
     background-color: #efefef;
-    border-top: 1px dashed #000;
-    border-bottom: 1px dashed rgb(131, 111, 111);
+    &.none-event {
+        grid-template-columns: auto 100px;
+    }
 }
 .search-box {
     display: grid;
     grid-template-rows: 1.6rem 1fr;
     grid-template-columns: 2fr 1fr 1fr 200px;
     grid-column-gap: 10px;
+    &.none-event {
+        grid-template-columns: 1fr 200px;
+    }
 }
 .search-label {
     grid-column: 1 / 2;
@@ -52,6 +56,9 @@ a {
     grid-column: 4 / 5;
     grid-row: 1 / 3;
     align-self: end;
+    &.none-event {
+        grid-column: 2 / 3;
+    }
 }
 .search-query {
     grid-column: 1 / 2;
@@ -108,7 +115,7 @@ a {
 .filter-container {
     position: absolute;
     background: #efefef;
-    border-top: 1px dashed #000;
+    // border-top: 1px dashed #000;
     width: 100%;
     top: 110px;
     bottom: 0;
@@ -120,6 +127,12 @@ a {
     overflow-y: auto;
     &.hide {
         display: none;
+    }
+    &.topic-filter {
+        grid-template-columns: 2fr 1fr;
+    }
+    &.speaker-filter {
+        grid-template-columns: 1fr;
     }
     .filter-item:nth-child(2) {
         margin-top: 20px;
@@ -237,7 +250,12 @@ a {
 .search-result {
     font-size: 1rem;
     padding: 0.6rem 0;
-    border-bottom: 1px dashed #000;
+    // border-bottom: 1px dashed #000;
+    &:after {
+        content: '';
+        display: block;
+        clear: both;
+    }
 }
 // list view
 .event-list-view {
@@ -267,6 +285,11 @@ a {
 .event-card-content p {
     font-size: 0.8rem;
     margin: 5px 0;
+}
+.event-card-content p.sub-title {
+    color: var(--dark-gray-background);
+    line-height: 1.5;
+    font-size: 0.7rem;
 }
 .event-card-content .tags {
     font-weight: bold;
@@ -331,20 +354,69 @@ a {
         }
     }
     .list-filter {
-        grid-template-columns: auto 90px;
-        grid-template-rows: 1fr 1fr;
-        grid-column-gap: 10px;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        grid-gap: 10px;
+        &.search-button-position {
+            position: relative;
+        }
+        &.none-event {
+            grid-template-columns: 1fr;
+            grid-template-rows: 1fr auto;
+            grid-gap: 10px;
+        }
+        &.none-event .search-box {
+            grid-template-rows: 1fr;
+            grid-template-columns: 50px 1fr;
+        }
     }
     .search-box {
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 1;
         grid-row-end: span 2;
-        grid-template-columns: 2fr 1fr 1fr 40px;
+        grid-template-rows: 1fr 1fr 1fr;
+        grid-template-columns: 50px 1fr 1fr;
         grid-column-gap: 10px;
+        align-items: center;
     }
-    .calendar-nav {
-        display: none;
+    .search-label {
+        grid-column: 1 / 2;
+        grid-row: 1 / 2;
+        align-items: center;
+    }
+    .search-query {
+        grid-column: 2 / 4;
+        grid-row: 1 / 2;
+    }
+    .search-label-year-month {
+        grid-column: 1 / 4;
+        grid-row: 2 / 3;
+    }
+    .search-button {
+        position: absolute;
+        bottom: -75px;
+        right: 10px;
+        &.none-event {
+            // bottom: 0;
+        }
+    }
+
+    .search-year {
+        grid-column: 1 / 3;
+        grid-row: 3 / 4;
+    }
+    .search-month {
+        grid-column: 3 / 4;
+        grid-row: 3 / 4;
+    }
+    .filter-container {
+        top: 240px;
+        display: block;
+        &.topic-filter,
+        &.speaker-filter {
+            top: 140px;
+        }
     }
 }
 .filter-view {

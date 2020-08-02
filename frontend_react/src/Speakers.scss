@@ -1,0 +1,70 @@
+.speaker-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    .event-card {
+        margin: 10px;
+        width: calc(50% - 20px);
+        max-width: 300px;
+        &:hover {
+            text-decoration: none;
+        }
+    }
+    .event-card-title {
+        text-align: center;
+    }
+    .speaker-image {
+        background-color: var(--pyladies-pink);
+        width: 200px;
+        margin: 60px auto;
+        height: 120px;
+        position: relative;
+        z-index: 1;
+        &:before,
+        &:after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            border-bottom: 50px solid var(--pyladies-pink);
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+        }
+        &:after {
+            top: auto;
+            bottom: -50px;
+            border-bottom: none;
+            border-top: 50px solid var(--pyladies-pink);
+        }
+        img {
+            width: 100%;
+            height: auto;
+            padding: 10%;
+            margin-top: -40px;
+            z-index: 2;
+            position: relative;
+        }
+    }
+    .speaker-name {
+        font-size: 1rem;
+        margin: 10px 0;
+    }
+    .speaker-title {
+        font-size: 0.8rem;
+        margin: 10p 0x;
+        color: var(--text-gray-color);
+    }
+    .tags {
+        color: #000;
+    }
+}
+/* 小螢幕 */
+@media only screen and (max-width: 720px) {
+    .speaker-list {
+        .event-card {
+            width: 100%;
+        }
+    }
+}

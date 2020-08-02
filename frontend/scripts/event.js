@@ -84,6 +84,8 @@
             return 'top';
         }else if (window.location.pathname.indexOf('signup')>=0){
             return 'signup';
+        }else if (window.location.pathname.indexOf('speaker')>=0){
+            return 'speaker';
         }else{
             return 'event';
         }
@@ -106,6 +108,7 @@
         let id = getUrlParameter('id') || 1,
             url;
         tw_pyladies.path = getPath();
+        console.log(tw_pyladies.path )
         if(tw_pyladies.path === 'topic'){
             // url = `/fakedata/topic46.json`;
             url = `/v1.0/api/topic/${id}`;
@@ -115,6 +118,9 @@
         }else if(tw_pyladies.path === 'signup'){
             // url = `/fakedata/apply_info.json`;
             url = `/v1.0/api/event/${id}/apply_info`;
+        }else if(tw_pyladies.path === 'speaker'){
+            // url = `/fakedata/speaker.json`;
+            url = `/v1.0/api/speaker/${id}`;
         }else{
             // url = `/fakedata/event137.json`;
             url = `/v1.0/api/event/${id}`;
@@ -134,6 +140,9 @@
                 topTemplating(definition.data.data, event.data.data);
             }else if(tw_pyladies.path === 'signup'){
                 signupTemplating(definition.data.data, event.data.data)
+            }else if(tw_pyladies.path === 'speaker'){
+                console.log(event.data.data);
+                speakerTemplating(definition.data.data, event.data.data)
             }else{
                 topicTemplating(definition.data.data, event.data.data);
             }
@@ -143,7 +152,7 @@
             }
         }))
         .catch(function (error) {
-            window.location = '/error/error.html';
+            // window.location = '/error/error.html';
         });
 
     // template
@@ -236,6 +245,16 @@
         })
         const blocks = ['event-menu-list', 'event-body'];
         // template blocks
+        renderHtml(blocks, data);
+    }
+    
+    function speakerTemplating(definition, data) {
+        console.log('speaker data', data)
+        //data processing
+        data.tags = data.fields.map(field=>  "#" + definition.field[field] + " ");
+        
+        // template blocks
+        const blocks = ['speaker-image', 'speaker-name', 'speaker-intro','speaker-topic'];
         renderHtml(blocks, data);
     }
 
