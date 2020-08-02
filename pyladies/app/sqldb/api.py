@@ -107,9 +107,16 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def get_topics(self):
         return self.session.query(Topic).all()
 
-    def get_topics_by_keyword(self, keyword):
+    def search_topics(self, keyword, level=None, freq=None, host=None):
         key = "%" + keyword + "%"
-        return self.session.query(Topic).filter(Topic.name.like(key)).all()
+        statement = Topic.name.like(key)
+        if level:
+            statement = and_(statement, Topic.level == level)
+        if freq:
+            statement = and_(statement, Topic.freq == freq)
+        if host:
+            statement = and_(statement, Topic.host == host)
+        return self.session.query(Topic).filter(statement).all()
 
     def get_topic(self, sn):
         topic = self.session.query(Topic).filter_by(sn=sn).one_or_none()

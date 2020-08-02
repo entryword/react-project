@@ -12,6 +12,11 @@ from app.exceptions import (
     EVENTLIST_INVALID_DATE,
     EVENTLIST_INVALID_SORT,
     EVENTLIST_INVALID_ORDER,
+    TOPICLIST_INVALID_KEYWORD,
+    TOPICLIST_INVALID_LEVEL,
+    TOPICLIST_INVALID_FREQ,
+    TOPICLIST_INVALID_HOST,
+    TOPICLIST_INVALID_FIELDS,
 )
 
 
@@ -848,3 +853,83 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         }
 
         self.assertCountEqual(rv.json["data"]["events"], [ans_1, ans_2, ans_3, ans_4])
+    
+    def test_list_topics(self):
+        topics = [
+            {
+                "name": "topic 1",
+                "desc": "this is topic 1",
+                "freq": 0,
+                "level": 0,
+                "host": 0,
+                "fields": [0, 2],
+            },
+            {
+                "name": "topic 2",
+                "desc": "this is topic 2",
+                "freq": 1,
+                "level": 1,
+                "host": 1,
+                "fields": [1, 2],
+            },
+            {
+                "name": "topic 3",
+                "desc": "this is topic 3",
+                "freq": 1,
+                "level": 1,
+                "host": 1,
+                "fields": [3, 4, 5],
+            }
+        ]
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            for topic in topics:
+                manager.create_topic(topic, autocommit=True)
+
+            # test invalid keyword parameters
+            rv = self.test_client.get("/v1.0/api/topics?keyword=abcdefghijklmnopqrstuvwxyz12345")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], TOPICLIST_INVALID_KEYWORD.code)
+
+            # test invalid level parameters
+            rv = self.test_client.get("/v1.0/api/topics?level=s1")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], TOPICLIST_INVALID_LEVEL.code)
+
+            # test invalid freq parameters
+            rv = self.test_client.get("/v1.0/api/topics?freq=1.2")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], TOPICLIST_INVALID_FREQ.code)
+
+            # test invalid host parameters
+            rv = self.test_client.get("/v1.0/api/topics?host=12,3")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], TOPICLIST_INVALID_HOST.code)
+
+            # test default parameters
+            rv = self.test_client.get("/v1.0/api/topics")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], 0)
+            self.assertEqual(len(rv.json["data"]["topics"]), 3)
+            self.assertEqual(rv.json["data"]["topics"][0]["name"], "topic 1")
+
+            # test empty parameters
+            rv = self.test_client.get("/v1.0/api/topics?keyword=&level=&freq=&host=")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], 0)
+            self.assertEqual(len(rv.json["data"]["topics"]), 3)
+            self.assertEqual(rv.json["data"]["topics"][0]["name"], "topic 1")
+
+            # test topic keyword, level, and fields
+            rv = self.test_client.get("/v1.0/api/topics?keyword=topic 1&level=0&fields=0")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], 0)
+            self.assertEqual(len(rv.json["data"]["topics"]), 1)
+            self.assertEqual(rv.json["data"]["topics"][0]["name"], "topic 1")
+
+            # test event keyword, level, and multiple fields
+            rv = self.test_client.get("/v1.0/api/topics?keyword=topic&level=1&fields=1&fields=4")
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.json["info"]["code"], 0)
+            self.assertEqual(len(rv.json["data"]["topics"]), 2)
+            self.assertEqual(rv.json["data"]["topics"][0]["name"], "topic 2")

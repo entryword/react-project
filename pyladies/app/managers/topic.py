@@ -44,9 +44,26 @@ class Manager(BaseTopicManager):
                 for i in topics:
                     print(i)
             else:
-                topics = manager.get_topics_by_keyword(key)
+                topics = manager.search_topics(key)
                 for i in topics:
                     print(i)
+    @staticmethod
+    def search_topics(keyword, level, freq, host, fields):
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            raw_topics = manager.search_topics(keyword, level, freq, host)
+            topics = []
+            for topic in raw_topics:
+                if (not fields) or (fields and fields.intersection(set(topic.fields))):
+                    topics.append({
+                        "id":topic.sn,
+                        "name":topic.name,
+                        "level":topic.level,
+                        "freq":topic.freq,
+                        "host":topic.host,
+                        "fields":topic.fields
+                    })
+            return topics
 
     @staticmethod
     def get_topic(t_id):

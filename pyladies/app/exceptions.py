@@ -14,6 +14,15 @@ INVALID_INPUT = PyLadiesException(1, _msg)
 _msg = "Unable to perform the action. Topic doesn't exist."
 TOPIC_NOT_EXIST = PyLadiesException(1000, _msg)
 
+_invalid_msg = "Invalid parameter '%s' to perform the action."
+_msg = "Unable to perform the action."
+TOPICLIST_INVALID_KEYWORD = PyLadiesException(1050, _invalid_msg % "keyword")
+TOPICLIST_INVALID_LEVEL = PyLadiesException(1051, _invalid_msg % "level")
+TOPICLIST_INVALID_FREQ = PyLadiesException(1052, _invalid_msg % "freq")
+TOPICLIST_INVALID_HOST = PyLadiesException(1053, _invalid_msg % "host")
+TOPICLIST_INVALID_FIELDS = PyLadiesException(1054, _invalid_msg % "fields")
+TOPICLIST_ERROR = PyLadiesException(1055, _msg)
+
 # [1100~1199] event basic
 _msg = "Unable to perform the action. EventBasic doesn't exist."
 EVENTBASIC_NOT_EXIST = PyLadiesException(1100, _msg)
