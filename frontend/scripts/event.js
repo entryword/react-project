@@ -63,7 +63,7 @@
         let result = "";
         if(events.length < 4){
             result = new Handlebars.SafeString(`<div class="col-lg-3 col-md-6 item"><div class="topic-title">
-                    <span>其他</span></div><div class="event-title"><a class="pink-link" href="/eventlist/index.html" target="_blank">所有活動</a></div></div>`);
+                    <span>其他</span></div><div class="event-title"><a class="pink-link" href="/eventlist/events" target="_blank">所有活動</a></div></div>`);
             document.getElementById('eventlist_link').style.display = "none";
         }
         return result;
