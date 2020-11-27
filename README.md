@@ -26,7 +26,7 @@
 
 ### 建立專案
 ```
-git clone https://{youraccount}@bitbucket.org/pyladies-tw/website2018.git
+git clone https://github.com/PyLadiesTaiwan/website2018.git
 cd ./website2018
 docker-compose build
 docker-compose up -d
