@@ -67,7 +67,6 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
             return obj.sn
-        return None
 
     def create_place(self, info, autocommit=False):
         obj = Place(**info)
