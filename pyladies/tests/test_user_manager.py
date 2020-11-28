@@ -27,13 +27,13 @@ class UserManagerTestCase(unittest.TestCase):
             # preparation
             r1 = Role()
             r1.name = 'r1'
-            r1.permission = json.dumps({'feat1': 0, 'feat2': 1})
+            r1.permission = {'feat1': 0, 'feat2': 1}
             db_sess.add(r1)
             db_sess.commit()
 
             r2 = Role()
             r2.name = 'r2'
-            r2.permission = json.dumps({'feat3': 2, 'feat2': 1})
+            r2.permission = {'feat3': 2, 'feat2': 1}
             db_sess.add(r2)
             db_sess.commit()
 

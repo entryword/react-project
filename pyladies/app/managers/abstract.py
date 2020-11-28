@@ -106,3 +106,25 @@ class BaseUserManager():
     @staticmethod
     def get_all_users():
         raise NotImplementedError()
+
+
+class BaseRoleManager():
+    @staticmethod
+    def create_role(info):
+        raise NotImplementedError()
+
+    @staticmethod
+    def update_role(role_sn, info):
+        raise NotImplementedError()
+
+    @staticmethod
+    def delete_role(role_sn):
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_role(role_sn):
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_roles():
+        raise NotImplementedError()
