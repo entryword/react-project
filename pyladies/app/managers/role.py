@@ -1,8 +1,6 @@
 from flask import current_app
-from jsonschema import validate
 
 from app.exceptions import ROLE_NAME_DUPLICATE
-from app.schemas.role_info import schema_create
 from app.sqldb import DBWrapper
 from .abstract import BaseRoleManager
 
