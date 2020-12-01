@@ -8,6 +8,7 @@ services:
     volumes:
       - ./data/mariadb_data:/var/lib/mysql
       - ./mysql.cnf:/etc/mysql/conf.d/custom.cnf
+      - ./testing_db_data/v1.0.2:/sql_init
     environment:
       - MYSQL_ROOT_PASSWORD=12345678
       - MYSQL_DATABASE=pyladies
