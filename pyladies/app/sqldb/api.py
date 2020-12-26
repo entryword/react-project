@@ -8,8 +8,8 @@ from app.exceptions import (
     EVENTINFO_NOT_EXIST, SPEAKER_NOT_EXIST,
     PLACE_NOT_EXIST, APPLY_NOT_EXIST,
     USER_NOT_EXIST, SLIDERESOURCE_NOT_EXIST,
-    ROLE_NOT_EXIST
-)
+    ROLE_NOT_EXIST,
+    RECORD_NOT_EXIST)
 from .abstract import SQLDatabaseAPI
 from .models import (
     EventApply,
@@ -20,9 +20,9 @@ from .models import (
     Role,
     SlideResource,
     Speaker,
-    Topic,   
+    Topic,
     User,
-)
+    CheckInList)
 
 
 class MySQLDatabaseAPI(SQLDatabaseAPI):
@@ -306,6 +306,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         roles = self.session.query(Role).all()
         return roles
 
+    def get_check_in_list(self, event_basic_sn):
+        records = self.session.query(CheckInList).filter_by(
+            sn=event_basic_sn
+        ).all()
+        return records
+
     ########## update
 
     # TODO: not finished yet
@@ -430,6 +436,27 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
+    def update_check_in_list(self, event_basic_sn, user_sn, info, autocommit=False):
+        record = self.session.query(CheckInList).filter_by(
+            event_basic_sn=event_basic_sn,
+            user_sn=user_sn
+        ).first()
+        if not record:
+            raise RECORD_NOT_EXIST
+
+        _allow_columns = {
+            'status',
+            'remark'
+        }
+        for k, v in info.items():
+            if k not in _allow_columns:
+                continue
+            setattr(record, k, v)
+        self.session.add(record)
+        if autocommit:
+            self.session.commit()
+
+
     ########## delete
 
     def delete_topic(self, sn, autocommit=False):
@@ -500,6 +527,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def delete_role(self, sn, autocommit=False):
         stmt = text("DELETE FROM role WHERE sn=:sn").bindparams(sn=sn)
+        self.session.execute(stmt)
+        if autocommit:
+            self.session.commit()
+
+    def delete_check_in_list(self, sn, autocommit=False):
+        stmt = text("DELETE FROM check_in_list WHERE sn=:sn").bindparams(sn=sn)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()

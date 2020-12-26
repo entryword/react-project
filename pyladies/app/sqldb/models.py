@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_login import UserMixin, AnonymousUserMixin
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import types, String, func
+from sqlalchemy import types, String, func, text
 from sqlalchemy.ext.declarative import declarative_base
 
 from app.constant import DEFAULT_PLACE_SN
@@ -352,13 +352,13 @@ class CheckInList(db.Model):
 
     sn = db.Column(db.Integer, primary_key=True)
     event_basic_sn = db.Column(db.Integer, nullable=False)  # 活動id
-    user_id = db.Column(db.Integer, db.ForeignKey("user.sn"))  # 參加者id (當下有在user table的話就加入，沒有就null)
+    user_sn = db.Column(db.Integer, db.ForeignKey("user.sn"))  # 參加者id (當下有在user table的話就加入，沒有就null)
     name = db.Column(db.String(128), nullable=False)  # 參加者名稱
     mail = db.Column(db.String(128), unique=True, nullable=False)  # 參加者email
     phone = db.Column(db.String(128), unique=True, nullable=False)  # 參加者phone
-    ticket_type = db.Column(db.Integer, nullable=False)  # 票卷種類
+    ticket_type = db.Column(db.Integer, nullable=False)  # 票卷種類 1:一般人 2:學生票
     ticket_amount = db.Column(db.Integer, nullable=False)  # 票價
     remark = db.Column(db.String(128))  # 備註 (admin可編輯)
-    status = db.Column(db.Integer, nullable=False)  # 狀態 0:未出席 1:出席
+    status = db.Column(db.Integer, server_default=text('0'), nullable=False)  # 狀態 0:未出席 1:出席
     update_datetime = db.Column(db.DateTime, nullable=False, server_default=func.now(), onupdate=func.now())  # 更新時間
     create_datetime = db.Column(db.DateTime, nullable=False, server_default=func.now())  # 建立時間
