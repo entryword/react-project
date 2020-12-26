@@ -24,15 +24,46 @@
     * 官網 CMS 是 VueJS app 在 `website2018/frontend_cms`，建置好的 code 搬到 `website2018/frontend/cms`。詳情參考下面細節。
 
 
-### 建立專案
+### 建置專案
+* 下載程式碼
 ```
-git clone https://{youraccount}@bitbucket.org/pyladies-tw/website2018.git
+git clone https://github.com/PyLadiesTaiwan/website2018.git
+```
+
+* 建置docker image
+```
 cd ./website2018
 docker-compose build
-docker-compose up -d
-docker-compose exec app bash
-python manage.py db upgrade
 ```
+* 啟動container
+```
+docker-compose up -d
+```
+* upgrade schema
+```
+docker-compose exec app bash
+
+# inside app container
+python manage.py db upgrade
+exit
+```
+* 塞假資料進database
+```
+docker-compose exec mariadb bash
+
+# inside mariadb container
+bash /sql_init/init.sh
+exit
+```
+
+### 測試是否成功
+1. localhost:5566 (能看到 phpMyAdmin 的畫面，帳號: `root`，密碼: `12345678`)
+2. localhost:55688/v1.0/api/definitions (確認 flask 服務運作正常)
+3. localhost:5555/v1.0/api/definitions (確認 nginx 服務運作正常)
+
+4. localhost:5555/ (前台畫面)
+5. localhost:5555/cms (後台畫面，帳號: `pyladies`，密碼: `12345678`)
+
 
 ### 前端專案開發與建置
 
@@ -73,7 +104,7 @@ python manage.py db upgrade
     npm i
     ```
 
-    - 專案開發
+ - 專案開發
 
     ```
     npm run dev
@@ -81,7 +112,10 @@ python manage.py db upgrade
 
     瀏覽器開啟 http://localhost:8080
 
-    - 專案建置
+    目前 CMS 需要登入才能拉到 API 資料，先到 http://localhost:5555/cms/login.html 登入成功之後
+    再回到 開發網址看到開發結果
+
+- 專案建置
 
     ``` 
     npm run build
@@ -92,22 +126,15 @@ python manage.py db upgrade
         - 將 website2018/frontend_cms/dist 下的 index.html 和 /static 資料夾內容 搬到 website2018/frontend/cms 下
         - login.html 是獨立頁面，如果沒有修改不需要動
 
-
-### 測試是否成功
-1. localhost:5566 (能看到 phpMyAdmin 的畫面)
-2. localhost:55688/v1.0/api/definitions (確認 flask 服務運作正常)
-3. localhost:5555/v1.0/api/definitions (確認 nginx 服務運作正常)
-
 #### 前端畫面
 
 這裡所顯示的畫面是在 `website2018/frontend` 資料夾裡的 code 的結果，前端開發期間請用上述的開發 port。
 
-1. localhost:5555 首頁
-2. localhost:5555/eventlist/index.html 官網活動列表
-3. localhost:5555/cms/ 後台 CMS
-3. localhost:5555/cms/login 後台 CMS login 畫面
+1. http://localhost:5555 首頁
+2. http://localhost:5555/eventlist/index.html 官網活動列表
+3. http://localhost:5555/cms/ 後台 CMS
+3. http://localhost:5555/cms/login.html 後台 CMS login 畫面
 
-=======
 ### Local DB 操作
 除了使用phpMyAdmin，也可使用MySQL Workbench或其他支援MariaDB的GUI。
 設定連線方式如下：

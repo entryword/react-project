@@ -5,6 +5,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from app import create_app
+from app.constant import DEFAULT_PLACE_SN
 from app.exceptions import PyLadiesException
 from app.exceptions import EVENTINFO_NOT_EXIST
 from app.sqldb import DBWrapper
@@ -16,12 +17,24 @@ class TestEventInfo:
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.app.db.create_all()
+        self.create_default_place()
 
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
         self.app.db.engine.dispose()
         self.app_context.pop()
+
+    def create_default_place(self):
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            place_info = {
+                "sn": DEFAULT_PLACE_SN,
+                "name": "default place",
+                "addr": "default place addr",
+                "map": "default place map",
+            }
+            manager.create_place(place_info, autocommit=True)
 
     @staticmethod
     def assert_event_info(event_info1, event_info2):

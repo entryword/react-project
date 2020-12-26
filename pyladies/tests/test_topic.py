@@ -191,12 +191,134 @@ class TestTopic:
             manager.create_topic(info_3, autocommit=True)
 
             # test & assertion 1
-            topics = manager.get_topics_by_keyword("b")
+            topics = manager.search_topics("b")
             self.assert_topics_length(topics, 1)
             self.assert_topic_name(topics[0], info_1)
 
             # test & assertion 2
-            topics = manager.get_topics_by_keyword("ef")
+            topics = manager.search_topics("ef")
             self.assert_topics_length(topics, 2)
             self.assert_topic_name(topics[0], info_2)
             self.assert_topic_name(topics[1], info_3)
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
+    def test_get_topics_by_level(self, topic_infos):
+        info_1 = topic_infos[0]
+        info_1["level"] = 0
+        info_2 = topic_infos[1]
+        info_2["level"] = 1
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(info_1, autocommit=True)
+            manager.create_topic(info_2, autocommit=True)
+
+            # test & assertion 1
+            topics = manager.search_topics("", "0")
+            self.assert_topics_length(topics, 1)
+            self.assert_topic(topics[0], info_1)
+
+            # test & assertion 2
+            topics = manager.search_topics("", 1)
+            self.assert_topics_length(topics, 1)
+            self.assert_topic(topics[0], info_2)
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
+    def test_get_topics_by_freq(self, topic_infos):
+        info_1 = topic_infos[0]
+        info_1["freq"] = 0
+        info_2 = topic_infos[1]
+        info_2["freq"] = 1
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(info_1, autocommit=True)
+            manager.create_topic(info_2, autocommit=True)
+
+            # test & assertion 1
+            topics = manager.search_topics("", None, "0")
+            self.assert_topics_length(topics, 1)
+            self.assert_topic(topics[0], info_1)
+
+            # test & assertion 2
+            topics = manager.search_topics("", None, 1)
+            self.assert_topics_length(topics, 1)
+            self.assert_topic(topics[0], info_2)
+
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
+    def test_get_topics_by_host(self, topic_infos):
+        info_1 = topic_infos[0]
+        info_1["host"] = 0
+        info_2 = topic_infos[1]
+        info_2["host"] = 1
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(info_1, autocommit=True)
+            manager.create_topic(info_2, autocommit=True)
+
+            # test & assertion 1
+            topics = manager.search_topics("", None, None, "0")
+            self.assert_topics_length(topics, 1)
+            self.assert_topic(topics[0], info_1)
+
+            # test & assertion 2
+            topics = manager.search_topics("", None, None, 1)
+            self.assert_topics_length(topics, 1)
+            self.assert_topic(topics[0], info_2)
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
+    def test_get_topics_by_level_host(self, topic_infos):
+        info_1 = topic_infos[0]
+        info_1["level"] = 1
+        info_1["host"] = 0
+        info_2 = topic_infos[1]
+        info_2["level"] = 1
+        info_2["host"] = 1
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(info_1, autocommit=True)
+            manager.create_topic(info_2, autocommit=True)
+
+            # test & assertion 1
+            topics = manager.search_topics("", None, None, "0")
+            self.assert_topics_length(topics, 1)
+            self.assert_topic(topics[0], info_1)
+
+            # test & assertion 2
+            topics = manager.search_topics("", 1, None, 1)
+            self.assert_topics_length(topics, 1)
+            self.assert_topic(topics[0], info_2)
+
+            # test & assertion 2
+            topics = manager.search_topics("", 1, None, 2)
+            self.assert_topics_length(topics, 0)
+    @pytest.mark.parametrize('topic_infos', [2], indirect=True)
+    def test_get_topics_by_keyword_level_host(self, topic_infos):
+        info_1 = topic_infos[0]
+        info_1["name"] = "abcd"
+        info_1["level"] = 1
+        info_1["host"] = 0
+        info_2 = topic_infos[1]
+        info_2["name"] = "def 2"
+        info_2["level"] = 1
+        info_2["host"] = 1
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            # preparation
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(info_1, autocommit=True)
+            manager.create_topic(info_2, autocommit=True)
+
+            # test & assertion 1
+            topics = manager.search_topics("b", None, None, "0")
+            self.assert_topics_length(topics, 1)
+            self.assert_topic(topics[0], info_1)
+
+            # test & assertion 2
+            topics = manager.search_topics("d", 1)
+            self.assert_topics_length(topics, 2)
+            self.assert_topic(topics[0], info_1)
+            self.assert_topic(topics[1], info_2)
+
+            # test & assertion 2
+            topics = manager.search_topics("d", None, None, 2)
+            self.assert_topics_length(topics, 0)
+

@@ -2,6 +2,7 @@ import json
 
 from flask import current_app
 
+from app.exceptions import PLACE_NAME_DUPLICATE
 from app.sqldb import DBWrapper
 from .abstract import BasePlaceManager
 
@@ -16,7 +17,14 @@ class Manager(BasePlaceManager):
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.create_place(info, autocommit=True)
+
+            try:
+                manager.create_place(info, autocommit=True)
+            except Exception as e:
+                if "duplicate" in str(e).lower():
+                    raise PLACE_NAME_DUPLICATE
+                raise e
+
             place = manager.get_place_by_name(info["name"])
             return place.sn
 
@@ -28,13 +36,12 @@ class Manager(BasePlaceManager):
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.update_place(sn, new_info, autocommit=True)
-
-    @staticmethod
-    def delete_place(sn):
-        with DBWrapper(current_app.db.engine.url).session() as db_sess:
-            manager = current_app.db_api_class(db_sess)
-            manager.delete_place(sn, autocommit=True)
+            try:
+                manager.update_place(sn, new_info, autocommit=True)
+            except Exception as e:
+                if "duplicate" in str(e).lower():
+                    raise PLACE_NAME_DUPLICATE
+                raise e
 
     @staticmethod
     def list_places():

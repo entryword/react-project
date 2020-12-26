@@ -3,6 +3,7 @@
 import pytest
 
 from app import create_app
+from app.constant import DEFAULT_PLACE_SN
 from app.exceptions import PyLadiesException
 from app.exceptions import APPLY_NOT_EXIST
 from app.sqldb import DBWrapper
@@ -15,12 +16,24 @@ class TestEventApply:
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.app.db.create_all()
+        self.create_default_place()
 
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
         self.app.db.engine.dispose()
         self.app_context.pop()
+
+    def create_default_place(self):
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            place_info = {
+                "sn": DEFAULT_PLACE_SN,
+                "name": "default place",
+                "addr": "default place addr",
+                "map": "default place map",
+            }
+            manager.create_place(place_info, autocommit=True)
 
     @pytest.mark.parametrize('apply_infos', [2], indirect=True)
     def test_create_event_apply(self, topic_info, event_basic_info, apply_infos):

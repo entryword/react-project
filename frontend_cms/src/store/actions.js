@@ -41,6 +41,15 @@ export default {
             window.location.href = loginUrl;
         }
     },
+    getPlace: async function(context, id) {
+        const data = await api.getPlace(id).then(res => res.data);
+        if (data.info.code == 0) {
+            context.commit('SET_PLACE', data.data);
+        } else {
+            alert(data.info.message);
+            window.location.href = loginUrl;
+        }
+    },
     getSpeakers: async function(context) {
         const data = await api.getSpeakers().then(res => res.data);
         if (data.info.code == 0) {
@@ -77,12 +86,30 @@ export default {
             // window.location.href = loginUrl;
         }
     },
+    postPlace: async function({ commit, state }, data) {
+        const postPlaceResultData = await api.postPlace(data).then(res => res.data);
+        if (postPlaceResultData.info.code == 0) {
+            commit('POST_PLACE_RESULT', postPlaceResultData.data);
+        } else {
+            alert(postPlaceResultData.info.message);
+            // window.location.href = loginUrl;
+        }
+    },
     putEvent: async function({ commit, state }, data) {
         const putEventResult = await api.putEvent(data).then(res => res.data);
         if (putEventResult.info.code == 0) {
             commit('PUT_EVENT_RESULT', putEventResult.data);
         } else {
             alert(putEventResult.info.message);
+            // window.location.href = loginUrl;
+        }
+    },
+    putPlace: async function({ commit, state }, data) {
+        const putPlaceResult = await api.putPlace(data).then(res => res.data);
+        if (putPlaceResult.info.code == 0) {
+            commit('PUT_PLACE_RESULT', putPlaceResult.data);
+        } else {
+            alert(putPlaceResult.info.message);
             // window.location.href = loginUrl;
         }
     },

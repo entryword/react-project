@@ -25,6 +25,9 @@ class SQLDatabaseAPI():
     def create_event_apply(self, info, autocommit=False):
         raise NotImplementedError()
 
+    def create_role(self, info, autocommit=False):
+        raise NotImplementedError()
+
     ########## get
     def get_topics(self):
         raise NotImplementedError()
@@ -68,6 +71,12 @@ class SQLDatabaseAPI():
     def get_all_users(self):
         raise NotImplementedError()
 
+    def get_roles(self):
+        raise NotImplementedError()
+
+    def get_role(self, sn):
+        raise NotImplementedError()
+
     ########## update
 
     def update_topic(self, sn, info, autocommit=False):
@@ -88,6 +97,9 @@ class SQLDatabaseAPI():
     def update_event_apply(self, sn, info, autocommit=False):
         raise NotImplementedError()
 
+    def update_role(self, sn, info, autocommit=False):
+        raise NotImplementedError()
+
     ########## delete
 
     def delete_topic(self, sn, autocommit=False):
@@ -106,4 +118,7 @@ class SQLDatabaseAPI():
         raise NotImplementedError()
 
     def delete_event_apply(self, sn, autocommit=False):
+        raise NotImplementedError()
+
+    def delete_role(self, sn, autocommit=False):
         raise NotImplementedError()

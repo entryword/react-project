@@ -7,12 +7,21 @@ from app.exceptions import (
     TOPIC_NOT_EXIST, EVENTBASIC_NOT_EXIST,
     EVENTINFO_NOT_EXIST, SPEAKER_NOT_EXIST,
     PLACE_NOT_EXIST, APPLY_NOT_EXIST,
-    USER_NOT_EXIST, SLIDERESOURCE_NOT_EXIST
+    USER_NOT_EXIST, SLIDERESOURCE_NOT_EXIST,
+    ROLE_NOT_EXIST
 )
 from .abstract import SQLDatabaseAPI
 from .models import (
-    Topic, Speaker, Link, Place, EventBasic,
-    SlideResource, EventInfo, EventApply, User
+    EventApply,
+    EventBasic,
+    EventInfo,
+    Link,
+    Place,
+    Role,
+    SlideResource,
+    Speaker,
+    Topic,   
+    User,
 )
 
 
@@ -101,15 +110,31 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             return obj.sn
         return None
 
+    def create_role(self, info, autocommit=False):
+        obj = Role(**info)
+        self.session.add(obj)
+
+        if autocommit:
+            self.session.commit()
+            return obj.sn
+        return None
+
     ########## get
 
     # TODO: pagination and filter
     def get_topics(self):
         return self.session.query(Topic).all()
 
-    def get_topics_by_keyword(self, keyword):
+    def search_topics(self, keyword, level=None, freq=None, host=None):
         key = "%" + keyword + "%"
-        return self.session.query(Topic).filter(Topic.name.like(key)).all()
+        statement = Topic.name.like(key)
+        if level:
+            statement = and_(statement, Topic.level == level)
+        if freq:
+            statement = and_(statement, Topic.freq == freq)
+        if host:
+            statement = and_(statement, Topic.host == host)
+        return self.session.query(Topic).filter(statement).all()
 
     def get_topic(self, sn):
         topic = self.session.query(Topic).filter_by(sn=sn).one_or_none()
@@ -245,6 +270,10 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         speaker = self.session.merge(speaker)
         return speaker
 
+    def search_speakers(self, keyword):
+        key = "%" + keyword + "%"
+        return self.session.query(Speaker).filter(Speaker.name.like(key)).all()
+
     def get_slides(self):
         return self.session.query(SlideResource).all()
 
@@ -265,6 +294,17 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def get_all_users(self):
         user_list = self.session.query(User).all()
         return user_list
+
+    def get_role(self, sn):
+        role = self.session.query(Role).filter_by(sn=sn).one_or_none()
+        if not role:
+            raise ROLE_NOT_EXIST
+        role = self.session.merge(role)
+        return role
+
+    def get_roles(self):
+        roles = self.session.query(Role).all()
+        return roles
 
     ########## update
 
@@ -377,6 +417,19 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
+    def update_role(self, sn, info, autocommit=False):
+        role = self.session.query(Role).filter_by(sn=sn).one_or_none()
+        if not role:
+            raise ROLE_NOT_EXIST
+        info.pop("sn", None)
+        for key, value in info.items():
+            if hasattr(role, key):
+                setattr(role, key, value)
+
+        self.session.add(role)
+        if autocommit:
+            self.session.commit()
+
     ########## delete
 
     def delete_topic(self, sn, autocommit=False):
@@ -415,18 +468,6 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def delete_place(self, sn, autocommit=False):
-        # place = self.session.query(Place).filter_by(sn=sn).one_or_none()
-        # if place:
-        #     self.session.delete(place)
-
-        #     if autocommit:
-        #         self.session.commit()
-        stmt = text("DELETE FROM place WHERE sn=:sn").bindparams(sn=sn)
-        self.session.execute(stmt)
-        if autocommit:
-            self.session.commit()
-
     def delete_speaker(self, sn, autocommit=False):
         # speaker = self.session.query(Speaker).filter_by(sn=sn).one_or_none()
         # if speaker:
@@ -453,6 +494,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def delete_event_apply(self, sn, autocommit=False):
         stmt = text("DELETE FROM event_apply WHERE sn=:sn").bindparams(sn=sn)
+        self.session.execute(stmt)
+        if autocommit:
+            self.session.commit()
+
+    def delete_role(self, sn, autocommit=False):
+        stmt = text("DELETE FROM role WHERE sn=:sn").bindparams(sn=sn)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()

@@ -7,10 +7,15 @@ import Modal from './Modal';
 import CalendarToolbar from './CalendarToolbar';
 
 class Calendar extends Component {
-    state = {
-        defaultDate: moment().toDate(),
-        selectedId: 0,
-    };
+    constructor(props) {
+        super(props);
+        this.el = document.createElement('div');
+        this.state = {
+            defaultDate: moment().toDate(),
+            selectedId: 0,
+        };
+    }
+
     processEventList = dataList => {
         const process = dataList.map(item => ({
             id: item.event.id,
@@ -71,9 +76,7 @@ class Calendar extends Component {
                             </h3>
                             <h4>
                                 <a
-                                    href={`/events/event.html?id=${
-                                        item.event.id
-                                    }`}
+                                    href={`/events/event.html?id=${item.event.id}`}
                                     rel="noopener noreferrer"
                                     target="_blank">
                                     {item.event.title}
@@ -100,6 +103,7 @@ class Calendar extends Component {
                     共 {this.props.events.count} 筆搜尋結果
                 </h2>
                 <BigCalendar
+                    popup
                     localizer={localizer}
                     events={eventsList}
                     views={['month']}

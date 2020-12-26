@@ -5,6 +5,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from app import create_app
+from app.constant import DEFAULT_PLACE_SN
 from app.exceptions import PyLadiesException
 from app.exceptions import EVENTBASIC_NOT_EXIST
 from app.sqldb import DBWrapper
@@ -16,12 +17,24 @@ class TestEventBasic:
         self.app_context = self.app.app_context()
         self.app_context.push()
         self.app.db.create_all()
+        self.create_default_place()
 
     def teardown(self):
         self.app.db.session.remove()
         self.app.db.drop_all()
         self.app.db.engine.dispose()
         self.app_context.pop()
+
+    def create_default_place(self):
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            place_info = {
+                "sn": DEFAULT_PLACE_SN,
+                "name": "default place",
+                "addr": "default place addr",
+                "map": "default place map",
+            }
+            manager.create_place(place_info, autocommit=True)
 
     @staticmethod
     def assert_topic_info(event_basic, topic_info):
@@ -36,7 +49,7 @@ class TestEventBasic:
     @staticmethod
     def assert_place_info(event_basic, place_info):
         if place_info is None:
-            assert event_basic.place is None
+            assert event_basic.place.sn == DEFAULT_PLACE_SN
             return
         assert event_basic.place.name == place_info["name"]
         assert event_basic.place.map == place_info["map"]
@@ -156,7 +169,7 @@ class TestEventBasic:
 
             # assertion 2
             row_count = db_sess.execute("SELECT COUNT(*) FROM place").scalar()
-            assert row_count == 2
+            assert row_count == 2 + 1 # default place is also counted
 
     def test_delete_event_basic(self, topic_info, event_basic_info):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:

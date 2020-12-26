@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en">
+
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-45593621-3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-45593621-3');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Speaker 講師</title>
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../sources/all.min.css">
+    <link rel="stylesheet" href="../sources/bootstrap.min.css">
+    <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/event.css">
+</head>
+<body>
+<nav class="navbar navbar-light top-nav sticky-top">
+    <h1 class="page-title color-pink">Speaker 講師</h1>
+    <a href="http://tw.pyladies.com/" class="navbar-brand"></a>
+    <h1 class="mobile-page-title color-pink">Speaker 講師</h1>
+    <div class="menu" for="menu-control-top">
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <a class="menu-wording menu-wording-close" href="#footer">Menu</a>
+    </div>
+</nav>
+<div class="side-bar">
+    <input type="checkbox" class="menu-control" id="menu-control">
+    <label class="menu" for="menu-control">
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+        <span class="menu-wording menu-wording-close">Menu</span>
+        <span class="menu-wording menu-wording-open">Close</span>
+    </label>
+    <div class="menu-content menu-content-side-bar"></div>
+</div>
+<div class="event-container container-with-menu">
+    <div class="event-menu">
+        <div class="event-menu-header menu-header speaker-header">
+            <div class="speaker-image" id="speaker-image"></div>
+            <div class="speaker-header-content" id="speaker-name"></div>
+        </div>
+        <ul class="event-menu-list" id="event-menu-list">
+            <li class="event-menu-item" id="event-first">
+                簡介 | 連結
+            </li>
+            <li class="event-menu-item" id="event-second">
+                主題 | 領域
+            </li>
+        </ul>
+    </div>
+    <div class="event-body speaker-body" id="event-body">
+        <div class="event-session event-first-session" id="event-first-session">
+            <!-- <h3>簡介 | 連結</h3> -->
+            <div id="speaker-intro"></div>
+        </div>
+        <div class="event-session event-second-session" id="event-second-session">
+            <!-- <h3>主題 | 領域</h3> -->
+            <div id="speaker-topic"></div>
+        </div>
+    </div>
+</div>
+<footer class="footer" id="footer"></footer>
+<script src="../scripts/template.js"></script>
+<script src="../sources/ScrollMagic.min.js"></script>
+<script src="../sources/axios.min.js"></script>
+<script src="../sources/handlebars.min.js"></script>
+<!--Template 講師照片-->
+<script id="speaker-image-template" type="text/x-handlebars-template">
+    <div className="speaker-image">
+        <img
+            src="{{setDefaultHeadShot photo}}"
+            alt={{name}}
+        />
+    </div>
+</script>
+<!--Template 講義名字 title-->
+<script id="speaker-name-template" type="text/x-handlebars-template">
+    <h2>{{title}}</h2>
+    <h1>{{name}}</h1>
+</script>
+<!--Template 簡介連結 -->
+<script id="speaker-intro-template" type="text/x-handlebars-template">
+    <h6>簡介</h6>
+    <p class="speaker-intro-desc">{{intro}}</p>
+    <h6>相關連結</h6>
+    <ul class="pyladies-list">
+        {{#each links}}
+        <li><a href="{{this.url}}" target="_blank">{{this.type}}</a></li>
+        {{/each}}
+    </ul>        
+</script>
+<!--Template 主題領域-->
+<script id="speaker-topic-template" type="text/x-handlebars-template">
+    <h6>主題 | 活動</h6>
+    <ul  class="pyladies-list">
+        {{#each talks}}
+            <li>
+                <a href="/events/topic.html?id={{this.topic_id}}" target="_blank">{{this.topic_name}}</a>
+            <ul>
+                {{#each this.events}}
+                <li><a href="/events/event.html?id={{this.id}}" target="_blank">{{this.title}}</a></li>
+                {{/each}}    
+            </ul>
+        </li>
+        {{/each}}
+    </ul>
+    <h6>領域</h6>
+    <div class="speaker-tags">
+        {{#each tags}}
+        <span class="tag">{{this}}</span>
+        {{/each}}
+    </div>
+</script>
+<script>let tw_pyladies = {};</script>
+<script src="../scripts/scroll.js"></script>
+<script src="../scripts/event.js"></script>
+</body>
+
+</html>

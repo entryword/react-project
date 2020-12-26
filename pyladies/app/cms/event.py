@@ -109,3 +109,14 @@ def update_event(e_id):
     }
 
     return jsonify(data=data, info=info)
+
+
+@api.route("/event/<int:e_id>", methods=["DELETE"])
+@login_required
+def delete_event(e_id):
+    EventManager().delete_event(e_id)
+    info = {
+        "code": OK.code,
+        "message": OK.message
+    }
+    return jsonify(info=info)
