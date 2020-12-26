@@ -1,5 +1,7 @@
 from flask import current_app
 
+from app.common.accupass_reader import AccupassCsvProcessor
+from app.exceptions import FILE_REQUIRED
 from app.managers.abstract import BaseCheckInListManager
 from app.sqldb import DBWrapper
 
@@ -23,11 +25,13 @@ class CheckInListManager(BaseCheckInListManager):
         return schema
 
     @staticmethod
-    def upload(info):
-        """
-            TODO
-        """
-        raise NotImplementedError()
+    def upload(event_basic_sn, csv_reader):
+        if not csv_reader:
+            raise FILE_REQUIRED
+        results = AccupassCsvProcessor(
+            event_basic_sn=event_basic_sn, csv_reader=csv_reader
+        ).get()
+        return results
 
     @classmethod
     def get_check_in_list(cls, event_basic_sn):

@@ -34,19 +34,12 @@ class AccupassCsvProcessor:
         '學生票': TicketType.STUDENT
     }
 
-    def __init__(self, event_basic_sn, csv_file):
+    def __init__(self, event_basic_sn, csv_reader):
         self.event_basic_sn = event_basic_sn
-        self.csv_file = csv_file
+        self.csv_reader = csv_reader
         self.results = list()
 
         self._exec()
-
-    def _read(self):
-        csv_reader = csv.DictReader(
-            (line.replace('\0', '') for line in self.csv_file),
-            quotechar='|'
-        )
-        return csv_reader
 
     def _extract_row(self, row):
         for k, v in row.items():
@@ -118,12 +111,10 @@ class AccupassCsvProcessor:
         return emails
 
     def _exec(self):
-        csv_reader = self._read()
-
-        emails = self._collect_emails(csv_reader=csv_reader)
+        emails = self._collect_emails(csv_reader=self.csv_reader)
         user_dict = self._get_existed_user_dict(emails=emails)
 
-        for index, row in self._yield_row(csv_reader):
+        for index, row in self._yield_row(csv_reader=self.csv_reader):
             row_dict = self._extract_row(row=row)
             data = self._create_check_member(row=row_dict, user_dict=user_dict)
             self.results.append(data)

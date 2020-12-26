@@ -1,9 +1,28 @@
-from flask import jsonify
+import codecs
+import csv
+
+from flask import jsonify, request
 from flask_login import login_required
 
 from app.cms import api
 from app.exceptions import OK
 from app.managers.check_in_list import CheckInListManager
+
+
+@api.route('/check-in-list/upload/<int:event_basic_sn>', methods=["POST"])
+def upload_check_in_list(event_basic_sn):
+    flask_file = request.files['file']
+    csv_reader = None
+    if flask_file:
+        stream = codecs.iterdecode(flask_file.stream, 'utf-8')
+        csv_reader = csv.reader(stream, dialect=csv.excel)
+    data = CheckInListManager.upload(csv_reader=csv_reader, event_basic_sn=event_basic_sn)
+    info = {
+        "code": OK.code,
+        "message": OK.message
+    }
+    return jsonify(data=data, info=info)
+
 
 
 @api.route("/check-in-list/<int:event_basic_sn>", methods=["GET"])

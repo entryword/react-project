@@ -132,7 +132,7 @@ class BaseRoleManager():
 
 class BaseCheckInListManager():
     @staticmethod
-    def upload(info):
+    def upload(event_basic_sn, csv_reader):
         raise NotImplementedError()
 
     @staticmethod
