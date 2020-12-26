@@ -46,7 +46,7 @@ def create_event(payload):
     }
     info = {
         "code": OK.code,
-        "message": "Perform the action successfully."
+        "message": OK.message
     }
     return jsonify(data=data, info=info)
 

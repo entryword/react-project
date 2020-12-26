@@ -253,13 +253,13 @@ class TestRoleApis(unittest.TestCase):
         }
 
         rv = self.test_client.put(
-            "/cms/api/role/{role_id}".format(role_id=str(role_id)),
+            "/cms/api/role/{role_id}".format(role_id=role_id),
             headers={"Content-Type": "application/json"},
             content_type="application/json",
             data=json.dumps(update_role_info),
         )
         self.assertEqual(rv.status_code, 200)
-        self.assertEqual(rv.json["info"]["code"], 1)
+        self.assertEqual(rv.json["info"]["code"], INVALID_INPUT.code)
 
     def test_update_role_duplicate_name(self):
         # case 2: 200, name duplicate with existed role
