@@ -118,6 +118,33 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             return obj.sn
         return None
 
+    def create_check_in_list(self, info, autocommit=False, flush=False):
+        obj = CheckInList(**info)
+        self.session.add(obj)
+
+        if autocommit:
+            self.session.commit()
+            return obj.sn
+        if flush:
+            self.session.flush()
+            return obj.sn
+        return None
+
+    def create_user(self, info, autocommit=False, flush=False):
+        """
+            TODO id change to sn
+        """
+        obj = User(**info)
+        self.session.add(obj)
+
+        if autocommit:
+            self.session.commit()
+            return obj.id
+        if flush:
+            self.session.flush()
+            return obj.id
+        return None
+
     ########## get
 
     # TODO: pagination and filter
@@ -294,6 +321,9 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         user_list = self.session.query(User).all()
         return user_list
 
+    def get_users_by_emails(self, emails):
+        return self.session.query(User).filter(User.mail.in_(emails)).all()
+
     def get_role(self, sn):
         role = self.session.query(Role).filter_by(sn=sn).one_or_none()
         if not role:
@@ -310,6 +340,13 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             sn=event_basic_sn
         ).all()
         return records
+
+    def get_check_in_list_by_event_basic_sn_and_email(self, event_basic_sn, email):
+        record = self.session.query(CheckInList).filter_by(
+            sn=event_basic_sn,
+            mail=email
+        ).first()
+        return record
 
     ########## update
 
@@ -435,26 +472,17 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def update_check_in_list(self, event_basic_sn, user_sn, info, autocommit=False):
-        record = self.session.query(CheckInList).filter_by(
-            event_basic_sn=event_basic_sn,
-            user_sn=user_sn
-        ).first()
+    def update_check_in_list(self, check_in_list_sn, info, autocommit=False):
+        record = self.session.query(CheckInList).filter_by(sn=check_in_list_sn).first()
         if not record:
             raise RECORD_NOT_EXIST
 
-        _allow_columns = {
-            'status',
-            'remark'
-        }
         for k, v in info.items():
-            if k not in _allow_columns:
-                continue
             setattr(record, k, v)
+
         self.session.add(record)
         if autocommit:
             self.session.commit()
-
 
     ########## delete
 

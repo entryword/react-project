@@ -1,3 +1,5 @@
+import codecs
+
 from flask import current_app
 
 from app.common.accupass_reader import AccupassCsvProcessor
@@ -25,16 +27,36 @@ class CheckInListManager(BaseCheckInListManager):
         return schema
 
     @classmethod
-    def upload(cls, event_basic_sn, csv_reader):
-        if not csv_reader:
+    def upload(cls, event_basic_sn, files):
+        stream = None
+        if files[0].filename != '':
+            file = files[0]
+            stream = codecs.iterdecode(file.stream, 'utf-8')
+        if not stream:
             raise FILE_REQUIRED
         old_results = cls.get_check_in_list(event_basic_sn=event_basic_sn)
         if old_results:
             raise RECORD_IS_EXIST
-        results = AccupassCsvProcessor(
-            event_basic_sn=event_basic_sn, csv_reader=csv_reader
-        ).get()
-        return results
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            results = AccupassCsvProcessor(
+                manager=manager, event_basic_sn=event_basic_sn, stream=stream
+            ).get()
+            return results
+
+    @classmethod
+    def create_check_in_list(cls, info):
+        email = info['mail']
+        event_basic_sn = info['event_basic_sn']
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            user_record = manager.get_check_in_list_by_event_basic_sn_and_email(
+                event_basic_sn=event_basic_sn, email=email
+            )
+            if user_record:
+                raise RECORD_IS_EXIST
+            sn = manager.create_check_in_list(info=info, autocommit=True)
+            return sn
 
     @classmethod
     def get_check_in_list(cls, event_basic_sn):
@@ -48,12 +70,11 @@ class CheckInListManager(BaseCheckInListManager):
             return results
 
     @classmethod
-    def update_check_in_list(cls, event_basic_sn, user_sn, info):
+    def update_check_in_list(cls, check_in_list_sn, info):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            record = manager.update_check_in_list(
-                event_basic_sn=event_basic_sn, user_sn=user_sn, info=info, autocommit=True)
-            return cls._extract_schema(record=record)
+            manager.update_check_in_list(
+                check_in_list_sn=check_in_list_sn, info=info, autocommit=True)
 
     @staticmethod
     def delete_check_in_list(check_in_list_sn):

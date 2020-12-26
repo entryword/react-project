@@ -346,16 +346,16 @@ class AnonymousUser(AnonymousUserMixin):
         return False
 
 
-# 活動報到名冊
+# 活動報到名冊 TODO 待User table設計好後 加入ForeignKey
 class CheckInList(db.Model):
     __tablename__ = "check_in_list"
 
     sn = db.Column(db.Integer, primary_key=True)
     event_basic_sn = db.Column(db.Integer, nullable=False)  # 活動id
-    user_sn = db.Column(db.Integer, db.ForeignKey("user.sn"))  # 參加者id (當下有在user table的話就加入，沒有就null)
+    user_sn = db.Column(db.Integer)  # 參加者id (當下有在user table的話就加入，沒有就null)
     name = db.Column(db.String(128), nullable=False)  # 參加者名稱
-    mail = db.Column(db.String(128), unique=True, nullable=False)  # 參加者email
-    phone = db.Column(db.String(128), unique=True, nullable=False)  # 參加者phone
+    mail = db.Column(db.String(128), nullable=False)  # 參加者email
+    phone = db.Column(db.String(128), nullable=False)  # 參加者phone
     ticket_type = db.Column(db.Integer, nullable=False)  # 票卷種類 1:一般人 2:學生票
     ticket_amount = db.Column(db.Integer, nullable=False)  # 票價
     remark = db.Column(db.String(128))  # 備註 (admin可編輯)

@@ -28,6 +28,12 @@ class SQLDatabaseAPI():
     def create_role(self, info, autocommit=False):
         raise NotImplementedError()
 
+    def create_check_in_list(self, info, autocommit=False, flush=False):
+        raise NotImplementedError()
+
+    def create_user(self, info, autocommit=False, flush=False):
+        raise NotImplementedError()
+
     ########## get
     def get_topics(self):
         raise NotImplementedError()
@@ -71,10 +77,19 @@ class SQLDatabaseAPI():
     def get_all_users(self):
         raise NotImplementedError()
 
+    def get_users_by_emails(self, emails):
+        raise NotImplementedError()
+
     def get_roles(self):
         raise NotImplementedError()
 
     def get_role(self, sn):
+        raise NotImplementedError()
+
+    def get_check_in_list(self, event_basic_sn):
+        raise NotImplementedError()
+
+    def get_check_in_list_by_event_basic_sn_and_email(self, event_basic_sn, email):
         raise NotImplementedError()
 
     ########## update
@@ -121,4 +136,7 @@ class SQLDatabaseAPI():
         raise NotImplementedError()
 
     def delete_role(self, sn, autocommit=False):
+        raise NotImplementedError()
+
+    def delete_check_in_list(self, sn, autocommit=False):
         raise NotImplementedError()
