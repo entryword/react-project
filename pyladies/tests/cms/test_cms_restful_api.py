@@ -1,13 +1,13 @@
 # coding=UTF-8
 
 import json
-import pytest
 from datetime import datetime, timedelta
-from werkzeug.security import generate_password_hash
 
 import pytest
+from werkzeug.security import generate_password_hash
+
 from app import create_app
-from app.exceptions import PLACE_NAME_DUPLICATE, EVENTBASIC_NOT_EXIST
+from app.exceptions import PLACE_NAME_DUPLICATE, EVENTBASIC_NOT_EXIST, OK
 from app.sqldb import DBWrapper
 from app.sqldb.models import User
 
@@ -44,20 +44,18 @@ class TestCreateEvent:
             "fields": [3],
         }
 
-        postdata = {
-            "data": {
-                "title": "XXXX",
-                "topic_id": None,
-                "start_date": "2019-03-09",
-                "start_time": "14:00",
-                "end_date": "2019-03-09",
-                "end_time": "17:00",
-                "place_id": None,
-                "desc": "XXXX",
-                "speaker_ids": [1],
-                "assistant_ids": [2],
-                "field_ids": [1, 2],
-            }
+        payload = {
+            "title": "XXXX",
+            "topic_id": None,
+            "start_date": "2019-03-09",
+            "start_time": "14:00",
+            "end_date": "2019-03-09",
+            "end_time": "17:00",
+            "place_id": None,
+            "desc": "XXXX",
+            "speaker_ids": [1],
+            "assistant_ids": [2],
+            "field_ids": [1, 2],
         }
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -69,19 +67,19 @@ class TestCreateEvent:
 
             topic = manager.get_topic_by_name(topic_info["name"])
             place = manager.get_place_by_name(place_info["name"])
-            postdata["data"]["topic_id"] = topic.sn
-            postdata["data"]["place_id"] = place.sn
+            payload["topic_id"] = topic.sn
+            payload["place_id"] = place.sn
 
         # post test
         rv = self.test_client.post(
             "/cms/api/event",
             headers={"Content-Type": "application/json"},
-            data=json.dumps(postdata),
+            data=json.dumps(payload),
             content_type="application/json",
         )
         # api assertion
         assert rv.status_code == 200
-        assert rv.json["info"]["code"] == 0
+        assert rv.json["info"]["code"] == OK.code
         assert rv.json["data"]["id"] == 1
         event_basic_sn = rv.json["data"]["id"]
 
@@ -92,9 +90,9 @@ class TestCreateEvent:
             assert event_basic.topic.name == topic_info["name"]
             assert event_basic.place.name == place_info["name"]
             assert event_basic.place.map == place_info["map"]
-            assert event_basic.date == postdata["data"]["start_date"]
-            assert event_basic.start_time == postdata["data"]["start_time"]
-            assert event_basic.end_time == postdata["data"]["end_time"]
+            assert event_basic.date == payload["start_date"]
+            assert event_basic.start_time == payload["start_time"]
+            assert event_basic.end_time == payload["end_time"]
 
 
 class TestGetEvents:
@@ -164,6 +162,7 @@ class TestGetEvents:
             "end_time": event_basic_info["end_time"],
             "start_time": event_basic_info["start_time"]
         }
+
         assert len(rv.json["data"]) == 1
         assert rv.json["data"][0] == expected_result
 
@@ -394,7 +393,7 @@ class TestGetSpeakers:
         # test
         rv = self.test_client.get("/cms/api/speakers")
 
-        #assert
+        # assert
         assert rv.json["info"]["code"] == 0
         assert len(rv.json["data"]) == 3
         for i in range(3):
@@ -425,7 +424,7 @@ class TestGetTopics:
         # test
         rv = self.test_client.get("/cms/api/topics")
 
-        #assert
+        # assert
         assert rv.json["info"]["code"] == 0
         assert len(rv.json["data"]) == 3
         assert rv.json["data"][0]["name"] == topic_infos[0]["name"]
@@ -643,7 +642,7 @@ class TestGetEvent:
                                         place_info, speaker_info, event_apply_info)
 
         # test
-        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
+        testurl = "/cms/api/event/" + str(event_info_info["event_basic_sn"])
         rv = self.test_client.get(testurl)
 
         # assertion
@@ -678,7 +677,7 @@ class TestGetEvent:
                                         place_info, speaker_info, None)
 
         # test
-        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
+        testurl = "/cms/api/event/" + str(event_info_info["event_basic_sn"])
         rv = self.test_client.get(testurl)
 
         # assertion
@@ -708,7 +707,7 @@ class TestGetEvent:
                                         place_info, None, event_apply_info)
 
         # test
-        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
+        testurl = "/cms/api/event/" + str(event_info_info["event_basic_sn"])
         rv = self.test_client.get(testurl)
         # assertion
         assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
@@ -733,7 +732,7 @@ class TestGetEvent:
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info, place_info)
 
         # test
-        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
+        testurl = "/cms/api/event/" + str(event_info_info["event_basic_sn"])
         rv = self.test_client.get(testurl)
 
         # assertion
@@ -798,48 +797,46 @@ class TestPutEvent:
         }
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
                                         place_info, speaker_info)
-        putdata = {
-            "data": {
-                "title": "XXXX",
-                "topic_id": event_basic_info["topic_sn"],
-                "start_date": "2019-03-09",
-                "start_time": "14:00",
-                "end_date": "2019-03-09",
-                "end_time": "17:00",
-                "place_id": event_basic_info["place_sn"],
-                "desc": "XXXX",
-                "speaker_ids": [1],
-                "assistant_ids": [2],
-                "field_ids": [1, 2],
-                "slide_resource_ids":[1,2,3],
-                "apply": [apply_info]
-            }
+        payload = {
+            "title": "XXXX",
+            "topic_id": event_basic_info["topic_sn"],
+            "start_date": "2019-03-09",
+            "start_time": "14:00",
+            "end_date": "2019-03-09",
+            "end_time": "17:00",
+            "place_id": event_basic_info["place_sn"],
+            "desc": "XXXX",
+            "speaker_ids": [1],
+            "assistant_ids": [2],
+            "field_ids": [1, 2],
+            "slide_resource_ids": [1, 2, 3],
+            "apply": [apply_info]
         }
 
         # test 1
-        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
+        test_url = "/cms/api/event/{e_id}".format(e_id=event_info_info["event_basic_sn"])
         rv = self.test_client.put(
-            testurl,
+            test_url,
             headers={"Content-Type": "application/json"},
-            data=json.dumps(putdata),
+            data=json.dumps(payload),
             content_type="application/json",
         )
+        print('#' * 50, rv.json)
 
         # assertion 1
         assert rv.json["data"]["id"] == event_info_info["event_basic_sn"]
 
         # test 2
-        testurl = "/cms/api/event/"+str(event_info_info["event_basic_sn"])
-        rv = self.test_client.get(testurl)
+        rv = self.test_client.get(test_url)
 
         # assertion 2
-        assert rv.json["data"]["start_time"] == putdata["data"]["start_time"]
-        assert rv.json["data"]["end_time"] == putdata["data"]["end_time"]
-        assert rv.json["data"]["topic_id"] == putdata["data"]["topic_id"]
-        assert rv.json["data"]["place_info"]["id"] == putdata["data"]["place_id"]
-        assert rv.json["data"]["title"] == putdata["data"]["title"]
-        assert rv.json["data"]["desc"] == putdata["data"]["desc"]
-        assert rv.json["data"]["fields"] == putdata["data"]["field_ids"]
+        assert rv.json["data"]["start_time"] == payload["start_time"]
+        assert rv.json["data"]["end_time"] == payload["end_time"]
+        assert rv.json["data"]["topic_id"] == payload["topic_id"]
+        assert rv.json["data"]["place_info"]["id"] == payload["place_id"]
+        assert rv.json["data"]["title"] == payload["title"]
+        assert rv.json["data"]["desc"] == payload["desc"]
+        assert rv.json["data"]["fields"] == payload["field_ids"]
         assert len(rv.json["data"]["speakers"]) == 1
         assert rv.json["data"]["speakers"][0]["name"] == speaker_info["name"]
         assert rv.json["data"]["assistants"] == []
@@ -940,7 +937,7 @@ class TestCreatePlace:
             "/cms/api/place",
             headers={"Content-Type": "application/json"},
             content_type="application/json",
-            data=json.dumps({'data': place_info}),
+            data=json.dumps(place_info),
         )
 
         # api assertion
@@ -949,8 +946,8 @@ class TestCreatePlace:
         assert rv.json["data"]["id"] == 1
 
         # test 2
-        testurl = "/cms/api/place/1"
-        rv = self.test_client.get(testurl)
+        test_url = "/cms/api/place/1"
+        rv = self.test_client.get(test_url)
 
         # assertion 2
         assert rv.status_code == 200
@@ -980,7 +977,7 @@ class TestCreatePlace:
             "/cms/api/place",
             headers={"Content-Type": "application/json"},
             content_type="application/json",
-            data=json.dumps({'data': place_info_2}),
+            data=json.dumps(place_info_2),
         )
 
         # assertion
@@ -1007,38 +1004,33 @@ class TestPutPlace:
             manager = self.app.db_api_class(db_sess)
             place_sn = manager.create_place(place_info, autocommit=True)
 
-        putdata = {
-            "data": {
-                "name": "place 2",
-                "addr": "台北市萬華區艋舺大道101號",
-                "map": "http://abc.com/map2.html"
-            }
+        payload = {
+            "name": "place 2",
+            "addr": "台北市萬華區艋舺大道101號",
+            "map": "http://abc.com/map2.html"
         }
 
         # test 1
-        testurl = "/cms/api/place/" + str(place_sn)
+        test_url = "/cms/api/place/{place_sn}".format(place_sn=place_sn)
         rv = self.test_client.put(
-            testurl,
+            test_url,
             headers={"Content-Type": "application/json"},
-            data=json.dumps(putdata),
+            data=json.dumps(payload),
             content_type="application/json",
         )
 
         # api assertion
         assert rv.status_code == 200
-        assert rv.json["info"]["code"] == 0
+        assert rv.json["info"]["code"] == OK.code
 
-        # test 2
-        testurl = "/cms/api/place/" + str(place_sn)
-        rv = self.test_client.get(testurl)
-        print(rv.json)
+        rv = self.test_client.get(test_url)
 
         # assertion 2
         assert rv.status_code == 200
-        assert rv.json["info"]["code"] == 0
-        assert rv.json["data"]["name"] == putdata["data"]["name"]
-        assert rv.json["data"]["addr"] == putdata["data"]["addr"]
-        assert rv.json["data"]["map"] == putdata["data"]["map"]
+        assert rv.json["info"]["code"] == OK.code
+        assert rv.json["data"]["name"] == payload["name"]
+        assert rv.json["data"]["addr"] == payload["addr"]
+        assert rv.json["data"]["map"] == payload["map"]
 
     def test_duplicate_place_name(self):
         # preparation
@@ -1057,15 +1049,16 @@ class TestPutPlace:
             manager.create_place(place_info, autocommit=True)
             place_sn = manager.create_place(place_info_2, autocommit=True)
 
-        # test
-        putdata = {}
-        putdata["data"] = place_info_2
-        putdata["data"]["name"] = place_info["name"]
-        testurl = "/cms/api/place/" + str(place_sn)
+        payload = {
+            **place_info_2.copy(),
+            "name": place_info["name"]
+        }
+
+        test_url = "/cms/api/place/{place_sn}".format(place_sn=place_sn)
         rv = self.test_client.put(
-            testurl,
+            test_url,
             headers={"Content-Type": "application/json"},
-            data=json.dumps(putdata),
+            data=json.dumps(payload),
             content_type="application/json",
         )
 
@@ -1090,17 +1083,17 @@ class TestGetPlace:
 
     def test_get_place(self):
         place = {
-                "name": "place 1",
-                "addr": "台北市信義區光復南路133號",
-                "map": "http://abc.com/map1.html",
-         }
+            "name": "place 1",
+            "addr": "台北市信義區光復南路133號",
+            "map": "http://abc.com/map1.html",
+        }
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             place_sn = manager.create_place(place, autocommit=True)
 
         # test
-        rv = self.test_client.get("/cms/api/place/"+str(place_sn))
+        rv = self.test_client.get("/cms/api/place/" + str(place_sn))
 
         # assert
         assert rv.json["info"]["code"] == 0

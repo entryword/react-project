@@ -65,6 +65,13 @@ TYPE_1_0 = {
     "all": "一次報名整系列"
 }
 
+ACCESS_TYPE_1_0 = {
+    0: "No Access",
+    1: "Read",
+    2: "Write"
+}
+
+
 DEFINITION_1_0 = {
     "field": FIELD_1_0,
     "freq": FREQ_1_0,
@@ -74,7 +81,8 @@ DEFINITION_1_0 = {
     "weekday": WEEKDAY_1_0,
     "time": TIME_1_0,
     "channel": CHANNEL_1_0,
-    "type": TYPE_1_0
+    "type": TYPE_1_0,
+    "access_type": ACCESS_TYPE_1_0
 }
 
 DEFAULT_PLACE_SN = 37

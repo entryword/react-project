@@ -1,6 +1,8 @@
-from flask import jsonify, request
+from flask import jsonify
 from flask_login import login_required
 
+from app.schemas.event_basic_info import schema_create
+from app.utils import payload_validator
 from . import api
 from ..exceptions import OK
 from ..managers.event import Manager as EventManager
@@ -10,111 +12,97 @@ from ..managers.event import Manager as EventManager
 @login_required
 def get_events():
     data = EventManager.get_events()
-
     info = {
         "code": OK.code,
         "message": OK.message
     }
-
     return jsonify(data=data, info=info)
 
 
 @api.route("/event", methods=["POST"])
 @login_required
-def create_event():
-    request_data = request.get_json()
-
-    data = request_data["data"]
-    eventinfo = {
+@payload_validator(schema_create)
+def create_event(payload):
+    event_info = {
         "event_basic": {
-            "topic_sn": data["topic_id"],
-            "date": data["start_date"],
-            # TODO:waiting table schema and data["end_date"] will add here
-            "start_time": data["start_time"],
-            "end_time": data["end_time"],
-            "place_sn": data["place_id"],
+            "topic_sn": payload["topic_id"],
+            "date": payload["start_date"],
+            # TODO:waiting table schema and payload["end_date"] will add here
+            "start_time": payload["start_time"],
+            "end_time": payload["end_time"],
+            "place_sn": payload["place_id"],
         },
         "event_info": {
-            "event_basic_sn": None,
-            "title": data["title"],
-            "desc": data["desc"],
-            "fields": data["field_ids"],
-            "speaker_sns": data["speaker_ids"],
-            "assistant_sns": data["assistant_ids"],
+            "title": payload["title"],
+            "desc": payload["desc"],
+            "fields": payload["field_ids"],
+            "speaker_sns": payload["speaker_ids"],
+            "assistant_sns": payload["assistant_ids"],
         },
     }
-
-    em = EventManager()
-    event_basic_newid = em.create_event(eventinfo)
-    res = {
-        "data": {"id": event_basic_newid},
-        "info": {"code": 0, "message": "Perform the action successfully."},
+    new_id = EventManager.create_event(event_info)
+    data = {
+        "id": new_id
     }
-
-    return jsonify(res)
+    info = {
+        "code": OK.code,
+        "message": OK.message
+    }
+    return jsonify(data=data, info=info)
 
 
 @api.route("/event/<int:e_id>", methods=["GET"])
 @login_required
 def get_event(e_id):
-    event_service = EventManager()
-    event_info = event_service.get_event(e_id, apimode=True)
-
+    data = EventManager.get_event(e_id, apimode=True)
     info = {
         "code": OK.code,
         "message": OK.message
     }
-
-    return jsonify(data=event_info, info=info)
+    return jsonify(data=data, info=info)
 
 
 @api.route("/event/<int:e_id>", methods=["PUT"])
 @login_required
-def update_event(e_id):
-    request_data = request.get_json()
-    data = request_data["data"]
-    eventinfo = { "event_basic": {}, "event_info": {}, "apply_info": {}}
-
-    eventinfo = {
+@payload_validator(schema_create)
+def update_event(e_id, payload):
+    event_info = {
         "event_basic": {
-            "topic_sn": data["topic_id"],
-            "date": data["start_date"],
-            "start_time": data["start_time"],
-            "end_time": data["end_time"],
-            "place_sn": data["place_id"]
+            "topic_sn": payload["topic_id"],
+            "date": payload["start_date"],
+            "start_time": payload["start_time"],
+            "end_time": payload["end_time"],
+            "place_sn": payload["place_id"]
         },
         "event_info": {
-            "title": data["title"],
-            "desc": data["desc"],
-            "fields": data["field_ids"],
-            "slide_resource_sns": data["slide_resource_ids"],
-            "speaker_sns": data["speaker_ids"],
-            "assistant_sns": data["assistant_ids"]
+            "title": payload["title"],
+            "desc": payload["desc"],
+            "fields": payload["field_ids"],
+            "slide_resource_sns": payload["slide_resource_ids"],
+            "speaker_sns": payload["speaker_ids"],
+            "assistant_sns": payload["assistant_ids"]
         },
         "apply_info": {
-            "apply": data["apply"]
+            "apply": payload["apply"]
         }
     }
 
-    event_service = EventManager()
-    event_service.update_event(e_id, eventinfo)
+    EventManager.update_event(e_id, event_info)
 
-    data ={
-        "id":e_id
+    data = {
+        "id": e_id
     }
-
     info = {
         "code": OK.code,
         "message": OK.message
     }
-
     return jsonify(data=data, info=info)
 
 
 @api.route("/event/<int:e_id>", methods=["DELETE"])
 @login_required
 def delete_event(e_id):
-    EventManager().delete_event(e_id)
+    EventManager.delete_event(e_id)
     info = {
         "code": OK.code,
         "message": OK.message

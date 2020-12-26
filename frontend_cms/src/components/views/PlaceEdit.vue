@@ -179,9 +179,9 @@ export default {
         document.getElementById("place_info").scrollIntoView();
       } else {
         // submit data
-        const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
+        const submitData = JSON.parse(JSON.stringify(this.vueModel));
         console.log(submitData);
-        this.putPlace({ data: submitData, id: this.$route.params.id }).then(
+        this.putPlace(submitData).then(
           () => {
             this.$router.push("/place-list");
           }
