@@ -1,6 +1,8 @@
-from flask import jsonify, request
+from flask import jsonify
 from flask_login import login_required
 
+from app.schemas.role_info import schema_create
+from app.utils import payload_validator
 from . import api
 from ..exceptions import OK
 from ..managers.role import Manager as RoleManager
@@ -34,13 +36,11 @@ def get_role(sn):
 
 @api.route("/role", methods=["POST"])
 @login_required
-def create_role():
-    request_data = request.get_json()
-    data = request_data["data"]
-
+@payload_validator(schema_create)
+def create_role(payload):
     create_info = {
-        "name": data["name"],
-        "permission": data["permission"],
+        "name": payload["name"],
+        "permission": payload["permission"],
     }
     sn = RoleManager.create_role(create_info)
 
@@ -55,13 +55,11 @@ def create_role():
 
 @api.route("/role/<int:sn>", methods=["PUT"])
 @login_required
-def update_role(sn):
-    request_data = request.get_json()
-    data = request_data["data"]
-
+@payload_validator(schema_create)
+def update_role(sn, payload):
     update_info = {
-        "name": data["name"],
-        "permission": data["permission"],
+        "name": payload["name"],
+        "permission": payload["permission"],
     }
     RoleManager.update_role(sn, update_info)
 

@@ -2,12 +2,10 @@
 
 import json
 import unittest
-import pytest
 
 from app import create_app
 from app.exceptions import INVALID_INPUT, ROLE_NAME_DUPLICATE, ROLE_NOT_EXIST
 from app.sqldb import DBWrapper
-from app.sqldb.models import Role
 
 
 class TestRoleApis(unittest.TestCase):
@@ -158,7 +156,7 @@ class TestRoleApis(unittest.TestCase):
             "/cms/api/role",
             headers={"Content-Type": "application/json"},
             content_type="application/json",
-            data=json.dumps({'data': self.basic_role_info}),
+            data=json.dumps(self.basic_role_info),
         )
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], 0)
@@ -187,7 +185,7 @@ class TestRoleApis(unittest.TestCase):
             "/cms/api/role",
             headers={"Content-Type": "application/json"},
             content_type="application/json",
-            data=json.dumps({'data': duplicate_role_name_info}),
+            data=json.dumps(duplicate_role_name_info),
         )
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], ROLE_NAME_DUPLICATE.code)
@@ -205,7 +203,7 @@ class TestRoleApis(unittest.TestCase):
             "/cms/api/role",
             headers={"Content-Type": "application/json"},
             content_type="application/json",
-            data=json.dumps({'data': lack_role_info}),
+            data=json.dumps(lack_role_info),
         )
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], INVALID_INPUT.code)
@@ -231,10 +229,37 @@ class TestRoleApis(unittest.TestCase):
             "/cms/api/role/{role_id}".format(role_id=str(role_id)),
             headers={"Content-Type": "application/json"},
             content_type="application/json",
-            data=json.dumps({'data': update_role_info}),
+            data=json.dumps(update_role_info),
         )
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], 0)
+
+    def test_update_role_event_list_error(self):
+        # case 1: 200, normal case
+        role_id = self._create_test_role_data(self.basic_role_info)
+        update_role_info = {
+            "name": "now_role_name",
+            "permission": {
+                "EventList": 3,  # should not over than 2  or less than 0
+                "Event": 2,
+                "EventRegister": 2,
+                "SpeakerList": 2,
+                "Speaker": 2,
+                "PlaceList": 1,
+                "Place": 1,
+                "UserList": 2,
+                "Role": 2
+            }
+        }
+
+        rv = self.test_client.put(
+            "/cms/api/role/{role_id}".format(role_id=role_id),
+            headers={"Content-Type": "application/json"},
+            content_type="application/json",
+            data=json.dumps(update_role_info),
+        )
+        self.assertEqual(rv.status_code, 200)
+        self.assertEqual(rv.json["info"]["code"], INVALID_INPUT.code)
 
     def test_update_role_duplicate_name(self):
         # case 2: 200, name duplicate with existed role
@@ -273,7 +298,7 @@ class TestRoleApis(unittest.TestCase):
             "/cms/api/role/{role_id}".format(role_id=str(role_id2)),
             headers={"Content-Type": "application/json"},
             content_type="application/json",
-            data=json.dumps({'data': update_role2_with_role1_name}),
+            data=json.dumps(update_role2_with_role1_name),
         )
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], ROLE_NAME_DUPLICATE.code)
@@ -299,7 +324,7 @@ class TestRoleApis(unittest.TestCase):
             "/cms/api/role/{role_id}".format(role_id=str(not_exist_role_id)),
             headers={"Content-Type": "application/json"},
             content_type="application/json",
-            data=json.dumps({'data': update_role_info}),
+            data=json.dumps(update_role_info),
         )
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], ROLE_NOT_EXIST.code)
@@ -318,7 +343,7 @@ class TestRoleApis(unittest.TestCase):
             "/cms/api/role/{role_id}".format(role_id=str(role_id)),
             headers={"Content-Type": "application/json"},
             content_type="application/json",
-            data=json.dumps({'data': lack_role_info}),
+            data=json.dumps(lack_role_info),
         )
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], INVALID_INPUT.code)

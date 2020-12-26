@@ -394,7 +394,7 @@ export default {
         document.getElementById("basic_info").scrollIntoView();
       } else {
         // submit data
-        const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
+        const submitData = JSON.parse(JSON.stringify(this.vueModel));
         this.postEvent(submitData).then(() => {
           // this.$router.push("/event-list");
           alert("新增完成");
