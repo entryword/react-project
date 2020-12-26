@@ -11,6 +11,9 @@ from app.managers.check_in_list import CheckInListManager
 
 @api.route('/check-in-list/upload/<int:event_basic_sn>', methods=["POST"])
 def upload_check_in_list(event_basic_sn):
+    """
+        TODO add payload validator
+    """
     flask_file = request.files['file']
     csv_reader = None
     if flask_file:
