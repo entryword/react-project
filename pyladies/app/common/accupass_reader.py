@@ -1,5 +1,3 @@
-import csv
-
 from app.sqldb.models import CheckInList, User, db
 
 
