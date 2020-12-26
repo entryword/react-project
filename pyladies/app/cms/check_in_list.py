@@ -9,6 +9,7 @@ from . import api
 
 
 @api.route('/check-in-list/upload/<int:event_basic_sn>', methods=["POST"])
+@login_required
 def upload_check_in_list(event_basic_sn):
     files = request.files.getlist('files')
     data = CheckInListManager.upload(event_basic_sn=event_basic_sn, files=files)
@@ -25,7 +26,6 @@ def upload_check_in_list(event_basic_sn):
 def create_check_in_list(payload):
     info = {
         'event_basic_sn': payload['event_basic_sn'],
-        'user_sn': payload['user_sn'],
         'name': payload['name'],
         'mail': payload['mail'],
         'phone': payload['phone'],
@@ -34,7 +34,10 @@ def create_check_in_list(payload):
         'remark': payload['remark'],
         'status': payload['status']
     }
-    data = CheckInListManager.create_check_in_list(info=info)
+    sn = CheckInListManager.create_check_in_list(info=info)
+    data = {
+        "id": sn
+    }
     info = {
         "code": OK.code,
         "message": OK.message

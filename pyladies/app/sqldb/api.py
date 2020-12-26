@@ -337,13 +337,13 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def get_check_in_list(self, event_basic_sn):
         records = self.session.query(CheckInList).filter_by(
-            sn=event_basic_sn
+            event_basic_sn=event_basic_sn
         ).all()
         return records
 
     def get_check_in_list_by_event_basic_sn_and_email(self, event_basic_sn, email):
         record = self.session.query(CheckInList).filter_by(
-            sn=event_basic_sn,
+            event_basic_sn=event_basic_sn,
             mail=email
         ).first()
         return record
