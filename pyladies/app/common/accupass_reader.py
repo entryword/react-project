@@ -32,12 +32,8 @@ class AccupassCsvProcessor:
         self.manager = manager
         self.event_basic_sn = event_basic_sn
         self.csv_reader = self._get_csv_reader(stream=stream)
-
         self.emails = list()
-        self.user_ids = list()
-
         self.results = list()
-
         self._exec()
 
     @staticmethod

@@ -1,7 +1,8 @@
+import copy
 import csv
 
 from app import create_app
-from app.exceptions import OK
+from app.exceptions import OK, RECORD_IS_EXIST
 
 
 class TestGetTopics:
@@ -39,6 +40,21 @@ class TestGetTopics:
             total_count = sum([1 for _ in have_title_rows])
             data_count = total_count - 1
             assert data_count != len(get_res.json['data'])
+
+    def test_duplicate_upload(self):
+        event_basic_sn = 100
+        url = '/cms/api/check-in-list/upload/{event_basic_sn}'.format(event_basic_sn=event_basic_sn)
+
+        headers = {
+            'Content-Type': 'multipart/form-data'
+        }
+        first_form_data = {'files': open('sample/accupass_user_list.csv', 'rb')}
+        first_upload = self.test_client.post(url, headers=headers, data=first_form_data)
+        assert first_upload.json['info']['code'] == OK.code
+
+        second_form_data = {'files': open('sample/accupass_user_list.csv', 'rb')}
+        second_upload = self.test_client.post(url, headers=headers, data=second_form_data)
+        assert second_upload.json['info']['code'] == RECORD_IS_EXIST.code
 
     def test_create(self):
         event_basic_sn = 100
