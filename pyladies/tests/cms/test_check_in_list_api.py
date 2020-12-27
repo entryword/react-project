@@ -1,4 +1,3 @@
-import copy
 import csv
 
 from app import create_app
