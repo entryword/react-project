@@ -118,7 +118,7 @@ class AccupassCsvProcessor:
             if row_dict['status'] not in self._allow_status:
                 continue
             temp.append(row_dict)
-            self.emails.append(row_dict['email'])
+            self.emails.append(row_dict['mail'])
         return temp
 
     def _exec(self):
