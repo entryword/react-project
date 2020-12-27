@@ -11,12 +11,12 @@ class AccupassCsvProcessor:
     """
 
     _allow_columns = {
-        '狀態',
-        '參加人姓名',
-        '參加人Email',
-        '參加人電話',
-        '票券名稱',
-        '票價(NT)',
+        '狀態': 'status',
+        '參加人姓名': 'name',
+        '參加人Email': 'mail',
+        '參加人電話': 'phone',
+        '票券名稱': 'ticket_type',
+        '票價(NT)': 'ticket_amount',
     }
 
     _allow_status = {
@@ -54,12 +54,13 @@ class AccupassCsvProcessor:
 
     def _extract_row(self, row):
         temp = dict()
-        for k, v in row.items():
-            k = self._clear(k)
-            v = self._clear(v)
-            if k not in self._allow_columns:
+        for key, value in row.items():
+            key = self._clear(key)
+            value = self._clear(value)
+            if key not in self._allow_columns:
                 continue
-            temp[k] = v or None
+            new_key = self._allow_columns[key]
+            temp[new_key] = value or None
         return temp
 
     def _get_existed_user_dict(self, emails):
@@ -88,16 +89,16 @@ class AccupassCsvProcessor:
         # return user_sn
 
     def _create_check_member(self, row, user_dict):
-        email = row.get('參加人Email')
-        ticket_type = self._convert_ticket_type(origin=row.get('票券名稱'))
-        ticket_amount = int(row.get('票價(NT)'))
+        email = row.get('mail')
+        ticket_type = self._convert_ticket_type(origin=row.get('ticket_type'))
+        ticket_amount = int(row.get('ticket_amount'))
         user_sn = user_dict[email] if email in user_dict else self._insert_new_user(email=email)
         info = dict(
             event_basic_sn=self.event_basic_sn,
             user_sn=user_sn,
-            name=row.get('參加人姓名'),
+            name=row.get('name'),
             mail=email,
-            phone=row.get('參加人電話'),
+            phone=row.get('phone'),
             ticket_type=ticket_type,
             ticket_amount=ticket_amount,
             remark=None,
@@ -114,10 +115,10 @@ class AccupassCsvProcessor:
         temp = list()
         for row in csv_reader:
             row_dict = self._extract_row(row=row)
-            if row_dict['狀態'] not in self._allow_status:
+            if row_dict['status'] not in self._allow_status:
                 continue
             temp.append(row_dict)
-            self.emails.append(row_dict['參加人Email'])
+            self.emails.append(row_dict['email'])
         return temp
 
     def _exec(self):
