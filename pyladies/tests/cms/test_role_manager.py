@@ -1,12 +1,9 @@
 # coding=UTF-8
 
-import json
 import unittest
 
-from jsonschema.exceptions import ValidationError
-
 from app import create_app
-from app.exceptions import PyLadiesException, INVALID_INPUT, ROLE_NAME_DUPLICATE, ROLE_NOT_EXIST
+from app.exceptions import PyLadiesException, ROLE_NAME_DUPLICATE, ROLE_NOT_EXIST
 from app.managers.role import Manager as RoleManager
 from app.sqldb import DBWrapper
 from app.sqldb.models import Role
@@ -164,30 +161,6 @@ class RoleManagerTestCase(unittest.TestCase):
             RoleManager.create_role(duplicate_role_name_info)
         self.assertEqual(cm.exception, ROLE_NAME_DUPLICATE)
 
-    def test_create_role_schema_error_key(self):
-        with self.assertRaises(ValidationError):
-            RoleManager.create_role({
-                "name": "role",
-                "permission": {"feat1": 1, "feat2": 2}
-            })
-
-    def test_create_role_schema_error_value(self):
-        with self.assertRaises(ValidationError):
-            RoleManager.create_role({
-                "name": "role",
-                "permission": {
-                    "EventList": 3,  # should not over than 2 or less than 0
-                    "Event": 2,
-                    "EventRegister": 2,
-                    "SpeakerList": 2,
-                    "Speaker": 2,
-                    "PlaceList": 1,
-                    "Place": 1,
-                    "UserList": 2,
-                    "Role": 2
-                }
-            })
-
     def test_update_role(self):
         # preparation
         r1_sn = self._create_test_role_basic()
@@ -274,38 +247,6 @@ class RoleManagerTestCase(unittest.TestCase):
         with self.assertRaises(PyLadiesException) as cm:
             RoleManager.update_role(not_existed_sn, update_role_info)
         self.assertEqual(cm.exception, ROLE_NOT_EXIST)
-
-    def test_update_role_schema_error_key(self):
-        # preparation
-        r1_sn = self._create_test_role_basic()
-
-        # test and assert
-        with self.assertRaises(ValidationError):
-            RoleManager.update_role(r1_sn, {
-                "name": "role",
-                "permission": {"feat3": 1, "feat4": 2}
-            })
-
-    def test_update_role_schema_error_value(self):
-        # preparation
-        r1_sn = self._create_test_role_basic()
-
-        # test and assert
-        with self.assertRaises(ValidationError):
-            RoleManager.update_role(r1_sn, {
-                "name": "role",
-                "permission": {
-                    "EventList": 3,  # should not over than 2  or less than 0
-                    "Event": 2,
-                    "EventRegister": 2,
-                    "SpeakerList": 2,
-                    "Speaker": 2,
-                    "PlaceList": 1,
-                    "Place": 1,
-                    "UserList": 2,
-                    "Role": 2
-                }
-            })
 
     def test_delete_role(self):
         # preparation

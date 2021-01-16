@@ -19,7 +19,7 @@
         let result = "";
         if(!!url){
             url  = Handlebars.Utils.escapeExpression(url);
-            result = new Handlebars.SafeString(`<div class="color-gray">詳細路線說明<a href="/${url}"> <i class="fa fa-external-link-alt"></i></a></div>`);
+            result = new Handlebars.SafeString(`<div class="color-gray">詳細路線說明<a href="${url}" target="_blank"> <i class="fa fa-external-link-alt"></i></a></div>`);
         }
         return result;
     });

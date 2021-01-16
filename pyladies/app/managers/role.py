@@ -1,8 +1,6 @@
 from flask import current_app
-from jsonschema import validate
 
 from app.exceptions import ROLE_NAME_DUPLICATE
-from app.schemas.role_info import schema_create
 from app.sqldb import DBWrapper
 from .abstract import BaseRoleManager
 
@@ -10,7 +8,6 @@ from .abstract import BaseRoleManager
 class Manager(BaseRoleManager):
     @staticmethod
     def create_role(info):
-        validate(info, schema_create)
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             try:
@@ -23,7 +20,6 @@ class Manager(BaseRoleManager):
 
     @staticmethod
     def update_role(role_sn, info):
-        validate(info, schema_create)
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             try:
