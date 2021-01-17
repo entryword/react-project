@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 
 from authlib.integrations.flask_client import OAuth
@@ -48,10 +49,11 @@ def create_app(config_name):
     app.register_error_handler(Exception, handle_unexpected_error)
 
     # Session config
-    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 
     # OAuth Setup
-    os.environ['GOOGLE_CLIENT_ID'] = '18018907994-vnhv9gqqlp4fkhek12pejafa5sp9bmcr.apps.googleusercontent.com'
+    os.environ['GOOGLE_CLIENT_ID'] = '18018907994-vnhv9gqqlp4fkhek12pejafa5sp9bmcr.' \
+                                     'apps.googleusercontent.com'
     os.environ['GOOGLE_CLIENT_SECRET'] = 'O4GaZWAaXffzdyytNPWpcxx4'
 
     oauth = OAuth(app)
@@ -64,7 +66,7 @@ def create_app(config_name):
         authorize_url='https://accounts.google.com/o/oauth2/auth',
         authorize_params=None,
         api_base_url='https://www.googleapis.com/oauth2/v1/',
-        userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',  # This is only needed if using openId to fetch user info
+        # userinfo_endpoint='https://openidconnect.googleapis.com/v1/userinfo',
         client_kwargs={'scope': 'openid email profile'},
     )
     app.oauth = oauth
