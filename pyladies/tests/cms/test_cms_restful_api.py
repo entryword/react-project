@@ -1,6 +1,7 @@
 # coding=UTF-8
 
 import json
+import copy
 from datetime import datetime, timedelta
 
 import pytest
@@ -398,6 +399,7 @@ class TestGetSpeakers:
         assert len(rv.json["data"]) == 3
         for i in range(3):
             assert rv.json["data"][i]["name"] == speaker_infos[i]["name"]
+
 
 
 class TestGetTopics:
@@ -1102,3 +1104,163 @@ class TestGetPlace:
         assert rv.json["data"]["name"] == place["name"]
         assert rv.json["data"]["addr"] == place["addr"]
         assert rv.json["data"]["map"] == place["map"]
+
+class TestCreateSpeaker:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def test_create_speaker(self, speaker_info):
+
+        # test 1
+        rv = self.test_client.post(
+            "/cms/api/speaker",
+            headers={"Content-Type": "application/json"},
+            content_type="application/json",
+            data=json.dumps({"data": speaker_info})
+        )
+
+        # api assertion
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["id"] == 1
+
+        # test 2
+        test_url = "/cms/api/speaker/1"
+        rv = self.test_client.get(test_url)
+
+        # assertion 2
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["name"] == speaker_info["name"]
+        assert rv.json["data"]["photo"] == speaker_info["photo"]
+        assert rv.json["data"]["title"] == speaker_info["title"]
+        assert rv.json["data"]["major_related"] == speaker_info["major_related"]
+        assert rv.json["data"]["intro"] == speaker_info["intro"]
+        assert rv.json["data"]["fields"] == speaker_info["fields"]
+        assert rv.json["data"]["links"] == speaker_info["links"]
+
+class TestGetSpeaker:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def test_get_speaker(self, speaker_info):
+
+        speaker = copy.deepcopy(speaker_info)
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_speaker(speaker, autocommit=True)
+
+        # test
+        rv = self.test_client.get("/cms/api/speaker/1")
+
+        #assert
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["name"] == speaker_info["name"]
+        assert rv.json["data"]["photo"] == speaker_info["photo"]
+        assert rv.json["data"]["title"] == speaker_info["title"]
+        assert rv.json["data"]["major_related"] == speaker_info["major_related"]
+        assert rv.json["data"]["intro"] == speaker_info["intro"]
+        assert rv.json["data"]["fields"] == speaker_info["fields"]
+        assert rv.json["data"]["links"] == speaker_info["links"]
+
+class TestPutSpeaker:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def test_put_speaker(self, speaker_info):
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            speaker_sn = manager.create_speaker(speaker_info, autocommit=True)
+
+        put_data = {
+            "name": "speaker 2",
+            "photo": "https://pyladies.marsw.tw/img/speaker_2_photo.png",
+            "title": "Senior Engineer",
+            "major_related": True,
+            "intro": "introduction",
+            "fields": [4],
+            "links": [{"type": "GitHub", "url": "http://github.com/speaker2"}]
+        }
+
+        # test 1
+        test_url = "/cms/api/speaker/" + str(speaker_sn)
+        rv = self.test_client.put(
+            test_url,
+            headers={"Content-Type": "application/json"},
+            content_type="application/json",
+            data=json.dumps({"data": put_data})
+        )
+
+        # api assertion
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+
+        # test 2
+        test_url = "/cms/api/speaker/" + str(speaker_sn)
+        rv = self.test_client.get(test_url)
+        print(rv.json)
+
+        # assertion 2
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["name"] == put_data["name"]
+        assert rv.json["data"]["photo"] == put_data["photo"]
+        assert rv.json["data"]["title"] == put_data["title"]
+        assert rv.json["data"]["major_related"] == put_data["major_related"]
+        assert rv.json["data"]["intro"] == put_data["intro"]
+        assert rv.json["data"]["fields"] == put_data["fields"]
+        assert rv.json["data"]["links"] == put_data["links"]
+
+class TestDeleteSpeaker:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def test_delete_speaker(self, speaker_info):
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_speaker(speaker_info, autocommit=True)
+
+        # test
+        rv = self.test_client.delete("/cms/api/speaker/1")
+
+        #assert
+        assert rv.json["info"]["code"] == 0
