@@ -4,7 +4,7 @@ from app import create_app
 from app.exceptions import OK, RECORD_IS_EXIST
 
 
-class TestGetTopics:
+class TestCheckInListApi:
     def setup(self):
         self.app = create_app('test')
         self.app_context = self.app.app_context()
