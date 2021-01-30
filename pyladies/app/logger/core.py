@@ -17,8 +17,8 @@ class LogManager:
     def __init__(self):
         logging.basicConfig(
             level=logging.DEBUG,
-            format='%(asctime)s %(levelname)s %(message)s',
-            datefmt='%Y-%m-%d %H:%M',
+            format='%(asctime)s %(levelname)s %(message)s [%(funcName)s in %(pathname)s]',
+            datefmt='%Y-%m-%d %H:%M:%S',
             handlers=[
                 logging.handlers.TimedRotatingFileHandler(
                     'log/debug.log',
