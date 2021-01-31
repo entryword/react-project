@@ -23,6 +23,7 @@ HOST_PLACE_1_0 = {
 }
 HOST_PLACES = list(HOST_PLACE_1_0.keys())
 
+
 # topc_info
 def _get_topic_infos(length=1):
     topics = []
@@ -122,8 +123,20 @@ def _get_speaker_infos(length=1, speaker_type='speaker'):
             "major_related": bool(getrandbits(1)),
             "intro": "intro %s" % speaker_idx,
             "fields": sample(FIELDS, randint(1, len(FIELDS))),
+            "links": _get_link_infos(randint(0, 3))
         })
     return speakers
+
+
+def _get_link_infos(length=1):
+    links = []
+    for i in range(length):
+        link_idx = i + 1
+        links.append({
+            "type": "link type %s" % link_idx,
+            "url": "url %s" % link_idx
+        })
+    return links
 
 
 @pytest.fixture()
