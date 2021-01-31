@@ -18,8 +18,8 @@ class TestCheckInListApi:
         self.app_context.pop()
 
     def test_upload(self):
-        event_basic_sn = 100
-        url = '/cms/api/check-in-list/upload/{event_basic_sn}'.format(event_basic_sn=event_basic_sn)
+        event_basic_id = 100
+        url = '/cms/api/check-in-list/upload/{event_basic_id}'.format(event_basic_id=event_basic_id)
 
         headers = {
             'Content-Type': 'multipart/form-data'
@@ -29,20 +29,20 @@ class TestCheckInListApi:
 
         assert upload_res.json['info']['code'] == OK.code
 
-        get_url = '/cms/api/check-in-list/event/{event_basic_sn}'.format(event_basic_sn=event_basic_sn)
+        get_url = '/cms/api/check-in-list/event/{event_basic_id}'.format(event_basic_id=event_basic_id)
         get_res = self.test_client.get(get_url)
 
         assert get_res.json['info']['code'] == OK.code
 
         with open('sample/accupass_user_list.csv', newline='') as f:
             have_title_rows = csv.reader(f)
-            total_count = sum([1 for _ in have_title_rows])
+            total_count = sum([1 for _ in have_title_rows]) - 1
             valid_data_count = total_count - 3  # three invalid records
             assert valid_data_count == len(get_res.json['data'])
 
     def test_duplicate_upload(self):
-        event_basic_sn = 100
-        url = '/cms/api/check-in-list/upload/{event_basic_sn}'.format(event_basic_sn=event_basic_sn)
+        event_basic_id = 100
+        url = '/cms/api/check-in-list/upload/{event_basic_id}'.format(event_basic_id=event_basic_id)
 
         headers = {
             'Content-Type': 'multipart/form-data'
@@ -56,11 +56,11 @@ class TestCheckInListApi:
         assert second_upload.json['info']['code'] == RECORD_IS_EXIST.code
 
     def test_create(self):
-        event_basic_sn = 100
+        event_basic_id = 100
 
-        post_url = '/cms/api/check-in-list'.format(event_basic_sn=event_basic_sn)
+        post_url = '/cms/api/check-in-list'.format(event_basic_id=event_basic_id)
         payload = {
-            'event_basic_sn': event_basic_sn,
+            'event_basic_id': event_basic_id,
             'name': 'test1234',
             'mail': 'test1234@demo.com',
             'phone': '886911111111',
@@ -73,31 +73,33 @@ class TestCheckInListApi:
         post_res = self.test_client.post(post_url, json=payload)
         assert post_res.json['info']['code'] == OK.code
 
-        new_sn = post_res.json['data']['id']
+        new_id = post_res.json['data']['id']
 
-        get_url = '/cms/api/check-in-list/event/{event_basic_sn}'.format(event_basic_sn=event_basic_sn)
+        get_url = '/cms/api/check-in-list/event/{event_basic_id}'.format(event_basic_id=event_basic_id)
         get_res = self.test_client.get(get_url)
         assert get_res.json['info']['code'] == OK.code
 
         create_success = False
         new_info = dict()
         for info in get_res.json['data']:
-            if info['sn'] == new_sn:
+            if info['id'] == new_id:
                 create_success = True
                 new_info = info
                 break
 
+        new_info.pop('id', None)
+        new_info.pop('user_id', None)
         assert new_info == payload
         assert create_success
 
-        return new_sn
+        return new_id
 
     def test_update(self):
-        check_in_list_sn = self.test_create()
+        check_in_list_id = self.test_create()
 
-        event_basic_sn = 100
+        event_basic_id = 100
 
-        put_url = '/cms/api/check-in-list/{check_in_list_sn}'.format(check_in_list_sn=check_in_list_sn)
+        put_url = '/cms/api/check-in-list/{check_in_list_id}'.format(check_in_list_id=check_in_list_id)
         payload = {
             'name': 'test5566',
             'mail': 'test5566@demo.com',
@@ -110,15 +112,15 @@ class TestCheckInListApi:
 
         put_res = self.test_client.put(put_url, json=payload)
         assert put_res.json['info']['code'] == OK.code
-        assert put_res.json['data']['id'] == check_in_list_sn
+        assert put_res.json['data']['id'] == check_in_list_id
 
-        get_url = '/cms/api/check-in-list/event/{event_basic_sn}'.format(event_basic_sn=event_basic_sn)
+        get_url = '/cms/api/check-in-list/event/{event_basic_id}'.format(event_basic_id=event_basic_id)
         get_res = self.test_client.get(get_url)
         assert get_res.json['info']['code'] == OK.code
 
         data_is_exist = False
         for info in get_res.json['data']:
-            if info['sn'] != check_in_list_sn:
+            if info['id'] != check_in_list_id:
                 continue
             for k, v in payload.items():
                 assert info[k] == v
@@ -128,22 +130,22 @@ class TestCheckInListApi:
         assert data_is_exist
 
     def test_delete(self):
-        check_in_list_sn = self.test_create()
+        check_in_list_id = self.test_create()
 
-        event_basic_sn = 100
+        event_basic_id = 100
 
-        delete_url = '/cms/api/check-in-list/{check_in_list_sn}'.format(check_in_list_sn=check_in_list_sn)
+        delete_url = '/cms/api/check-in-list/{check_in_list_id}'.format(check_in_list_id=check_in_list_id)
 
         delete_res = self.test_client.delete(delete_url)
         assert delete_res.json['info']['code'] == OK.code
 
-        get_url = '/cms/api/check-in-list/event/{event_basic_sn}'.format(event_basic_sn=event_basic_sn)
+        get_url = '/cms/api/check-in-list/event/{event_basic_id}'.format(event_basic_id=event_basic_id)
         get_res = self.test_client.get(get_url)
         assert get_res.json['info']['code'] == OK.code
 
         delete_success = True
         for info in get_res.json['data']:
-            if info['sn'] == check_in_list_sn:
+            if info['id'] == check_in_list_id:
                 delete_success = False
                 break
 

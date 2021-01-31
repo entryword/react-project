@@ -3,7 +3,7 @@ from app.constant import TICKET_TYPE_1_0, CHECK_IN_LIST_STATUS_1_0
 create_schema = {
     "type": "object",
     "properties": {
-        "event_basic_sn": {"type": "integer"},
+        "event_basic_id": {"type": "integer"},
         "name": {
             "type": "string",
             "minLength": 1
@@ -27,7 +27,7 @@ create_schema = {
         "status": {"type": "integer", "enum": list(CHECK_IN_LIST_STATUS_1_0.keys())}
     },
     "required": [
-        "event_basic_sn",
+        "event_basic_id",
         "name",
         "mail",
         "phone",

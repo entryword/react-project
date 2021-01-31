@@ -102,8 +102,16 @@ class AccupassCsvProcessor:
         )
         check_in_list_sn = self.manager.create_check_in_list(info=info, flush=True)
         schema = {
-            'sn': check_in_list_sn,
-            **info
+            'id': check_in_list_sn,
+            'event_basic_id': info['event_basic_sn'],
+            'user_id': info['user_sn'],
+            'name': info['name'],
+            'mail': info['mail'],
+            'phone': info['phone'],
+            'ticket_type': info['ticket_type'],
+            'ticket_amount': info['ticket_amount'],
+            'remark': info['remark'],
+            'status': info['status'],
         }
         return schema
 

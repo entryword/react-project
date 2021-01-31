@@ -13,9 +13,9 @@ class CheckInListManager(BaseCheckInListManager):
     @staticmethod
     def _extract_schema(record):
         schema = {
-            'sn': record.sn,
-            'event_basic_sn': record.event_basic_sn,
-            'user_sn': record.user_sn,
+            'id': record.sn,
+            'event_basic_id': record.event_basic_sn,
+            'user_id': record.user_sn,
             'name': record.name,
             'mail': record.mail,
             'phone': record.phone,
