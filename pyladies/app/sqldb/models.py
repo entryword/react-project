@@ -358,7 +358,7 @@ class CheckInList(db.Model):
     phone = db.Column(db.String(128), nullable=False)  # 參加者phone
     ticket_type = db.Column(db.Integer, nullable=False)  # 票卷種類 1:一般人 2:學生票
     ticket_amount = db.Column(db.Integer, nullable=False)  # 票價
-    remark = db.Column(db.String(128))  # 備註 (admin可編輯)
+    remark = db.Column(db.Text)  # 備註 (admin可編輯)
     status = db.Column(db.Integer, server_default=text('0'), nullable=False)  # 狀態 0:未出席 1:出席
     update_datetime = db.Column(db.DateTime, nullable=False, server_default=func.now(), onupdate=func.now())  # 更新時間
     create_datetime = db.Column(db.DateTime, nullable=False, server_default=func.now())  # 建立時間

@@ -37,8 +37,8 @@ class TestCheckInListApi:
         with open('sample/accupass_user_list.csv', newline='') as f:
             have_title_rows = csv.reader(f)
             total_count = sum([1 for _ in have_title_rows])
-            data_count = total_count - 1
-            assert data_count != len(get_res.json['data'])
+            valid_data_count = total_count - 3  # three invalid records
+            assert valid_data_count == len(get_res.json['data'])
 
     def test_duplicate_upload(self):
         event_basic_sn = 100
@@ -80,11 +80,14 @@ class TestCheckInListApi:
         assert get_res.json['info']['code'] == OK.code
 
         create_success = False
+        new_info = dict()
         for info in get_res.json['data']:
             if info['sn'] == new_sn:
                 create_success = True
+                new_info = info
                 break
 
+        assert new_info == payload
         assert create_success
 
         return new_sn

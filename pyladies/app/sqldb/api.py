@@ -128,7 +128,6 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if flush:
             self.session.flush()
             return obj.sn
-        return None
 
     def create_user(self, info, autocommit=False, flush=False):
         """
@@ -143,7 +142,6 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if flush:
             self.session.flush()
             return obj.id
-        return None
 
     ########## get
 
