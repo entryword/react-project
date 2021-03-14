@@ -194,6 +194,20 @@ export default {
     }
     return axios({ method, url, data })
   },
+  deleteEvent(id){
+    let method = "DELETE";
+    let url = "";
+    let data = null;
+    if (useFakeData && process.env.NODE_ENV === 'development'){
+      method = "get";
+      url = "/static/fake_data/delete_event_result.json"
+    } else if (!useFakeData && process.env.NODE_ENV === 'development'){
+      url = `${devPrefix}/event/${id}`
+    } else {
+      url = `${prefix}/event/${id}`
+    }
+    return axios({ method, url, data })
+  },
   logout(){
     let method = "PUT";
     let url = "";

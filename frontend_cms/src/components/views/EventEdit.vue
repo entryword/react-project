@@ -10,11 +10,17 @@
             <div class="box" id="basic_info">
               <div class="box-header">
                 <h3 class="box-title" v-if="isEdit">活動內容編輯</h3>
+                <div class="box-button pull-right">
+                <button
+                  class="btn btn-primary mr-1"
+                  @click.stop.prevent="deleteCurrentEvent"
+                >刪除此活動</button>
                 <button
                   v-if="isEdit"
-                  class="btn btn-primary pull-right"
+                  class="btn btn-primary ml-1"
                   @click.stop.prevent="goCopy"
                 >複製此活動</button>
+                </div>
                 <h3 class="box-title" v-if="!isEdit">活動內容複製 - 從活動 {{id}} 複製</h3>
               </div>
               <div class="box-body">
@@ -534,7 +540,8 @@ export default {
       "event",
       "put_event_result",
       "post_event_result",
-      "post_slide_result"
+      "post_slide_result",
+      "delete_event_result"
     ]),
     applyChannelType: function() {
       return Object.keys(this.CHANNEL_TYPE).map(key => {
@@ -773,6 +780,7 @@ export default {
       "getEvent",
       "postEvent",
       "putEvent",
+      "deleteEvent",
       "postSlide"
     ]),
     clearInput(vueModel) {
@@ -827,6 +835,14 @@ export default {
       this.$nextTick(function() {
         this.applySelected = 0;
       });
+    },
+    deleteCurrentEvent() {
+      this.deleteEvent(this.$route.params.id).then(
+          () => {
+            alert("刪除完成");
+            this.$router.push("/event-list");
+          }
+      );
     },
     addNewSlide() {
       if (!this.newSlide.type) {

@@ -121,5 +121,13 @@ export default {
             alert(postSlideResultData.info.message);
             // window.location.href = loginUrl;
         }
+    },
+    deleteEvent: async function({ commit, state }, id) {
+        const data = await api.deleteEvent(id).then(res => res.data);
+        if (data.info.code == 0) {
+            commit('DELETE_EVENT_RESULT', data.data);
+        } else {
+            alert(data.info.message);
+        }
     }
 }
