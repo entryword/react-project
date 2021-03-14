@@ -322,6 +322,9 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def get_users_by_emails(self, emails):
         return self.session.query(User).filter(User.mail.in_(emails)).all()
 
+    def get_user_by_email(self, email):
+        return self.session.query(User).filter(User.mail == email).first()
+
     def get_role(self, sn):
         role = self.session.query(Role).filter_by(sn=sn).one_or_none()
         if not role:

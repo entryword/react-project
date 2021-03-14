@@ -55,6 +55,21 @@ class CheckInListManager(BaseCheckInListManager):
             )
             if user_record:
                 raise RECORD_IS_EXIST
+
+            old_user = manager.get_user_by_email(email=email)
+            if old_user:
+                user_id = old_user.id
+            else:
+                user_info = {
+                    'name': email,
+                    'mail': email
+                }
+                user_id = manager.create_user(info=user_info, flush=True)
+
+            info.update({
+                'user_sn': user_id
+            })
+
             sn = manager.create_check_in_list(info=info, autocommit=True)
             return sn
 
