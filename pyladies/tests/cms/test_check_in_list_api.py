@@ -1,4 +1,5 @@
 import csv
+import os
 
 from app import create_app
 from app.exceptions import OK, RECORD_IS_EXIST
@@ -24,7 +25,7 @@ class TestCheckInListApi:
         headers = {
             'Content-Type': 'multipart/form-data'
         }
-        form_data = {'files': open('tests/cms/sample/accupass_user_list.csv', 'rb')}
+        form_data = {'files': open('{path}/sample/accupass_user_list.csv'.format(path=os.path.dirname(os.path.realpath(__file__))), 'rb')}
         upload_res = self.test_client.post(url, headers=headers, data=form_data)
 
         assert upload_res.json['info']['code'] == OK.code
@@ -34,7 +35,7 @@ class TestCheckInListApi:
 
         assert get_res.json['info']['code'] == OK.code
 
-        with open('tests/cms/sample/accupass_user_list.csv', newline='') as f:
+        with open('{path}/sample/accupass_user_list.csv'.format(path=os.path.dirname(os.path.realpath(__file__))), newline='') as f:
             have_title_rows = csv.reader(f)
             total_count = sum([1 for _ in have_title_rows]) - 1
             valid_data_count = total_count - 3  # three invalid records
@@ -47,11 +48,11 @@ class TestCheckInListApi:
         headers = {
             'Content-Type': 'multipart/form-data'
         }
-        first_form_data = {'files': open('tests/cms/sample/accupass_user_list.csv', 'rb')}
+        first_form_data = {'files': open('{path}/sample/accupass_user_list.csv'.format(path=os.path.dirname(os.path.realpath(__file__))), 'rb')}
         first_upload = self.test_client.post(url, headers=headers, data=first_form_data)
         assert first_upload.json['info']['code'] == OK.code
 
-        second_form_data = {'files': open('tests/cms/sample/accupass_user_list.csv', 'rb')}
+        second_form_data = {'files': open('{path}/sample/accupass_user_list.csv'.format(path=os.path.dirname(os.path.realpath(__file__))), 'rb')}
         second_upload = self.test_client.post(url, headers=headers, data=second_form_data)
         assert second_upload.json['info']['code'] == RECORD_IS_EXIST.code
 
