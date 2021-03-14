@@ -77,6 +77,14 @@ ROLE_NOT_EXIST = PyLadiesException(1800, _msg)
 _msg = "Unable to perform the action. Role name is duplicate."
 ROLE_NAME_DUPLICATE = PyLadiesException(1801, _msg)
 
+# [1900~1999] check in list
+_msg = "Record is not exist"
+RECORD_NOT_EXIST = PyLadiesException(1900, _msg)
+_msg = "Record is exist"
+RECORD_IS_EXIST = PyLadiesException(1901, _msg)
+_msg = "File Required"
+FILE_REQUIRED = PyLadiesException(1902, _msg)
+
 # [8000~8099] routing
 _msg = "Routing Not Found"
 ROUTING_NOT_FOUND = PyLadiesException(8000, _msg)

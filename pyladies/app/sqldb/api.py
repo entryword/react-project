@@ -8,8 +8,8 @@ from app.exceptions import (
     EVENTINFO_NOT_EXIST, SPEAKER_NOT_EXIST,
     PLACE_NOT_EXIST, APPLY_NOT_EXIST,
     USER_NOT_EXIST, SLIDERESOURCE_NOT_EXIST,
-    ROLE_NOT_EXIST
-)
+    ROLE_NOT_EXIST,
+    RECORD_NOT_EXIST)
 from .abstract import SQLDatabaseAPI
 from .models import (
     EventApply,
@@ -20,9 +20,9 @@ from .models import (
     Role,
     SlideResource,
     Speaker,
-    Topic,   
+    Topic,
     User,
-)
+    CheckInList)
 
 
 class MySQLDatabaseAPI(SQLDatabaseAPI):
@@ -117,6 +117,31 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             self.session.commit()
             return obj.sn
         return None
+
+    def create_check_in_list(self, info, autocommit=False, flush=False):
+        obj = CheckInList(**info)
+        self.session.add(obj)
+
+        if autocommit:
+            self.session.commit()
+            return obj.sn
+        if flush:
+            self.session.flush()
+            return obj.sn
+
+    def create_user(self, info, autocommit=False, flush=False):
+        """
+            TODO id change to sn
+        """
+        obj = User(**info)
+        self.session.add(obj)
+
+        if autocommit:
+            self.session.commit()
+            return obj.id
+        if flush:
+            self.session.flush()
+            return obj.id
 
     ########## get
 
@@ -294,6 +319,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         user_list = self.session.query(User).all()
         return user_list
 
+    def get_users_by_emails(self, emails):
+        return self.session.query(User).filter(User.mail.in_(emails)).all()
+
+    def get_user_by_email(self, email):
+        return self.session.query(User).filter(User.mail == email).first()
+
     def get_role(self, sn):
         role = self.session.query(Role).filter_by(sn=sn).one_or_none()
         if not role:
@@ -304,6 +335,19 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def get_roles(self):
         roles = self.session.query(Role).all()
         return roles
+
+    def get_check_in_list(self, event_basic_sn):
+        records = self.session.query(CheckInList).filter_by(
+            event_basic_sn=event_basic_sn
+        ).all()
+        return records
+
+    def get_check_in_list_by_event_basic_sn_and_email(self, event_basic_sn, email):
+        record = self.session.query(CheckInList).filter_by(
+            event_basic_sn=event_basic_sn,
+            mail=email
+        ).first()
+        return record
 
     ########## update
 
@@ -429,6 +473,18 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
+    def update_check_in_list(self, check_in_list_sn, info, autocommit=False):
+        record = self.session.query(CheckInList).filter_by(sn=check_in_list_sn).first()
+        if not record:
+            raise RECORD_NOT_EXIST
+
+        for k, v in info.items():
+            setattr(record, k, v)
+
+        self.session.add(record)
+        if autocommit:
+            self.session.commit()
+
     ########## delete
 
     def delete_topic(self, sn, autocommit=False):
@@ -499,6 +555,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     def delete_role(self, sn, autocommit=False):
         stmt = text("DELETE FROM role WHERE sn=:sn").bindparams(sn=sn)
+        self.session.execute(stmt)
+        if autocommit:
+            self.session.commit()
+
+    def delete_check_in_list(self, sn, autocommit=False):
+        stmt = text("DELETE FROM check_in_list WHERE sn=:sn").bindparams(sn=sn)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()

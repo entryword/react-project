@@ -71,6 +71,29 @@ ACCESS_TYPE_1_0 = {
     2: "Write"
 }
 
+class CheckInListStatus:
+    CHECK_IN = 1
+    NO_CHECK_IN = 0
+
+
+class TicketType:
+    COMMON = 1  # 一般人
+    STUDENT = 2  # 學生
+    OTHER = 3  # 其他
+
+
+TICKET_TYPE_1_0 = {
+    TicketType.COMMON: "Common",
+    TicketType.STUDENT: "Student",
+    TicketType.OTHER: "Other"
+}
+
+
+CHECK_IN_LIST_STATUS_1_0 = {
+    CheckInListStatus.CHECK_IN: "Check In",
+    CheckInListStatus.NO_CHECK_IN: "No Check In"
+}
+
 
 DEFINITION_1_0 = {
     "field": FIELD_1_0,
@@ -82,7 +105,9 @@ DEFINITION_1_0 = {
     "time": TIME_1_0,
     "channel": CHANNEL_1_0,
     "type": TYPE_1_0,
-    "access_type": ACCESS_TYPE_1_0
+    "access_type": ACCESS_TYPE_1_0,
+    "ticket_type": TICKET_TYPE_1_0,
+    "check_in_list_status": CHECK_IN_LIST_STATUS_1_0
 }
 
 DEFAULT_PLACE_SN = 37

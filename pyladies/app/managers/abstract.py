@@ -128,3 +128,21 @@ class BaseRoleManager():
     @staticmethod
     def get_roles():
         raise NotImplementedError()
+
+
+class BaseCheckInListManager():
+    @staticmethod
+    def upload(event_basic_sn, csv_reader):
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_check_in_list(event_basic_sn):
+        raise NotImplementedError()
+
+    @staticmethod
+    def update_check_in_list(event_basic_sn, user_sn, info):
+        raise NotImplementedError()
+
+    @staticmethod
+    def delete_check_in_list(check_in_list_sn):
+        raise NotImplementedError()
