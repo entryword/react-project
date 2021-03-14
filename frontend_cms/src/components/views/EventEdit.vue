@@ -909,7 +909,7 @@ export default {
         document.getElementById("basic_info").scrollIntoView();
       } else if (this.isEdit) {
         // submit data 編輯
-        const submitData = { data: JSON.parse(JSON.stringify(this.vueModel)) };
+        const submitData = JSON.parse(JSON.stringify(this.vueModel));
         this.putEvent({ data: submitData, id: this.$route.params.id }).then(
           () => {
             alert("編輯完成");
