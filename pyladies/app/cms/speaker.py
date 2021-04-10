@@ -1,9 +1,12 @@
-from flask import current_app, jsonify, request
+from flask import jsonify, request
 from flask_login import login_required
 
 from . import api
+from ..constant import DEFAULT_FIELD_SN
 from ..exceptions import OK
 from ..managers.speaker import Manager as SpeakerManager
+from app.schemas.speaker_info import schema_create
+from app.utils import payload_validator
 
 
 @api.route("/speakers", methods=["GET"])
@@ -21,18 +24,17 @@ def get_speakers():
 
 @api.route("/speaker", methods=["POST"])
 @login_required
-def create_speaker():
-    request_data = request.get_json()
-
-    data = request_data["data"]
+@payload_validator(schema_create)
+def create_speaker(payload):
+    data = payload["data"]
     speaker_info = {
         "name": data["name"],
-        "photo": data["photo"],
         "title": data["title"],
-        "major_related": data["major_related"],
-        "intro": data["intro"],
-        "fields": data["fields"],
-        "links": data["links"]
+        "photo": data.get("photo", None),
+        "major_related": data.get("major_related", True),
+        "intro": data.get("intro", ""),
+        "fields": data.get("fields", [DEFAULT_FIELD_SN]),
+        "links": data.get("links", [])
     }
 
     speaker_new_id = SpeakerManager().create_speaker_by_object(speaker_info)
@@ -59,18 +61,17 @@ def get_speaker(speaker_id):
 
 @api.route("/speaker/<int:speaker_id>", methods=["PUT"])
 @login_required
-def update_speaker(speaker_id):
-    request_data = request.get_json()
-    data = request_data["data"]
-
+@payload_validator(schema_create)
+def update_speaker(speaker_id, payload):
+    data = payload["data"]
     speaker_info = {
         "name": data["name"],
-        "photo": data["photo"],
         "title": data["title"],
-        "major_related": data["major_related"],
-        "intro": data["intro"],
-        "fields": data["fields"],
-        "links": data["links"]
+        "photo": data.get("photo", None),
+        "major_related": data.get("major_related", True),
+        "intro": data.get("intro", ""),
+        "fields": data.get("fields", [-1]),
+        "links": data.get("links", [])
     }
 
     SpeakerManager().update_speaker_by_object(speaker_id, speaker_info)

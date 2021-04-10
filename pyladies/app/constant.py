@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 FIELD_1_0 = {
+    -1: "Not Specified",
     0: "Data Science",
     1: "Web",
     2: "Crawler",
@@ -12,7 +13,7 @@ FIELD_1_0 = {
     8: "Party",
     9: "IoT",
     10: "Finance",
-    11: "Bot"
+    11: "Bot",
 }
 
 FREQ_1_0 = {
@@ -111,3 +112,4 @@ DEFINITION_1_0 = {
 }
 
 DEFAULT_PLACE_SN = 37
+DEFAULT_FIELD_SN = -1
