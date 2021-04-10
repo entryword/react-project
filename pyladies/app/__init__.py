@@ -52,10 +52,6 @@ def create_app(config_name):
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
 
     # OAuth Setup
-    os.environ['GOOGLE_CLIENT_ID'] = '18018907994-vnhv9gqqlp4fkhek12pejafa5sp9bmcr.' \
-                                     'apps.googleusercontent.com'
-    os.environ['GOOGLE_CLIENT_SECRET'] = 'O4GaZWAaXffzdyytNPWpcxx4'
-
     oauth = OAuth(app)
     oauth.register(
         name='google',

@@ -3,10 +3,12 @@ from flask import current_app, jsonify, redirect, session, url_for
 from . import api
 from ..exceptions import OK
 
+
 @api.route("/login", methods=["GET"])
 def login():
     redirect_uri = url_for('api.auth', _external=True)
     return current_app.oauth.google.authorize_redirect(redirect_uri)
+
 
 @api.route("/auth", methods=["GET"])
 def auth():
@@ -20,10 +22,12 @@ def auth():
     session.permanent = True
     return redirect('/')
 
+
 @api.route("/logout", methods=["GET"])
 def logout():
     session.pop('user', None)
     return redirect('/')
+
 
 @api.route("/user", methods=["GET"])
 def user():
