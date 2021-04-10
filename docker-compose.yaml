@@ -18,7 +18,7 @@ services:
       timeout: 3s
       retries: 15
     restart: always
-    
+
   testdb:
     image: mariadb:10
     volumes:
@@ -60,6 +60,8 @@ services:
       - PYTHONPATH=/var/www/html/website2018/pyladies/
       - DEV_DATABASE_URL=mysql+pymysql://root:12345678@mariadb/pyladies?charset=utf8
       - TEST_DATABASE_URL=mysql+pymysql://root:12345678@testdb/test?charset=utf8
+      - GOOGLE_CLIENT_ID=18018907994-vnhv9gqqlp4fkhek12pejafa5sp9bmcr.apps.googleusercontent.com
+      - GOOGLE_CLIENT_SECRET=O4GaZWAaXffzdyytNPWpcxx4
     depends_on:
       mariadb:
         condition: service_healthy
