@@ -8,7 +8,8 @@ import pytest
 from werkzeug.security import generate_password_hash
 
 from app import create_app
-from app.exceptions import PLACE_NAME_DUPLICATE, EVENTBASIC_NOT_EXIST, OK
+from app.constant import DEFAULT_PLACE_SN
+from app.exceptions import PLACE_NAME_DUPLICATE, EVENTBASIC_NOT_EXIST, OK, TOPIC_ASSOCIATED_WITH_EXISTED_EVENT
 from app.sqldb import DBWrapper
 from app.sqldb.models import User
 
@@ -426,12 +427,207 @@ class TestGetTopics:
         # test
         rv = self.test_client.get("/cms/api/topics")
 
-        # assert
         assert rv.json["info"]["code"] == 0
         assert len(rv.json["data"]) == 3
         assert rv.json["data"][0]["name"] == topic_infos[0]["name"]
         assert rv.json["data"][1]["name"] == topic_infos[1]["name"]
         assert rv.json["data"][2]["name"] == topic_infos[2]["name"]
+
+
+class TestGetTopic:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def test_get_topic(self, topic_info):
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+            topic = manager.get_topic_by_name(topic_info["name"])
+
+        # test
+        testurl = "/cms/api/topic/"+str(topic.sn)
+        rv = self.test_client.get(testurl)
+
+        assert rv.json["data"]["name"] == topic_info["name"]
+        assert rv.json["data"]["desc"] == topic_info["desc"]
+        assert rv.json["data"]["freq"] == topic_info["freq"]
+        assert rv.json["data"]["level"] == topic_info["level"]
+        assert rv.json["data"]["host"] == topic_info["host"]
+        assert rv.json["data"]["fields"] == topic_info["fields"]
+
+
+class TestCreateTopic:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def test_create_topic(self, topic_info):
+
+        # test 1
+        rv = self.test_client.post(
+            "/cms/api/topic",
+            headers={"Content-Type": "application/json"},
+            content_type="application/json",
+            data=json.dumps({"data": topic_info})
+        )
+
+        # api assertion
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["id"] == 1
+
+        # test 2
+        test_url = "/cms/api/topic/1"
+        rv = self.test_client.get(test_url)
+
+        # assertion 2
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["name"] == topic_info["name"]
+        assert rv.json["data"]["desc"] == topic_info["desc"]
+        assert rv.json["data"]["freq"] == topic_info["freq"]
+        assert rv.json["data"]["level"] == topic_info["level"]
+        assert rv.json["data"]["host"] == topic_info["host"]
+        assert rv.json["data"]["fields"] == topic_info["fields"]
+
+
+class TestPutTopic:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def test_put_topic(self, topic_info):
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+            topic = manager.get_topic_by_name(topic_info["name"])
+
+        put_data = {
+            "name": "New topic 1",
+            "desc": "This is new topic 1",
+            "freq": 1,
+            "level": 1,
+            "host": 1,
+            "fields": [1],
+        }
+
+        # test 1
+        test_url = "/cms/api/topic/" + str(topic.sn)
+        rv = self.test_client.put(
+            test_url,
+            headers={"Content-Type": "application/json"},
+            content_type="application/json",
+            data=json.dumps({"data": put_data})
+        )
+
+        # api assertion
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+
+        # test 2
+        test_url = "/cms/api/topic/" + str(topic.sn)
+        rv = self.test_client.get(test_url)
+
+        # assertion 2
+        assert rv.status_code == 200
+        assert rv.json["info"]["code"] == 0
+        assert rv.json["data"]["name"] == put_data["name"]
+        assert rv.json["data"]["desc"] == put_data["desc"]
+        assert rv.json["data"]["freq"] == put_data["freq"]
+        assert rv.json["data"]["level"] == put_data["level"]
+        assert rv.json["data"]["host"] == put_data["host"]
+        assert rv.json["data"]["fields"] == put_data["fields"]
+
+
+
+class TestDeleteTopic:
+    def setup(self):
+        self.app = create_app('test')
+        self.app_context = self.app.app_context()
+        self.app_context.push()
+        self.app.db.create_all()
+        self.test_client = self.app.test_client()
+        self.create_default_place()
+
+    def teardown(self):
+        self.app.db.session.remove()
+        self.app.db.drop_all()
+        self.app_context.pop()
+
+    def create_default_place(self):
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            place_info = {
+                "sn": DEFAULT_PLACE_SN,
+                "name": "default place",
+                "addr": "default place addr",
+                "map": "default place map",
+            }
+            manager.create_place(place_info, autocommit=True)
+
+    def test_delete_not_exist_topic(self):
+        testurl = "/cms/api/topic/1234"
+        rv = self.test_client.delete(testurl)
+        assert rv.json["info"]["code"] == 0
+
+    def test_delete_one_topic(self, topic_info):
+        # preparation
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+            topic = manager.get_topic_by_name(topic_info["name"])
+
+            testurl = "/cms/api/topic/"+str(topic.sn)
+            rv = self.test_client.get(testurl)
+            assert rv.json["data"]
+
+            rv = self.test_client.delete(testurl)
+            assert rv.json["info"]["code"] == 0
+
+    def test_delete_topic_has_event(self, topic_info, event_basic_info, event_info):
+        with DBWrapper(self.app.db.engine.url).session() as db_sess:
+            manager = self.app.db_api_class(db_sess)
+            manager.create_topic(topic_info, autocommit=True)
+            topic = manager.get_topic_by_name(topic_info["name"])
+            event_basic_info["topic_sn"] = topic.sn
+            manager.create_event_basic(event_basic_info, autocommit=True)
+            event_info["event_basic_sn"] = topic.event_basics[0].sn
+            manager.create_event_info(event_info, autocommit=True)
+
+            # test
+            testurl = "/cms/api/topic/" + str(topic.sn)
+            rv = self.test_client.get(testurl)
+            assert rv.json["data"]
+
+            rv = self.test_client.delete(testurl)
+            assert rv.json["info"]["code"] == TOPIC_ASSOCIATED_WITH_EXISTED_EVENT.code
 
 
 class TestCreateSlideResource:

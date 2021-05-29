@@ -1,9 +1,10 @@
 import json
 
-from flask import current_app
+from flask import current_app, request
 
 from app.sqldb import DBWrapper
 from .abstract import BaseTopicManager
+from ..exceptions import TOPIC_ASSOCIATED_WITH_EXISTED_EVENT
 from ..utils import HashableDict
 
 
@@ -21,6 +22,14 @@ class Manager(BaseTopicManager):
             return topic.sn
 
     @staticmethod
+    def create_topic_by_object(topic_object):
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            manager.create_topic(topic_object, autocommit=True)
+            topic = manager.get_topic_by_name(topic_object["name"])
+            return topic.sn
+
+    @staticmethod
     def update_topic(sn, file_path):
         with open(file_path) as f:
             new_info = json.loads(f.read())
@@ -30,10 +39,22 @@ class Manager(BaseTopicManager):
             manager.update_topic(sn, new_info, autocommit=True)
 
     @staticmethod
+    def update_topic_by_object(sn, topic_object):
+        with DBWrapper(current_app.db.engine.url).session() as db_sess:
+            manager = current_app.db_api_class(db_sess)
+            manager.update_topic(sn, topic_object, autocommit=True)
+
+    @staticmethod
     def delete_topic(sn):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.delete_topic(sn, autocommit=True)
+            topic = manager.get_topic(sn)
+
+            # delete only when topic can not be associated to any event
+            if not topic.event_basics:
+                manager.delete_topic(sn, autocommit=True)
+            else:
+                raise TOPIC_ASSOCIATED_WITH_EXISTED_EVENT
 
     @staticmethod
     def list_topics(key=None):
@@ -47,6 +68,7 @@ class Manager(BaseTopicManager):
                 topics = manager.search_topics(key)
                 for i in topics:
                     print(i)
+
     @staticmethod
     def search_topics(keyword, level, freq, host, fields):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
@@ -56,12 +78,12 @@ class Manager(BaseTopicManager):
             for topic in raw_topics:
                 if (not fields) or (fields and fields.intersection(set(topic.fields))):
                     topics.append({
-                        "id":topic.sn,
-                        "name":topic.name,
-                        "level":topic.level,
-                        "freq":topic.freq,
-                        "host":topic.host,
-                        "fields":topic.fields
+                        "id": topic.sn,
+                        "name": topic.name,
+                        "level": topic.level,
+                        "freq": topic.freq,
+                        "host": topic.host,
+                        "fields": topic.fields
                     })
             return topics
 
