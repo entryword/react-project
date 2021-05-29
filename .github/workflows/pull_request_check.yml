@@ -1,0 +1,20 @@
+name: Pull Request Check
+on: 
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  Pull-Request-Check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Build services
+        run: docker-compose build
+      - name: Create and start containers
+        env:
+          COMPOSE_INTERACTIVE_NO_CLI: 1 
+        run: docker-compose up -d
+      - name: Run Pytest
+        env:
+          COMPOSE_INTERACTIVE_NO_CLI: 1
+        run: docker-compose exec -T app py.test
