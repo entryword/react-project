@@ -6,6 +6,7 @@ from sqlalchemy import or_, and_
 from app.exceptions import (
     TOPIC_NOT_EXIST, EVENTBASIC_NOT_EXIST,
     EVENTINFO_NOT_EXIST, SPEAKER_NOT_EXIST,
+    MEMBER_NOT_EXIST,
     PLACE_NOT_EXIST, APPLY_NOT_EXIST,
     USER_NOT_EXIST, SLIDERESOURCE_NOT_EXIST,
     ROLE_NOT_EXIST,
@@ -16,6 +17,7 @@ from .models import (
     EventBasic,
     EventInfo,
     Link,
+    Member,
     Place,
     Role,
     SlideResource,
@@ -142,6 +144,15 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if flush:
             self.session.flush()
             return obj.id
+
+    def create_member(self, info, autocommit=False):
+        obj = Member(**info)
+        self.session.add(obj)
+
+        if autocommit:
+            self.session.commit()
+            return obj.id
+        return None
 
     ########## get
 
@@ -349,6 +360,18 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         ).first()
         return record
 
+    def get_members(self):
+        return self.session.query(Member).all()
+
+    def get_member(self, m_id):
+        member = self.session.query(Member).filter_by(id=m_id).first()
+        if not member:
+            raise MEMBER_NOT_EXIST
+        return member
+
+    def get_member_by_email(self, email):
+        return self.session.query(Member).filter_by(mail=email).first()
+
     ########## update
 
     # TODO: not finished yet
@@ -485,6 +508,18 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
+    def update_member(self, m_id, info, autocommit=False):
+        member = self.session.query(Member).filter_by(id=m_id).first()
+        if not member:
+            raise MEMBER_NOT_EXIST
+
+        for key, value in info.items():
+            setattr(member, key, value)
+
+        self.session.add(member)
+        if autocommit:
+            self.session.commit()
+
     ########## delete
 
     def delete_topic(self, sn, autocommit=False):
@@ -562,5 +597,14 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def delete_check_in_list(self, sn, autocommit=False):
         stmt = text("DELETE FROM check_in_list WHERE sn=:sn").bindparams(sn=sn)
         self.session.execute(stmt)
+        if autocommit:
+            self.session.commit()
+
+    def delete_member(self, m_id, autocommit=False):
+        member = self.session.query(Member).filter_by(id=m_id).first()
+        if not member:
+            return
+
+        self.session.delete(member)
         if autocommit:
             self.session.commit()

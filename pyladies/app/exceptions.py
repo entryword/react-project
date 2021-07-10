@@ -88,6 +88,10 @@ RECORD_IS_EXIST = PyLadiesException(1901, _msg)
 _msg = "File Required"
 FILE_REQUIRED = PyLadiesException(1902, _msg)
 
+# [2000~2099] member
+_msg = "Unable to perform the action. Member doesn't exist."
+MEMBER_NOT_EXIST = PyLadiesException(2000, _msg)
+
 # [8000~8099] routing
 _msg = "Routing Not Found"
 ROUTING_NOT_FOUND = PyLadiesException(8000, _msg)

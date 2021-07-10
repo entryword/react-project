@@ -24,11 +24,17 @@ class IntegerArrayType(types.TypeDecorator):
 
     def process_bind_param(self, value, dialect):
         # from python to database
+        if not value:
+            return None
+
         value = [str(i) for i in value]
         return ",".join(value)
 
     def process_result_value(self, value, dialect):
         # from database to python object
+        if value is None:
+            return []
+
         value = value.split(",")
         value = [int(i) for i in value]
         return value
@@ -362,3 +368,22 @@ class CheckInList(db.Model):
     status = db.Column(db.Integer, server_default=text('0'), nullable=False)  # 狀態 0:未出席 1:出席
     update_datetime = db.Column(db.DateTime, nullable=False, server_default=func.now(), onupdate=func.now())  # 更新時間
     create_datetime = db.Column(db.DateTime, nullable=False, server_default=func.now())  # 建立時間
+
+
+class Member(UserMixin, db.Model):
+    __tablename__ = 'member'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    mail = db.Column(db.String(128), unique=True, nullable=False, index=True)
+    is_student = db.Column(db.Boolean)
+    title = db.Column(db.String(64)) # student major or job title
+    fields = db.Column(IntegerArrayType(128))
+
+    def __str__(self):
+        return ("<Member id: {obj.id}"
+                ", name: {obj.name}"
+                ", mail: {obj.mail}"
+                ", is_student: {obj.is_student}"
+                ", title: {obj.title}"
+                ", fields: {obj.fields}").format(obj=self)

@@ -253,3 +253,25 @@ def apply_infos(request):
     if hasattr(request, 'param'):
         length = request.param
     return _get_apply_infos(length)
+
+
+# member_info
+def _get_member_info(idx):
+    return {
+        'name': 'Member%s' % idx,
+        'mail': '%s@pyladies.tw' % idx,
+        'is_student': True if idx % 3 == 0 else False if idx % 3 == 1 else None,
+        'title': None if idx % 3 == 2 else 'title %s' % idx,
+        'fields': [] if idx % 3 == 2 else sample(FIELDS, randint(1, len(FIELDS)))
+    }
+
+
+@pytest.fixture()
+def member_info():
+    return _get_member_info(1)
+
+
+@pytest.fixture()
+def member_infos(request):
+    count = getattr(request, 'param', 1)
+    return [_get_member_info(i + 1) for i in range(count)]

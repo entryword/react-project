@@ -1009,7 +1009,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         rv = self.test_client.get("/v1.0/api/speakers?fields=not_a_number")
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], SPEAKERLIST_INVALID_FIELDS.code)
-    
+
     def test_list_topics(self):
         topics = [
             {
