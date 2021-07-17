@@ -146,3 +146,29 @@ class BaseCheckInListManager():
     @staticmethod
     def delete_check_in_list(check_in_list_sn):
         raise NotImplementedError()
+
+
+class BaseMemberManager():
+    @staticmethod
+    def social_login(email, name):
+        raise NotImplementedError()
+
+    @staticmethod
+    def logout():
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_members():
+        raise NotImplementedError()
+
+    @staticmethod
+    def get_member(m_id):
+        raise NotImplementedError()
+
+    @staticmethod
+    def update_member(m_id, info):
+        raise NotImplementedError()
+
+    @staticmethod
+    def delete_member(m_id):
+        raise NotImplementedError()
