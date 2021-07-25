@@ -1,6 +1,6 @@
 from flask import jsonify, request
-from flask_login import login_required
 
+from app.utils import login_required
 from . import api
 from ..exceptions import OK
 from ..managers.slide import Manager as SlideManager

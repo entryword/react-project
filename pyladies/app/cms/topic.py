@@ -1,6 +1,6 @@
 from flask import jsonify, request
-from flask_login import login_required
 
+from app.utils import login_required
 from . import api
 from ..exceptions import OK, TOPIC_NOT_EXIST, PyLadiesException
 from ..managers.topic import Manager as TopicManager
@@ -80,7 +80,7 @@ def update_topic(t_id):
         "message": OK.message
     }
     return jsonify(info=info)
-    
+
 @api.route("/topic/<int:t_id>", methods=["DELETE"])
 @login_required
 def delete_topic(t_id):

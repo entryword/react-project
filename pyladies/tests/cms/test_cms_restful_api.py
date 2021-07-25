@@ -4,6 +4,7 @@ import json
 import copy
 from datetime import datetime, timedelta
 
+from flask import session
 import pytest
 from werkzeug.security import generate_password_hash
 
@@ -736,9 +737,11 @@ class TestLogin:
         }
         self.create_new_user(login_info)
 
-        rv = self.test_client.post("/cms/api/login", json=login_info)
+        with self.test_client as c:
+            rv = c.post("/cms/api/login", json=login_info)
 
-        assert rv.json["info"]["code"] == 0
+            assert rv.json["info"]["code"] == 0
+            assert session['user_type'] == 'Admin'
 
 
 class TestLogout:

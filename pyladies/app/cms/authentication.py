@@ -1,8 +1,9 @@
-from flask import jsonify, request
-from flask_login import login_required
+from flask import jsonify, request, session
 from jsonschema import validate
 
+from app.constant import UserType
 from app.schemas.authentication import schema_login
+from app.utils import login_required
 from . import api
 from ..exceptions import OK
 from ..managers.user import Manager as UserManager
@@ -13,6 +14,7 @@ def login():
     request_data = request.get_json()
     validate(request_data, schema_login)
 
+    session['user_type'] = UserType.ADMIN
     UserManager.login(request_data["username"], request_data["password"])
     info = {
         "code": OK.code,

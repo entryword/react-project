@@ -1,8 +1,7 @@
 from flask import jsonify
-from flask_login import login_required
 
 from app.schemas.place_info import schema_create
-from app.utils import payload_validator
+from app.utils import login_required, payload_validator
 from . import api
 from ..exceptions import OK
 from ..managers.place import Manager as PlaceManager

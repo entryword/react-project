@@ -9,11 +9,12 @@ from werkzeug.exceptions import Unauthorized
 
 from config import config
 
+from app.constant import UserType
 from app.exceptions import (
     PyLadiesException, ROUTING_NOT_FOUND, UNEXPECTED_ERROR,
     USER_LOGIN_REQUIRED, INVALID_INPUT,
 )
-from app.sqldb.models import db, AnonymousUser, User
+from app.sqldb.models import db, AnonymousUser, User, Member
 
 
 login_manager = LoginManager()
@@ -23,7 +24,11 @@ login_manager.anonymous_user = AnonymousUser
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    user_type = session.get('user_type')
+    if user_type == UserType.ADMIN:
+        return User.query.filter_by(id=user_id).first()
+
+    return Member.query.filter_by(id=user_id).first()
 
 
 def create_app(config_name):

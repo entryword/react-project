@@ -1,10 +1,9 @@
 from flask import jsonify, request
-from flask_login import login_required
 
 from app.exceptions import OK
 from app.managers.check_in_list import CheckInListManager
 from app.schemas.check_in_list_info import create_schema, update_schema
-from app.utils import payload_validator
+from app.utils import login_required, payload_validator
 from . import api
 
 

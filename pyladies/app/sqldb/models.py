@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import types, String, func, text
 from sqlalchemy.ext.declarative import declarative_base
 
-from app.constant import DEFAULT_PLACE_SN
+from app.constant import DEFAULT_PLACE_SN, UserType
 
 Base = declarative_base(name='Model')
 db = SQLAlchemy()
@@ -312,6 +312,10 @@ class User(UserMixin, db.Model):
     def role_ids(self):
         return [r.sn for r in self.roles]
 
+    @property
+    def type(self):
+        return UserType.ADMIN
+
     def __str__(self):
         return ("<User sn: {obj.id}"
                 ", name: {obj.name}"
@@ -379,6 +383,10 @@ class Member(UserMixin, db.Model):
     is_student = db.Column(db.Boolean)
     title = db.Column(db.String(64)) # student major or job title
     fields = db.Column(IntegerArrayType(128))
+
+    @property
+    def type(self):
+        return UserType.MEMBER
 
     def __str__(self):
         return ("<Member id: {obj.id}"

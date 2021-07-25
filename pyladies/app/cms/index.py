@@ -1,4 +1,4 @@
-from flask_login import login_required
+from app.utils import login_required
 
 from . import api
 

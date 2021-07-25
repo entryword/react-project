@@ -113,3 +113,7 @@ DEFINITION_1_0 = {
 
 DEFAULT_PLACE_SN = 37
 DEFAULT_FIELD_SN = -1
+
+class UserType:
+    ADMIN = 'Admin'
+    MEMBER = 'Member'

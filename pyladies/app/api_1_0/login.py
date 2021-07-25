@@ -1,36 +1,38 @@
-from flask import current_app, jsonify, redirect, session, url_for
+from flask import current_app, redirect, session, url_for, request
 
+from app.constant import UserType
+from app.utils import login_required
 from . import api
-from ..exceptions import OK
+from ..managers.member import Manager as MemberManager
 
 
-@api.route("/login", methods=["GET"])
+@api.route('/login', methods=['GET'])
 def login():
     redirect_uri = url_for('api.auth', _external=True)
     return current_app.oauth.google.authorize_redirect(redirect_uri)
 
 
-@api.route("/auth", methods=["GET"])
+@api.route('/auth', methods=['GET'])
 def auth():
-    google = current_app.oauth.google
-    google.authorize_access_token()
-    resp = google.get('userinfo')
-    user_info = resp.json()
+    if current_app.config['TESTING']:
+        user_info = {
+            'email': request.args.get('email'),
+            'name': request.args.get('name')
+        }
+    else:
+        google = current_app.oauth.google
+        google.authorize_access_token()
+        resp = google.get('userinfo')
+        user_info = resp.json()
 
-    session['user'] = user_info
-    # flask sessions expire once you close the browser unless you have a permanent session
-    session.permanent = True
+    session['user_type'] = UserType.MEMBER
+    new_created = MemberManager.social_login(user_info['email'], user_info['name'])
+    session['first_time_login'] = new_created
     return redirect('/')
 
 
-@api.route("/logout", methods=["GET"])
+@api.route('/logout', methods=['GET'])
+@login_required(user_type=UserType.MEMBER)
 def logout():
-    session.pop('user', None)
+    MemberManager.logout()
     return redirect('/')
-
-
-@api.route("/user", methods=["GET"])
-def user():
-    user_info = session.get('user') or {}
-    info = {"code": OK.code, "message": OK.message}
-    return jsonify(data=user_info, info=info)
