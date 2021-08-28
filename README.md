@@ -55,6 +55,17 @@ docker-compose exec mariadb bash
 bash /sql_init/init.sh
 exit
 ```
+* 編譯前端頁面
+```
+# Install node modules (execute when yarn.lock is updated)
+docker-compose exec -T node build_script/installNodeModules.sh
+
+# build CMS (frontend_cms) 
+docker-compose exec -T node build_script/cmsBuild.sh
+
+# build APP (frontend_react)
+docker-compose exec -T node build_script/frontendBuild.sh
+```
 
 ### 測試是否成功
 1. localhost:5566 (能看到 phpMyAdmin 的畫面，帳號: `root`，密碼: `12345678`)

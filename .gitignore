@@ -1,6 +1,10 @@
 .idea/
-node_modules/
+.vscode/
 .DS_Store
 data/
 nginx_log/
 log/
+node_modules/
+frontend/cms/
+frontend/eventlist/static
+frontend_cms/dist

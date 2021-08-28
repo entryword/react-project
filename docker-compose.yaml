@@ -80,3 +80,14 @@ services:
     restart: always
     command: [nginx-debug, '-g', 'daemon off;']
 
+  node:
+    image: node:14.16.1
+    stdin_open: true
+    tty: true
+    working_dir: /var/www/html/website2018/
+    volumes: 
+      - ./frontend:/var/www/html/website2018/frontend
+      - ./frontend_cms:/var/www/html/website2018/frontend_cms
+      - ./frontend_react:/var/www/html/website2018/frontend_react
+      - ./build_script:/var/www/html/website2018/build_script
+    restart: always
