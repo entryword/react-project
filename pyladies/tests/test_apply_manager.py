@@ -6,7 +6,7 @@ import jsonschema
 from pytest import raises
 
 from app import create_app
-from app.constant import DEFAULT_PLACE_SN
+from app.constant import DEFAULT_PLACE_ID
 from app.managers.apply import Manager as ApplyManager
 from app.sqldb import DBWrapper
 
@@ -29,7 +29,7 @@ class InvalidInputTestCase(unittest.TestCase):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             place_info = {
-                "sn": DEFAULT_PLACE_SN,
+                "id": DEFAULT_PLACE_ID,
                 "name": "default place",
                 "addr": "default place addr",
                 "map": "default place map",
@@ -46,7 +46,7 @@ class InvalidInputTestCase(unittest.TestCase):
             "fields": [0, 1, 2]
         }
         event_basic_info = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2017-01-01",
             "start_time": "14:00",
             "end_time": "16:00"
@@ -65,7 +65,7 @@ class InvalidInputTestCase(unittest.TestCase):
         }
 
         input_event_apply = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info]
         }
 
@@ -74,10 +74,10 @@ class InvalidInputTestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_basic = topic.event_basics[0]
-            input_event_apply["event_basic_sn"] = event_basic.sn
+            input_event_apply["event_basic_id"] = event_basic.id
 
             # test & assertion
             with raises(jsonschema.exceptions.ValidationError):
@@ -93,7 +93,7 @@ class InvalidInputTestCase(unittest.TestCase):
             "fields": [0, 1, 2]
         }
         event_basic_info = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2017-01-01",
             "start_time": "14:00",
             "end_time": "16:00"
@@ -112,7 +112,7 @@ class InvalidInputTestCase(unittest.TestCase):
         }
 
         input_event_apply = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info]
         }
 
@@ -121,10 +121,10 @@ class InvalidInputTestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_basic = topic.event_basics[0]
-            input_event_apply["event_basic_sn"] = event_basic.sn
+            input_event_apply["event_basic_id"] = event_basic.id
 
             # test & assertion
             with raises(jsonschema.exceptions.ValidationError):
@@ -140,7 +140,7 @@ class InvalidInputTestCase(unittest.TestCase):
             "fields": [0, 1, 2]
         }
         event_basic_info = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2017-01-01",
             "start_time": "14:00",
             "end_time": "16:00"
@@ -159,7 +159,7 @@ class InvalidInputTestCase(unittest.TestCase):
         }
 
         input_event_apply = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info]
         }
 
@@ -168,10 +168,10 @@ class InvalidInputTestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_basic = topic.event_basics[0]
-            input_event_apply["event_basic_sn"] = event_basic.sn
+            input_event_apply["event_basic_id"] = event_basic.id
 
             # test & assertion
             with raises(ValueError):
@@ -187,7 +187,7 @@ class InvalidInputTestCase(unittest.TestCase):
             "fields": [0, 1, 2]
         }
         event_basic_info = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2017-01-01",
             "start_time": "14:00",
             "end_time": "16:00"
@@ -206,7 +206,7 @@ class InvalidInputTestCase(unittest.TestCase):
         }
 
         input_event_apply = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info]
         }
 
@@ -215,10 +215,10 @@ class InvalidInputTestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_basic = topic.event_basics[0]
-            input_event_apply["event_basic_sn"] = event_basic.sn
+            input_event_apply["event_basic_id"] = event_basic.id
 
             # test & assertion
             with raises(ValueError):

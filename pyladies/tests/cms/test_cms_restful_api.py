@@ -9,7 +9,7 @@ import pytest
 from werkzeug.security import generate_password_hash
 
 from app import create_app
-from app.constant import DEFAULT_PLACE_SN
+from app.constant import DEFAULT_PLACE_ID
 from app.exceptions import PLACE_NAME_DUPLICATE, EVENTBASIC_NOT_EXIST, OK, TOPIC_ASSOCIATED_WITH_EXISTED_EVENT
 from app.sqldb import DBWrapper
 from app.sqldb.models import User
@@ -70,8 +70,8 @@ class TestCreateEvent:
 
             topic = manager.get_topic_by_name(topic_info["name"])
             place = manager.get_place_by_name(place_info["name"])
-            payload["topic_id"] = topic.sn
-            payload["place_id"] = place.sn
+            payload["topic_id"] = topic.id
+            payload["place_id"] = place.id
 
         # post test
         rv = self.test_client.post(
@@ -84,12 +84,12 @@ class TestCreateEvent:
         assert rv.status_code == 200
         assert rv.json["info"]["code"] == OK.code
         assert rv.json["data"]["id"] == 1
-        event_basic_sn = rv.json["data"]["id"]
+        event_basic_id = rv.json["data"]["id"]
 
         # event assertion
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            event_basic = manager.get_event_basic(event_basic_sn)
+            event_basic = manager.get_event_basic(event_basic_id)
             assert event_basic.topic.name == topic_info["name"]
             assert event_basic.place.name == place_info["name"]
             assert event_basic.place.map == place_info["map"]
@@ -120,27 +120,27 @@ class TestGetEvents:
     def _preparation_for_event(self, topic_info, event_basic_infos, event_infos, place, speaker=None, apply=None):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            topic_sn = manager.create_topic(topic_info, autocommit=True)
-            place_sn = manager.create_place(place, autocommit=True)
+            topic_id = manager.create_topic(topic_info, autocommit=True)
+            place_id = manager.create_place(place, autocommit=True)
             if speaker:
-                speaker_sn = manager.create_speaker(speaker, autocommit=True)
+                speaker_id = manager.create_speaker(speaker, autocommit=True)
             else:
-                speaker_sn = None
+                speaker_id = None
             for event_basic_info, event_info in \
                     zip(event_basic_infos, event_infos):
-                event_basic_info['topic_sn'] = topic_sn
-                event_basic_info['place_sn'] = place_sn
-                event_basic_sn = manager.create_event_basic(event_basic_info, autocommit=True)
+                event_basic_info['topic_id'] = topic_id
+                event_basic_info['place_id'] = place_id
+                event_basic_id = manager.create_event_basic(event_basic_info, autocommit=True)
                 if apply:
-                    apply["event_basic_sn"] = event_basic_sn
+                    apply["event_basic_id"] = event_basic_id
                     manager.create_event_apply(apply, autocommit=True)
-                event_info['event_basic_sn'] = event_basic_sn
-                event_info["speaker_sns"] = [speaker_sn]
+                event_info['event_basic_id'] = event_basic_id
+                event_info["speaker_ids"] = [speaker_id]
                 manager.create_event_info(event_info, autocommit=True)
 
     def test_one_event(self, event_info, speaker_info, topic_info, event_basic_info, place_info, apply_info):
         event_apply_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info]
         }
         self._preparation_for_event(topic_info, [event_basic_info], [event_info],
@@ -153,7 +153,7 @@ class TestGetEvents:
         expected_result = {
             "date": event_basic_info["date"],
             "event_apply_exist": 1,
-            "id": event_info["event_basic_sn"],
+            "id": event_info["event_basic_id"],
             "place": {
                 "name": place_info["name"]
             },
@@ -181,7 +181,7 @@ class TestGetEvents:
 
     def test_one_event_without_speaker(self, topic_info, event_basic_info, event_info, place_info, apply_info):
         event_apply_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info]
         }
         self._preparation_for_event(topic_info, [event_basic_info], [event_info], place_info, None, event_apply_info)
@@ -208,7 +208,7 @@ class TestGetEvents:
     def test_events(self, topic_info, event_basic_infos, event_infos, place_info, speaker_info, apply_info):
         # preparation
         event_apply_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info]
         }
         self._preparation_for_event(topic_info, event_basic_infos, event_infos,
@@ -223,7 +223,7 @@ class TestGetEvents:
             expected_result = {
                 "date": event_basic_infos[i]["date"],
                 "event_apply_exist": 1,
-                "id": event_infos[i]["event_basic_sn"],
+                "id": event_infos[i]["event_basic_id"],
                 "place": {
                     "name": place_info["name"]
                 },
@@ -253,7 +253,7 @@ class TestGetEvents:
     @pytest.mark.parametrize('event_infos', [2], indirect=True)
     def test_events_without_speaker(self, event_infos, topic_info, event_basic_infos, place_info, apply_info):
         event_apply_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info]
         }
         self._preparation_for_event(topic_info, event_basic_infos, event_infos, place_info, None, event_apply_info)
@@ -456,7 +456,7 @@ class TestGetTopic:
             topic = manager.get_topic_by_name(topic_info["name"])
 
         # test
-        testurl = "/cms/api/topic/"+str(topic.sn)
+        testurl = "/cms/api/topic/"+str(topic.id)
         rv = self.test_client.get(testurl)
 
         assert rv.json["data"]["name"] == topic_info["name"]
@@ -540,7 +540,7 @@ class TestPutTopic:
         }
 
         # test 1
-        test_url = "/cms/api/topic/" + str(topic.sn)
+        test_url = "/cms/api/topic/" + str(topic.id)
         rv = self.test_client.put(
             test_url,
             headers={"Content-Type": "application/json"},
@@ -553,7 +553,7 @@ class TestPutTopic:
         assert rv.json["info"]["code"] == 0
 
         # test 2
-        test_url = "/cms/api/topic/" + str(topic.sn)
+        test_url = "/cms/api/topic/" + str(topic.id)
         rv = self.test_client.get(test_url)
 
         # assertion 2
@@ -586,7 +586,7 @@ class TestDeleteTopic:
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             place_info = {
-                "sn": DEFAULT_PLACE_SN,
+                "id": DEFAULT_PLACE_ID,
                 "name": "default place",
                 "addr": "default place addr",
                 "map": "default place map",
@@ -605,7 +605,7 @@ class TestDeleteTopic:
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
 
-            testurl = "/cms/api/topic/"+str(topic.sn)
+            testurl = "/cms/api/topic/"+str(topic.id)
             rv = self.test_client.get(testurl)
             assert rv.json["data"]
 
@@ -617,13 +617,13 @@ class TestDeleteTopic:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
-            event_info["event_basic_sn"] = topic.event_basics[0].sn
+            event_info["event_basic_id"] = topic.event_basics[0].id
             manager.create_event_info(event_info, autocommit=True)
 
             # test
-            testurl = "/cms/api/topic/" + str(topic.sn)
+            testurl = "/cms/api/topic/" + str(topic.id)
             rv = self.test_client.get(testurl)
             assert rv.json["data"]
 
@@ -804,25 +804,25 @@ class TestGetEvent:
     def _preparation_for_one_event(self, topic, event_basic, event_info, place, speaker=None, apply=None):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            topic_sn = manager.create_topic(topic, autocommit=True)
-            place_sn = manager.create_place(place, autocommit=True)
+            topic_id = manager.create_topic(topic, autocommit=True)
+            place_id = manager.create_place(place, autocommit=True)
             event_basic.update({
-                "topic_sn": topic_sn,
-                "place_sn": place_sn
+                "topic_id": topic_id,
+                "place_id": place_id
             })
-            event_basic_sn = manager.create_event_basic(event_basic, autocommit=True)
-            event_info["event_basic_sn"] = event_basic_sn
+            event_basic_id = manager.create_event_basic(event_basic, autocommit=True)
+            event_info["event_basic_id"] = event_basic_id
             if speaker:
-                speaker_sn = manager.create_speaker(speaker, autocommit=True)
-                event_info["speaker_sns"] = [speaker_sn]
+                speaker_id = manager.create_speaker(speaker, autocommit=True)
+                event_info["speaker_ids"] = [speaker_id]
             manager.create_event_info(event_info, autocommit=True)
             if apply:
-                apply["event_basic_sn"] = event_basic_sn
+                apply["event_basic_id"] = event_basic_id
                 manager.create_event_apply(apply, autocommit=True)
 
     def test_one_event(self, topic_info, event_basic_info, place_info, apply_info):
         event_info_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1]
@@ -836,21 +836,21 @@ class TestGetEvent:
             "fields": [3]
         }
         event_apply_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info]
         }
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
                                         place_info, speaker_info, event_apply_info)
 
         # test
-        testurl = "/cms/api/event/" + str(event_info_info["event_basic_sn"])
+        testurl = "/cms/api/event/" + str(event_info_info["event_basic_id"])
         rv = self.test_client.get(testurl)
 
         # assertion
         assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
         assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
-        assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
-        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
+        assert rv.json["data"]["topic_id"] == event_basic_info["topic_id"]
+        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_id"]
         assert rv.json["data"]["title"] == event_info_info["title"]
         assert rv.json["data"]["desc"] == event_info_info["desc"]
         assert rv.json["data"]["fields"] == event_info_info["fields"]
@@ -861,7 +861,7 @@ class TestGetEvent:
 
     def test_one_event_without_apply(self, topic_info, event_basic_info, place_info):
         event_info_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1]
@@ -878,14 +878,14 @@ class TestGetEvent:
                                         place_info, speaker_info, None)
 
         # test
-        testurl = "/cms/api/event/" + str(event_info_info["event_basic_sn"])
+        testurl = "/cms/api/event/" + str(event_info_info["event_basic_id"])
         rv = self.test_client.get(testurl)
 
         # assertion
         assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
         assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
-        assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
-        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
+        assert rv.json["data"]["topic_id"] == event_basic_info["topic_id"]
+        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_id"]
         assert rv.json["data"]["title"] == event_info_info["title"]
         assert rv.json["data"]["desc"] == event_info_info["desc"]
         assert rv.json["data"]["fields"] == event_info_info["fields"]
@@ -895,26 +895,26 @@ class TestGetEvent:
 
     def test_one_event_without_speaker(self, topic_info, event_basic_info, place_info, apply_info):
         event_info_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1]
         }
         event_apply_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info]
         }
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
                                         place_info, None, event_apply_info)
 
         # test
-        testurl = "/cms/api/event/" + str(event_info_info["event_basic_sn"])
+        testurl = "/cms/api/event/" + str(event_info_info["event_basic_id"])
         rv = self.test_client.get(testurl)
         # assertion
         assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
         assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
-        assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
-        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
+        assert rv.json["data"]["topic_id"] == event_basic_info["topic_id"]
+        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_id"]
         assert rv.json["data"]["title"] == event_info_info["title"]
         assert rv.json["data"]["desc"] == event_info_info["desc"]
         assert rv.json["data"]["fields"] == event_info_info["fields"]
@@ -925,7 +925,7 @@ class TestGetEvent:
 
     def test_one_event_without_speaker_and_apply(self, topic_info, event_basic_info, place_info):
         event_info_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1]
@@ -933,14 +933,14 @@ class TestGetEvent:
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info, place_info)
 
         # test
-        testurl = "/cms/api/event/" + str(event_info_info["event_basic_sn"])
+        testurl = "/cms/api/event/" + str(event_info_info["event_basic_id"])
         rv = self.test_client.get(testurl)
 
         # assertion
         assert rv.json["data"]["start_time"] == event_basic_info["start_time"]
         assert rv.json["data"]["end_time"] == event_basic_info["end_time"]
-        assert rv.json["data"]["topic_id"] == event_basic_info["topic_sn"]
-        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_sn"]
+        assert rv.json["data"]["topic_id"] == event_basic_info["topic_id"]
+        assert rv.json["data"]["place_info"]["id"] == event_basic_info["place_id"]
         assert rv.json["data"]["title"] == event_info_info["title"]
         assert rv.json["data"]["desc"] == event_info_info["desc"]
         assert rv.json["data"]["fields"] == event_info_info["fields"]
@@ -965,25 +965,25 @@ class TestPutEvent:
     def _preparation_for_one_event(self, topic, event_basic, event_info, place, speaker=None, apply=None):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            topic_sn = manager.create_topic(topic, autocommit=True)
-            place_sn = manager.create_place(place, autocommit=True)
+            topic_id = manager.create_topic(topic, autocommit=True)
+            place_id = manager.create_place(place, autocommit=True)
             event_basic.update({
-                "topic_sn": topic_sn,
-                "place_sn": place_sn
+                "topic_id": topic_id,
+                "place_id": place_id
             })
-            event_basic_sn = manager.create_event_basic(event_basic, autocommit=True)
-            event_info["event_basic_sn"] = event_basic_sn
+            event_basic_id = manager.create_event_basic(event_basic, autocommit=True)
+            event_info["event_basic_id"] = event_basic_id
             if speaker:
-                speaker_sn = manager.create_speaker(speaker, autocommit=True)
-                event_info["speaker_sns"] = [speaker_sn]
+                speaker_id = manager.create_speaker(speaker, autocommit=True)
+                event_info["speaker_ids"] = [speaker_id]
             manager.create_event_info(event_info, autocommit=True)
             if apply:
-                apply["event_basic_sn"] = event_basic_sn
+                apply["event_basic_id"] = event_basic_id
                 manager.create_event_apply(apply, autocommit=True)
 
     def test_one_event(self, topic_info, event_basic_info, place_info, apply_info):
         event_info_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1]
@@ -1000,12 +1000,12 @@ class TestPutEvent:
                                         place_info, speaker_info)
         payload = {
             "title": "XXXX",
-            "topic_id": event_basic_info["topic_sn"],
+            "topic_id": event_basic_info["topic_id"],
             "start_date": "2019-03-09",
             "start_time": "14:00",
             "end_date": "2019-03-09",
             "end_time": "17:00",
-            "place_id": event_basic_info["place_sn"],
+            "place_id": event_basic_info["place_id"],
             "desc": "XXXX",
             "speaker_ids": [1],
             "assistant_ids": [2],
@@ -1015,7 +1015,7 @@ class TestPutEvent:
         }
 
         # test 1
-        test_url = "/cms/api/event/{e_id}".format(e_id=event_info_info["event_basic_sn"])
+        test_url = "/cms/api/event/{e_id}".format(e_id=event_info_info["event_basic_id"])
         rv = self.test_client.put(
             test_url,
             headers={"Content-Type": "application/json"},
@@ -1025,7 +1025,7 @@ class TestPutEvent:
         print('#' * 50, rv.json)
 
         # assertion 1
-        assert rv.json["data"]["id"] == event_info_info["event_basic_sn"]
+        assert rv.json["data"]["id"] == event_info_info["event_basic_id"]
 
         # test 2
         rv = self.test_client.get(test_url)
@@ -1063,26 +1063,26 @@ class TestDeleteEvent:
     def _preparation_for_one_event(self, topic, event_basic, event_info, place, speaker=None, apply=None):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            topic_sn = manager.create_topic(topic, autocommit=True)
-            place_sn = manager.create_place(place, autocommit=True)
+            topic_id = manager.create_topic(topic, autocommit=True)
+            place_id = manager.create_place(place, autocommit=True)
             event_basic.update({
-                "topic_sn": topic_sn,
-                "place_sn": place_sn
+                "topic_id": topic_id,
+                "place_id": place_id
             })
-            event_basic_sn = manager.create_event_basic(event_basic, autocommit=True)
-            event_info["event_basic_sn"] = event_basic_sn
+            event_basic_id = manager.create_event_basic(event_basic, autocommit=True)
+            event_info["event_basic_id"] = event_basic_id
             if speaker:
-                speaker_sn = manager.create_speaker(speaker, autocommit=True)
-                event_info["speaker_sns"] = [speaker_sn]
+                speaker_id = manager.create_speaker(speaker, autocommit=True)
+                event_info["speaker_ids"] = [speaker_id]
             manager.create_event_info(event_info, autocommit=True)
             if apply:
-                apply["event_basic_sn"] = event_basic_sn
+                apply["event_basic_id"] = event_basic_id
                 manager.create_event_apply(apply, autocommit=True)
 
     def test_one_event(self, topic_info, event_basic_info, place_info, apply_info):
         # preparation
         event_info_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1]
@@ -1090,7 +1090,7 @@ class TestDeleteEvent:
         self._preparation_for_one_event(topic_info, event_basic_info, event_info_info,
                                         place_info)
 
-        testurl = "/cms/api/event/" + str(event_info_info["event_basic_sn"])
+        testurl = "/cms/api/event/" + str(event_info_info["event_basic_id"])
         rv = self.test_client.get(testurl)
         assert rv.json["info"]["code"] == 0
         assert rv.json["data"]
@@ -1203,7 +1203,7 @@ class TestPutPlace:
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            place_sn = manager.create_place(place_info, autocommit=True)
+            place_id = manager.create_place(place_info, autocommit=True)
 
         payload = {
             "name": "place 2",
@@ -1212,7 +1212,7 @@ class TestPutPlace:
         }
 
         # test 1
-        test_url = "/cms/api/place/{place_sn}".format(place_sn=place_sn)
+        test_url = "/cms/api/place/{place_id}".format(place_id=place_id)
         rv = self.test_client.put(
             test_url,
             headers={"Content-Type": "application/json"},
@@ -1248,14 +1248,14 @@ class TestPutPlace:
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             manager.create_place(place_info, autocommit=True)
-            place_sn = manager.create_place(place_info_2, autocommit=True)
+            place_id = manager.create_place(place_info_2, autocommit=True)
 
         payload = {
             **place_info_2.copy(),
             "name": place_info["name"]
         }
 
-        test_url = "/cms/api/place/{place_sn}".format(place_sn=place_sn)
+        test_url = "/cms/api/place/{place_id}".format(place_id=place_id)
         rv = self.test_client.put(
             test_url,
             headers={"Content-Type": "application/json"},
@@ -1291,15 +1291,15 @@ class TestGetPlace:
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            place_sn = manager.create_place(place, autocommit=True)
+            place_id = manager.create_place(place, autocommit=True)
 
         # test
-        rv = self.test_client.get("/cms/api/place/" + str(place_sn))
+        rv = self.test_client.get("/cms/api/place/" + str(place_id))
 
         # assert
         assert rv.json["info"]["code"] == 0
         assert len(rv.json["data"]) == 4
-        assert rv.json["data"]["id"] == place_sn
+        assert rv.json["data"]["id"] == place_id
         assert rv.json["data"]["name"] == place["name"]
         assert rv.json["data"]["addr"] == place["addr"]
         assert rv.json["data"]["map"] == place["map"]
@@ -1398,7 +1398,7 @@ class TestPutSpeaker:
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            speaker_sn = manager.create_speaker(speaker_info, autocommit=True)
+            speaker_id = manager.create_speaker(speaker_info, autocommit=True)
 
         put_data = {
             "name": "speaker 2",
@@ -1411,7 +1411,7 @@ class TestPutSpeaker:
         }
 
         # test 1
-        test_url = "/cms/api/speaker/" + str(speaker_sn)
+        test_url = "/cms/api/speaker/" + str(speaker_id)
         rv = self.test_client.put(
             test_url,
             headers={"Content-Type": "application/json"},
@@ -1424,7 +1424,7 @@ class TestPutSpeaker:
         assert rv.json["info"]["code"] == 0
 
         # test 2
-        test_url = "/cms/api/speaker/" + str(speaker_sn)
+        test_url = "/cms/api/speaker/" + str(speaker_id)
         rv = self.test_client.get(test_url)
         print(rv.json)
 

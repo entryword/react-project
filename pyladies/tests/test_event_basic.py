@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from app import create_app
-from app.constant import DEFAULT_PLACE_SN
+from app.constant import DEFAULT_PLACE_ID
 from app.exceptions import PyLadiesException
 from app.exceptions import EVENTBASIC_NOT_EXIST
 from app.sqldb import DBWrapper
@@ -29,7 +29,7 @@ class TestEventBasic:
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             place_info = {
-                "sn": DEFAULT_PLACE_SN,
+                "id": DEFAULT_PLACE_ID,
                 "name": "default place",
                 "addr": "default place addr",
                 "map": "default place map",
@@ -49,7 +49,7 @@ class TestEventBasic:
     @staticmethod
     def assert_place_info(event_basic, place_info):
         if place_info is None:
-            assert event_basic.place.sn == DEFAULT_PLACE_SN
+            assert event_basic.place.id == DEFAULT_PLACE_ID
             return
         assert event_basic.place.name == place_info["name"]
         assert event_basic.place.map == place_info["map"]
@@ -64,14 +64,14 @@ class TestEventBasic:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
 
             # test
             manager.create_event_basic(event_basic_info, autocommit=True)
 
             # assertion
-            event_basic_sn = topic.event_basics[0].sn
-            event_basic = manager.get_event_basic(event_basic_sn)
+            event_basic_id = topic.event_basics[0].id
+            event_basic = manager.get_event_basic(event_basic_id)
             self.assert_topic_info(event_basic, topic_info)
             self.assert_event_basic_info(event_basic, event_basic_info)
             self.assert_place_info(event_basic, None)
@@ -85,22 +85,22 @@ class TestEventBasic:
             topic = manager.get_topic_by_name(topic_info["name"])
             place = manager.get_place_by_name(place_info["name"])
             event_basic_info.update({
-                "topic_sn": topic.sn,
-                "place_sn": place.sn
+                "topic_id": topic.id,
+                "place_id": place.id
             })
 
             # test
             manager.create_event_basic(event_basic_info, autocommit=True)
 
             # assertion
-            event_basic_sn = topic.event_basics[0].sn
-            event_basic = manager.get_event_basic(event_basic_sn)
+            event_basic_id = topic.event_basics[0].id
+            event_basic = manager.get_event_basic(event_basic_id)
             self.assert_topic_info(event_basic, topic_info)
             self.assert_event_basic_info(event_basic, event_basic_info)
             self.assert_place_info(event_basic, place_info)
 
     def test_create_event_basic_with_not_existed_topic(self, event_basic_info):
-        event_basic_info["topic_sn"] = 100
+        event_basic_info["topic_id"] = 100
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
@@ -120,19 +120,19 @@ class TestEventBasic:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
-            event_basic_info_2["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
+            event_basic_info_2["topic_id"] = topic.id
             manager.create_place(place_info, autocommit=True)
             place = manager.get_place_by_name(place_info["name"])
-            event_basic_info_2["place_sn"] = place.sn
+            event_basic_info_2["place_id"] = place.id
             manager.create_event_basic(event_basic_info, autocommit=True)
 
             # test
             manager.update_event_basic(1, event_basic_info_2, autocommit=True)
 
             # assertion
-            event_basic_sn = topic.event_basics[0].sn
-            event_basic = manager.get_event_basic(event_basic_sn)
+            event_basic_id = topic.event_basics[0].id
+            event_basic = manager.get_event_basic(event_basic_id)
             self.assert_event_basic_info(event_basic, event_basic_info_2)
             self.assert_place_info(event_basic, place_info)
 
@@ -148,22 +148,22 @@ class TestEventBasic:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
-            event_basic_info_2["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
+            event_basic_info_2["topic_id"] = topic.id
             manager.create_place(place_info, autocommit=True)
             place = manager.get_place_by_name(place_info["name"])
-            event_basic_info["place_sn"] = place.sn
+            event_basic_info["place_id"] = place.id
             manager.create_place(place_info_2, autocommit=True)
             new_place = manager.get_place_by_name(place_info_2["name"])
-            event_basic_info_2["place_sn"] = new_place.sn
+            event_basic_info_2["place_id"] = new_place.id
             manager.create_event_basic(event_basic_info, autocommit=True)
 
             # test
             manager.update_event_basic(1, event_basic_info_2, autocommit=True)
 
             # assertion 1
-            event_basic_sn = topic.event_basics[0].sn
-            event_basic = manager.get_event_basic(event_basic_sn)
+            event_basic_id = topic.event_basics[0].id
+            event_basic = manager.get_event_basic(event_basic_id)
             self.assert_event_basic_info(event_basic, event_basic_info_2)
             self.assert_place_info(event_basic, place_info_2)
 
@@ -177,16 +177,16 @@ class TestEventBasic:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
-            event_basic_sn = topic.event_basics[0].sn
+            event_basic_id = topic.event_basics[0].id
 
             # test
-            manager.delete_event_basic(event_basic_sn, autocommit=True)
+            manager.delete_event_basic(event_basic_id, autocommit=True)
 
             # assertion
             with pytest.raises(PyLadiesException) as cm:
-                manager.get_event_basic(event_basic_sn)
+                manager.get_event_basic(event_basic_id)
             self.assert_exception(cm.value, EVENTBASIC_NOT_EXIST)
 
     def test_delete_topic(self, topic_info, event_basic_info):
@@ -195,36 +195,36 @@ class TestEventBasic:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
-            event_basic_sn = topic.event_basics[0].sn
+            event_basic_id = topic.event_basics[0].id
 
             # test
-            manager.delete_topic(topic.sn, autocommit=True)
+            manager.delete_topic(topic.id, autocommit=True)
 
             # assertion
             with pytest.raises(PyLadiesException) as cm:
-                manager.get_event_basic(event_basic_sn)
+                manager.get_event_basic(event_basic_id)
             self.assert_exception(cm.value, EVENTBASIC_NOT_EXIST)
 
-    def test_get_event_basic_by_sn(self, topic_info, event_basic_info):
+    def test_get_event_basic_by_id(self, topic_info, event_basic_info):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
-            event_basic_sn = topic.event_basics[0].sn
+            event_basic_id = topic.event_basics[0].id
 
             # test & assertion 1
-            event_basic = manager.get_event_basic(event_basic_sn)
+            event_basic = manager.get_event_basic(event_basic_id)
             self.assert_event_basic_info(event_basic, event_basic_info)
 
             # test & assertion 2
             with pytest.raises(PyLadiesException) as cm:
-                not_exist_event_basic_sn = event_basic_sn + 1
-                manager.get_event_basic(not_exist_event_basic_sn)
+                not_exist_event_basic_id = event_basic_id + 1
+                manager.get_event_basic(not_exist_event_basic_id)
             self.assert_exception(cm.value, EVENTBASIC_NOT_EXIST)
 
     @pytest.mark.parametrize('event_basic_infos', [2], indirect=True)
@@ -236,8 +236,8 @@ class TestEventBasic:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
-            event_basic_info_2["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
+            event_basic_info_2["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
             manager.create_event_basic(event_basic_info_2, autocommit=True)
 

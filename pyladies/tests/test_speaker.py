@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from app import create_app
-from app.constant import DEFAULT_PLACE_SN
+from app.constant import DEFAULT_PLACE_ID
 from app.exceptions import PyLadiesException
 from app.exceptions import SPEAKER_NOT_EXIST
 from app.managers.speaker import Manager as SpeakerManager
@@ -21,7 +21,7 @@ class TestSpeaker():
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             place_info = {
-                "sn": DEFAULT_PLACE_SN,
+                "id": DEFAULT_PLACE_ID,
                 "name": "default place",
                 "addr": "default place addr",
                 "map": "default place map",
@@ -285,7 +285,7 @@ class TestSpeaker():
             speaker = manager.get_speaker_by_name(info["name"])
 
             # test
-            manager.delete_speaker(speaker.sn, autocommit=True)
+            manager.delete_speaker(speaker.id, autocommit=True)
 
             # assertion 1
             with pytest.raises(PyLadiesException) as cm:
@@ -324,7 +324,7 @@ class TestSpeaker():
                 manager.get_speaker_by_name("speaker 2")
             self.assertEqual(cm.value, SPEAKER_NOT_EXIST)
 
-    def test_get_speaker_by_sn(self):
+    def test_get_speaker_by_id(self):
         info = {
             "name": "speaker 1",
             "photo": "https://pyladies.marsw.tw/img/speaker_1_photo.png",
@@ -507,32 +507,32 @@ class TestSpeaker():
             manager.create_topic(topic_infos[1], autocommit=True)
             topic1 = manager.get_topic_by_name(topic_infos[0]["name"])
             topic2 = manager.get_topic_by_name(topic_infos[1]["name"])
-            event_basic_info1["topic_sn"] = topic1.sn
-            event_basic_info2["topic_sn"] = topic1.sn
-            event_basic_info3["topic_sn"] = topic2.sn
+            event_basic_info1["topic_id"] = topic1.id
+            event_basic_info2["topic_id"] = topic1.id
+            event_basic_info3["topic_id"] = topic2.id
             manager.create_event_basic(event_basic_info1, autocommit=True)
             manager.create_event_basic(event_basic_info2, autocommit=True)
             manager.create_event_basic(event_basic_info3, autocommit=True)
-            event_info1["event_basic_sn"] = topic1.event_basics[0].sn
-            event_info2["event_basic_sn"] = topic1.event_basics[1].sn
-            event_info3["event_basic_sn"] = topic2.event_basics[0].sn
-            event_info1["speaker_sns"] = [speaker.sn]
-            event_info2["speaker_sns"] = [speaker.sn]
-            event_info3["speaker_sns"] = [speaker.sn]
+            event_info1["event_basic_id"] = topic1.event_basics[0].id
+            event_info2["event_basic_id"] = topic1.event_basics[1].id
+            event_info3["event_basic_id"] = topic2.event_basics[0].id
+            event_info1["speaker_ids"] = [speaker.id]
+            event_info2["speaker_ids"] = [speaker.id]
+            event_info3["speaker_ids"] = [speaker.id]
             manager.create_event_info(event_info1, autocommit=True)
             manager.create_event_info(event_info2, autocommit=True)
             manager.create_event_info(event_info3, autocommit=True)
 
             expected_talks = [
-                {'topic_name': topic1.name, 'topic_id': topic1.sn,
+                {'topic_name': topic1.name, 'topic_id': topic1.id,
                  'events': [{'id': 1, 'title': event_info1["title"]},
                             {'id': 2, 'title': event_info2["title"]}]},
-                {'topic_name': topic2.name, 'topic_id': topic2.sn,
+                {'topic_name': topic2.name, 'topic_id': topic2.id,
                  'events': [{'id': 3, 'title': event_info3["title"]}]}
             ]
 
             # test & assertion 1
-            result = SpeakerManager().get_speaker_profile(speaker.sn)
+            result = SpeakerManager().get_speaker_profile(speaker.id)
             self.assertEqual(result["name"], speaker_info["name"])
             self.assertEqual(result["photo"], speaker_info["photo"])
             self.assertEqual(result["title"], speaker_info["title"])

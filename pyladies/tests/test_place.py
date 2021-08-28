@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 
 from app import create_app
-from app.constant import DEFAULT_PLACE_SN
+from app.constant import DEFAULT_PLACE_ID
 from app.exceptions import PyLadiesException
 from app.exceptions import PLACE_NOT_EXIST
 from app.sqldb import DBWrapper
@@ -29,7 +29,7 @@ class TestPlace:
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             place_info = {
-                "sn": DEFAULT_PLACE_SN,
+                "id": DEFAULT_PLACE_ID,
                 "name": "default place",
                 "addr": "default place addr",
                 "map": "default place map",
@@ -80,13 +80,13 @@ class TestPlace:
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            place_sn = manager.create_place(place_info, autocommit=True)
+            place_id = manager.create_place(place_info, autocommit=True)
 
             # test
-            manager.update_place(place_sn, place_info_2, autocommit=True)
+            manager.update_place(place_id, place_info_2, autocommit=True)
 
             # assertion
-            place = manager.get_place(place_sn)
+            place = manager.get_place(place_id)
             self.assert_place(place, place_info_2)
 
     @pytest.mark.parametrize('place_infos', [3], indirect=True)
@@ -98,17 +98,17 @@ class TestPlace:
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            place_sn = manager.create_place(place_info, autocommit=True)
+            place_id = manager.create_place(place_info, autocommit=True)
             manager.create_place(place_info_2, autocommit=True)
 
             # test & assertion 1
-            manager.update_place(place_sn, new_info_un, autocommit=True)
-            place = manager.get_place(place_sn)
+            manager.update_place(place_id, new_info_un, autocommit=True)
+            place = manager.get_place(place_id)
             self.assert_place(place, new_info_un)
 
             # test & assertion 2
             with pytest.raises(IntegrityError) as cm:
-                manager.update_place(place_sn, new_info_dp, autocommit=True)
+                manager.update_place(place_id, new_info_dp, autocommit=True)
             error_msg = str(cm.value)
             assert "duplicate" in error_msg.lower()
 
@@ -127,19 +127,19 @@ class TestPlace:
                 manager.get_place_by_name("place 2")
             assert cm.value == PLACE_NOT_EXIST
 
-    def test_get_place_by_sn(self, place_info):
+    def test_get_place_by_id(self, place_info):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)
-            place_sn = manager.create_place(place_info, autocommit=True)
+            place_id = manager.create_place(place_info, autocommit=True)
 
             # test & assertion 1
-            place = manager.get_place(place_sn)
+            place = manager.get_place(place_id)
             self.assert_place(place, place_info)
 
             # test & assertion 2
             with pytest.raises(PyLadiesException) as cm:
-                manager.get_place(place_sn + 1)
+                manager.get_place(place_id + 1)
             assert cm.value == PLACE_NOT_EXIST
 
     @pytest.mark.parametrize('place_infos', [3], indirect=True)
@@ -156,7 +156,7 @@ class TestPlace:
 
             # test & assertion 1
             places = manager.get_places()
-            places = [place for place in places if place.sn != DEFAULT_PLACE_SN]
+            places = [place for place in places if place.id != DEFAULT_PLACE_ID]
             self.assert_place(places[0], place_info)
             self.assert_place(places[1], place_info_2)
             self.assert_place(places[2], place_info_3)

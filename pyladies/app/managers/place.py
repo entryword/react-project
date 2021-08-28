@@ -26,10 +26,10 @@ class Manager(BasePlaceManager):
                 raise e
 
             place = manager.get_place_by_name(info["name"])
-            return place.sn
+            return place.id
 
     @staticmethod
-    def update_place(sn, new_info):
+    def update_place(id, new_info):
         if not isinstance(new_info, dict):
             with open(new_info) as f:
                 new_info = json.loads(f.read())
@@ -37,7 +37,7 @@ class Manager(BasePlaceManager):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             try:
-                manager.update_place(sn, new_info, autocommit=True)
+                manager.update_place(id, new_info, autocommit=True)
             except Exception as e:
                 if "duplicate" in str(e).lower():
                     raise PLACE_NAME_DUPLICATE
@@ -61,7 +61,7 @@ class Manager(BasePlaceManager):
             for place in places:
                 data = {
                     "addr": place.addr,
-                    "id": place.sn,
+                    "id": place.id,
                     "name": place.name,
                     "map":place.map
                 }
@@ -69,15 +69,15 @@ class Manager(BasePlaceManager):
             return places_list
 
     @staticmethod
-    def get_place(sn):
+    def get_place(id):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            place = manager.get_place(sn)
+            place = manager.get_place(id)
 
 
             data = {
                 "addr": place.addr,
-                "id": place.sn,
+                "id": place.id,
                 "name": place.name,
                 "map":place.map
             }

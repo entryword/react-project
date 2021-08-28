@@ -4,7 +4,7 @@ from app.constant import CHANNEL_1_0, TYPE_1_0
 schema_create = {
     "type": "object",
     "properties": {
-        "event_basic_sn": {"type": "integer", "minimum": 1},
+        "event_basic_id": {"type": "integer", "minimum": 1},
         "apply": {
             "type": "array",
             "items": {
@@ -26,5 +26,5 @@ schema_create = {
             "minItems": 1
         }
     },
-    "required": ["event_basic_sn", "apply"]
+    "required": ["event_basic_id", "apply"]
 }

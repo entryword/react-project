@@ -11,7 +11,7 @@ from . import api
 @login_required
 def upload_check_in_list(event_basic_id):
     files = request.files.getlist('files')
-    data = CheckInListManager.upload(event_basic_sn=event_basic_id, files=files)
+    data = CheckInListManager.upload(event_basic_id=event_basic_id, files=files)
     info = {
         "code": OK.code,
         "message": OK.message
@@ -24,7 +24,7 @@ def upload_check_in_list(event_basic_id):
 @payload_validator(create_schema)
 def create_check_in_list(payload):
     info = {
-        'event_basic_sn': payload['event_basic_id'],
+        'event_basic_id': payload['event_basic_id'],
         'name': payload['name'],
         'mail': payload['mail'],
         'phone': payload['phone'],
@@ -33,9 +33,9 @@ def create_check_in_list(payload):
         'remark': payload['remark'],
         'status': payload['status']
     }
-    sn = CheckInListManager.create_check_in_list(info=info)
+    id = CheckInListManager.create_check_in_list(info=info)
     data = {
-        "id": sn
+        "id": id
     }
     info = {
         "code": OK.code,
@@ -46,8 +46,8 @@ def create_check_in_list(payload):
 
 @api.route("/check-in-list/event/<int:event_basic_id>", methods=["GET"])
 @login_required
-def get_check_in_list_by_event_basic_sn(event_basic_id):
-    data = CheckInListManager.get_check_in_list(event_basic_sn=event_basic_id)
+def get_check_in_list_by_event_basic_id(event_basic_id):
+    data = CheckInListManager.get_check_in_list(event_basic_id=event_basic_id)
     info = {
         "code": OK.code,
         "message": OK.message
@@ -60,7 +60,7 @@ def get_check_in_list_by_event_basic_sn(event_basic_id):
 @payload_validator(update_schema)
 def update_check_in_list(check_in_list_id, payload):
     CheckInListManager.update_check_in_list(
-        check_in_list_sn=check_in_list_id,
+        check_in_list_id=check_in_list_id,
         info=payload
     )
     data = {
@@ -76,7 +76,7 @@ def update_check_in_list(check_in_list_id, payload):
 @api.route("/check-in-list/<int:check_in_list_id>", methods=["DELETE"])
 @login_required
 def delete_check_in_list(check_in_list_id):
-    CheckInListManager.delete_check_in_list(check_in_list_sn=check_in_list_id)
+    CheckInListManager.delete_check_in_list(check_in_list_id=check_in_list_id)
     info = {
         "code": OK.code,
         "message": OK.message

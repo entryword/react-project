@@ -36,7 +36,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
-            return obj.sn
+            return obj.id
         return None
 
     def create_event_basic(self, info, autocommit=False):
@@ -45,30 +45,30 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
-            return obj.sn
+            return obj.id
         return None
 
     def create_event_info(self, info, autocommit=False):
-        speaker_sns = info.pop("speaker_sns", [])
-        assistant_sns = info.pop("assistant_sns", [])
-        slide_resource_sns = info.pop("slide_resource_sns", [])
+        speaker_ids = info.pop("speaker_ids", [])
+        assistant_ids = info.pop("assistant_ids", [])
+        slide_resource_ids = info.pop("slide_resource_ids", [])
 
         obj = EventInfo(**info)
 
-        speakers = self.session.query(Speaker).filter(Speaker.sn.in_(speaker_sns)).all()
+        speakers = self.session.query(Speaker).filter(Speaker.id.in_(speaker_ids)).all()
         obj.speakers = speakers
 
-        assistants = self.session.query(Speaker).filter(Speaker.sn.in_(assistant_sns)).all()
+        assistants = self.session.query(Speaker).filter(Speaker.id.in_(assistant_ids)).all()
         obj.assistants = assistants
 
-        slide_resources = self.session.query(SlideResource).filter(SlideResource.sn.in_(slide_resource_sns)).all()
+        slide_resources = self.session.query(SlideResource).filter(SlideResource.id.in_(slide_resource_ids)).all()
         obj.slide_resources = slide_resources
 
         self.session.add(obj)
 
         if autocommit:
             self.session.commit()
-            return obj.sn
+            return obj.id
 
     def create_place(self, info, autocommit=False):
         obj = Place(**info)
@@ -76,7 +76,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
-            return obj.sn
+            return obj.id
         return None
 
     def create_speaker(self, info, autocommit=False):
@@ -91,7 +91,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
-            return obj.sn
+            return obj.id
         return None
 
     def create_event_apply(self, info, autocommit=False):
@@ -99,7 +99,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         self.session.add(obj)
         if autocommit:
             self.session.commit()
-            return obj.sn
+            return obj.id
         return None
 
     def create_slide_resource(self, info, autocommit=False):
@@ -108,7 +108,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
-            return obj.sn
+            return obj.id
         return None
 
     def create_role(self, info, autocommit=False):
@@ -117,7 +117,7 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
-            return obj.sn
+            return obj.id
         return None
 
     def create_check_in_list(self, info, autocommit=False, flush=False):
@@ -126,15 +126,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
         if autocommit:
             self.session.commit()
-            return obj.sn
+            return obj.id
         if flush:
             self.session.flush()
-            return obj.sn
+            return obj.id
 
     def create_user(self, info, autocommit=False, flush=False):
-        """
-            TODO id change to sn
-        """
         obj = User(**info)
         self.session.add(obj)
 
@@ -171,8 +168,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
             statement = and_(statement, Topic.host == host)
         return self.session.query(Topic).filter(statement).all()
 
-    def get_topic(self, sn):
-        topic = self.session.query(Topic).filter_by(sn=sn).one_or_none()
+    def get_topic(self, id):
+        topic = self.session.query(Topic).filter_by(id=id).one_or_none()
         if not topic:
             raise TOPIC_NOT_EXIST
         topic = self.session.merge(topic)
@@ -214,8 +211,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         home_event.sort(key=lambda e: "{} {}".format(e.date, e.start_time))
         return home_event[:limit]
 
-    def get_event_basics_by_topic(self, topic_sn):
-        return self.session.query(EventBasic).filter_by(topic_sn=topic_sn).all()
+    def get_event_basics_by_topic(self, topic_id):
+        return self.session.query(EventBasic).filter_by(topic_id=topic_id).all()
 
     def search_event_basics(self, keyword, date):
 
@@ -240,30 +237,30 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def get_event_basics(self):
         return self.session.query(EventBasic).all()
 
-    def get_event_basic(self, sn):
-        event_basic = self.session.query(EventBasic).filter_by(sn=sn).one_or_none()
+    def get_event_basic(self, id):
+        event_basic = self.session.query(EventBasic).filter_by(id=id).one_or_none()
         if not event_basic:
             raise EVENTBASIC_NOT_EXIST
         event_basic = self.session.merge(event_basic)
         return event_basic
 
-    def get_event_info(self, sn):
-        event_info = self.session.query(EventInfo).filter_by(sn=sn).one_or_none()
+    def get_event_info(self, id):
+        event_info = self.session.query(EventInfo).filter_by(id=id).one_or_none()
         if not event_info:
             raise EVENTINFO_NOT_EXIST
         event_info = self.session.merge(event_info)
         return event_info
 
-    def get_event_apply_by_event_basic_sn(self, event_basic_sn):
+    def get_event_apply_by_event_basic_id(self, event_basic_id):
         event_apply = self.session.query(EventApply)\
-            .filter_by(event_basic_sn=event_basic_sn).one_or_none()
+            .filter_by(event_basic_id=event_basic_id).one_or_none()
         if not event_apply:
             raise APPLY_NOT_EXIST
         event_apply = self.session.merge(event_apply)
         return event_apply
 
-    def get_event_apply(self, sn):
-        event_apply = self.session.query(EventApply).filter_by(sn=sn).one_or_none()
+    def get_event_apply(self, id):
+        event_apply = self.session.query(EventApply).filter_by(id=id).one_or_none()
         if not event_apply:
             raise APPLY_NOT_EXIST
         event_apply = self.session.merge(event_apply)
@@ -273,8 +270,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def get_places(self):
         return self.session.query(Place).all()
 
-    def get_place(self, sn):
-        place = self.session.query(Place).filter_by(sn=sn).one_or_none()
+    def get_place(self, id):
+        place = self.session.query(Place).filter_by(id=id).one_or_none()
         if not place:
             raise PLACE_NOT_EXIST
         place = self.session.merge(place)
@@ -291,8 +288,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def get_speakers(self):
         return self.session.query(Speaker).all()
 
-    def get_speaker(self, sn):
-        speaker = self.session.query(Speaker).filter_by(sn=sn).one_or_none()
+    def get_speaker(self, id):
+        speaker = self.session.query(Speaker).filter_by(id=id).one_or_none()
         if not speaker:
             raise SPEAKER_NOT_EXIST
         speaker = self.session.merge(speaker)
@@ -312,8 +309,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def get_slides(self):
         return self.session.query(SlideResource).all()
 
-    def get_slide_resource(self, sn):
-        slide_resource = self.session.query(SlideResource).filter_by(sn=sn).one_or_none()
+    def get_slide_resource(self, id):
+        slide_resource = self.session.query(SlideResource).filter_by(id=id).one_or_none()
         if not slide_resource:
             raise SLIDERESOURCE_NOT_EXIST
         slide_resource = self.session.merge(slide_resource)
@@ -336,8 +333,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
     def get_user_by_email(self, email):
         return self.session.query(User).filter(User.mail == email).first()
 
-    def get_role(self, sn):
-        role = self.session.query(Role).filter_by(sn=sn).one_or_none()
+    def get_role(self, id):
+        role = self.session.query(Role).filter_by(id=id).one_or_none()
         if not role:
             raise ROLE_NOT_EXIST
         role = self.session.merge(role)
@@ -347,15 +344,15 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         roles = self.session.query(Role).all()
         return roles
 
-    def get_check_in_list(self, event_basic_sn):
+    def get_check_in_list(self, event_basic_id):
         records = self.session.query(CheckInList).filter_by(
-            event_basic_sn=event_basic_sn
+            event_basic_id=event_basic_id
         ).all()
         return records
 
-    def get_check_in_list_by_event_basic_sn_and_email(self, event_basic_sn, email):
+    def get_check_in_list_by_event_basic_id_and_email(self, event_basic_id, email):
         record = self.session.query(CheckInList).filter_by(
-            event_basic_sn=event_basic_sn,
+            event_basic_id=event_basic_id,
             mail=email
         ).first()
         return record
@@ -376,12 +373,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     # TODO: not finished yet
 
-    def update_topic(self, sn, info, autocommit=False):
-        topic = self.session.query(Topic).filter_by(sn=sn).one_or_none()
+    def update_topic(self, id, info, autocommit=False):
+        topic = self.session.query(Topic).filter_by(id=id).one_or_none()
         if not topic:
             raise TOPIC_NOT_EXIST
 
-        info.pop("sn", None)
+        info.pop("id", None)
         for key, value in info.items():
             if hasattr(topic, key):
                 setattr(topic, key, value)
@@ -390,12 +387,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def update_event_basic(self, sn, info, autocommit=False):
-        event_basic = self.session.query(EventBasic).filter_by(sn=sn).one_or_none()
+    def update_event_basic(self, id, info, autocommit=False):
+        event_basic = self.session.query(EventBasic).filter_by(id=id).one_or_none()
         if not event_basic:
             raise EVENTBASIC_NOT_EXIST
 
-        info.pop("sn", None)
+        info.pop("id", None)
         for key, value in info.items():
             if hasattr(event_basic, key):
                 setattr(event_basic, key, value)
@@ -404,27 +401,27 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def update_event_info(self, sn, info, autocommit=False):
-        event_info = self.session.query(EventInfo).filter_by(sn=sn).one_or_none()
+    def update_event_info(self, id, info, autocommit=False):
+        event_info = self.session.query(EventInfo).filter_by(id=id).one_or_none()
         if not event_info:
             raise EVENTINFO_NOT_EXIST
 
-        if "speaker_sns" in info:
-            speaker_sns = info.pop("speaker_sns")
-            speakers = self.session.query(Speaker).filter(Speaker.sn.in_(speaker_sns)).all()
+        if "speaker_ids" in info:
+            speaker_ids = info.pop("speaker_ids")
+            speakers = self.session.query(Speaker).filter(Speaker.id.in_(speaker_ids)).all()
             event_info.speakers = speakers
 
-        if "assistant_sns" in info:
-            assistant_sns = info.pop("assistant_sns")
-            assistants = self.session.query(Speaker).filter(Speaker.sn.in_(assistant_sns)).all()
+        if "assistant_ids" in info:
+            assistant_ids = info.pop("assistant_ids")
+            assistants = self.session.query(Speaker).filter(Speaker.id.in_(assistant_ids)).all()
             event_info.assistants = assistants
 
-        if "slide_resource_sns" in info:
-            slide_resource_sns = info.pop("slide_resource_sns")
-            slide_resources = self.session.query(SlideResource).filter(SlideResource.sn.in_(slide_resource_sns)).all()
+        if "slide_resource_ids" in info:
+            slide_resource_ids = info.pop("slide_resource_ids")
+            slide_resources = self.session.query(SlideResource).filter(SlideResource.id.in_(slide_resource_ids)).all()
             event_info.slide_resources = slide_resources
 
-        info.pop("sn", None)
+        info.pop("id", None)
         for key, value in info.items():
             if hasattr(event_info, key):
                 setattr(event_info, key, value)
@@ -433,12 +430,12 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def update_place(self, sn, info, autocommit=False):
-        place = self.session.query(Place).filter_by(sn=sn).one_or_none()
+    def update_place(self, id, info, autocommit=False):
+        place = self.session.query(Place).filter_by(id=id).one_or_none()
         if not place:
             raise PLACE_NOT_EXIST
 
-        info.pop("sn", None)
+        info.pop("id", None)
         for key, value in info.items():
             if hasattr(place, key):
                 setattr(place, key, value)
@@ -447,21 +444,21 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def update_speaker(self, sn, info, autocommit=False):
-        speaker = self.session.query(Speaker).filter_by(sn=sn).one_or_none()
+    def update_speaker(self, id, info, autocommit=False):
+        speaker = self.session.query(Speaker).filter_by(id=id).one_or_none()
         if not speaker:
             raise SPEAKER_NOT_EXIST
 
         if "links" in info:
             for i in speaker.links:
-                self.delete_link(i.sn, autocommit=autocommit)
+                self.delete_link(i.id, autocommit=autocommit)
             links = info.pop("links")
             links_ = []
             for i in links:
                 links_.append(Link(**i))
             speaker.links = links_
 
-        info.pop("sn", None)
+        info.pop("id", None)
         for key, value in info.items():
             if hasattr(speaker, key):
                 setattr(speaker, key, value)
@@ -470,11 +467,11 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def update_event_apply(self, sn, info, autocommit=False):
-        event_apply = self.session.query(EventApply).filter_by(sn=sn).one_or_none()
+    def update_event_apply(self, id, info, autocommit=False):
+        event_apply = self.session.query(EventApply).filter_by(id=id).one_or_none()
         if not event_apply:
             raise EVENTINFO_NOT_EXIST
-        info.pop("sn", None)
+        info.pop("id", None)
         for key, value in info.items():
             if hasattr(event_apply, key):
                 setattr(event_apply, key, value)
@@ -483,11 +480,11 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def update_role(self, sn, info, autocommit=False):
-        role = self.session.query(Role).filter_by(sn=sn).one_or_none()
+    def update_role(self, id, info, autocommit=False):
+        role = self.session.query(Role).filter_by(id=id).one_or_none()
         if not role:
             raise ROLE_NOT_EXIST
-        info.pop("sn", None)
+        info.pop("id", None)
         for key, value in info.items():
             if hasattr(role, key):
                 setattr(role, key, value)
@@ -496,8 +493,8 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
         if autocommit:
             self.session.commit()
 
-    def update_check_in_list(self, check_in_list_sn, info, autocommit=False):
-        record = self.session.query(CheckInList).filter_by(sn=check_in_list_sn).first()
+    def update_check_in_list(self, check_in_list_id, info, autocommit=False):
+        record = self.session.query(CheckInList).filter_by(id=check_in_list_id).first()
         if not record:
             raise RECORD_NOT_EXIST
 
@@ -522,80 +519,80 @@ class MySQLDatabaseAPI(SQLDatabaseAPI):
 
     ########## delete
 
-    def delete_topic(self, sn, autocommit=False):
-        # topic = self.session.query(Topic).filter_by(sn=sn).one_or_none()
+    def delete_topic(self, id, autocommit=False):
+        # topic = self.session.query(Topic).filter_by(id=id).one_or_none()
         # if topic:
         #     self.session.delete(topic)
 
         #     if autocommit:
         #         self.session.commit()
-        stmt = text("DELETE FROM topic WHERE sn=:sn").bindparams(sn=sn)
+        stmt = text("DELETE FROM topic WHERE id=:id").bindparams(id=id)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()
 
-    def delete_event_basic(self, sn, autocommit=False):
-        # event_basic = self.session.query(EventBasic).filter_by(sn=sn).one_or_none()
+    def delete_event_basic(self, id, autocommit=False):
+        # event_basic = self.session.query(EventBasic).filter_by(id=id).one_or_none()
         # if event_basic:
         #     self.session.delete(event_basic)
 
         #     if autocommit:
         #         self.session.commit()
-        stmt = text("DELETE FROM event_basic WHERE sn=:sn").bindparams(sn=sn)
+        stmt = text("DELETE FROM event_basic WHERE id=:id").bindparams(id=id)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()
 
-    def delete_event_info(self, sn, autocommit=False):
-        # event_info = self.session.query(EventInfo).filter_by(sn=sn).one_or_none()
+    def delete_event_info(self, id, autocommit=False):
+        # event_info = self.session.query(EventInfo).filter_by(id=id).one_or_none()
         # if event_info:
         #     self.session.delete(event_info)
 
         #     if autocommit:
         #         self.session.commit()
-        stmt = text("DELETE FROM event_info WHERE sn=:sn").bindparams(sn=sn)
+        stmt = text("DELETE FROM event_info WHERE id=:id").bindparams(id=id)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()
 
-    def delete_speaker(self, sn, autocommit=False):
-        # speaker = self.session.query(Speaker).filter_by(sn=sn).one_or_none()
+    def delete_speaker(self, id, autocommit=False):
+        # speaker = self.session.query(Speaker).filter_by(id=id).one_or_none()
         # if speaker:
         #     self.session.delete(speaker)
 
         #     if autocommit:
         #         self.session.commit()
-        stmt = text("DELETE FROM speaker WHERE sn=:sn").bindparams(sn=sn)
+        stmt = text("DELETE FROM speaker WHERE id=:id").bindparams(id=id)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()
 
-    def delete_link(self, sn, autocommit=True):
-        stmt = text("DELETE FROM link WHERE sn=:sn").bindparams(sn=sn)
+    def delete_link(self, id, autocommit=True):
+        stmt = text("DELETE FROM link WHERE id=:id").bindparams(id=id)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()
 
-    def delete_slide_resource(self, sn, autocommit=True):
-        stmt = text("DELETE FROM slide_resource WHERE sn=:sn").bindparams(sn=sn)
+    def delete_slide_resource(self, id, autocommit=True):
+        stmt = text("DELETE FROM slide_resource WHERE id=:id").bindparams(id=id)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()
 
-    def delete_event_apply(self, sn, autocommit=False):
-        stmt = text("DELETE FROM event_apply WHERE sn=:sn").bindparams(sn=sn)
+    def delete_event_apply(self, id, autocommit=False):
+        stmt = text("DELETE FROM event_apply WHERE id=:id").bindparams(id=id)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()
 
-    def delete_role(self, sn, autocommit=False):
-        stmt = text("DELETE FROM role WHERE sn=:sn").bindparams(sn=sn)
+    def delete_role(self, id, autocommit=False):
+        stmt = text("DELETE FROM role WHERE id=:id").bindparams(id=id)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()
 
-    def delete_check_in_list(self, sn, autocommit=False):
-        stmt = text("DELETE FROM check_in_list WHERE sn=:sn").bindparams(sn=sn)
+    def delete_check_in_list(self, id, autocommit=False):
+        stmt = text("DELETE FROM check_in_list WHERE id=:id").bindparams(id=id)
         self.session.execute(stmt)
         if autocommit:
             self.session.commit()

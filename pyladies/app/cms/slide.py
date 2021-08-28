@@ -31,10 +31,10 @@ def create_slide():
     }
 
     manager = SlideManager()
-    slide_sn = manager.create_slide(slide_data)
-    slide = manager.get_slide(slide_sn)
+    slide_id = manager.create_slide(slide_data)
+    slide = manager.get_slide(slide_id)
     slide_info = {
-        "id": slide.sn,
+        "id": slide.id,
         "type": slide.type,
         "title": slide.title,
         "url": slide.url

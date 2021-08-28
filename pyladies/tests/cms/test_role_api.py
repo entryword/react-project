@@ -39,15 +39,15 @@ class TestRoleApis(unittest.TestCase):
     def _create_test_role_data(self, info):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
-            role_sn = manager.create_role(info, autocommit=True)
-            return role_sn
+            role_id = manager.create_role(info, autocommit=True)
+            return role_id
 
-    def _check_data_existed(self, role_sn):
+    def _check_data_existed(self, role_id):
         existed = False
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             try:
-                manager.get_role(role_sn)
+                manager.get_role(role_id)
                 existed = True
             except:
                 existed = False

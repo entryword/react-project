@@ -52,9 +52,9 @@ class UserManagerTestCase(unittest.TestCase):
             self.assertEqual([{
                 'name': 'ut_name_u1',
                 'roles':[
-                    {'name': 'r1', 'sn': r1.sn},
-                    {'name': 'r2', 'sn': r2.sn}
+                    {'name': 'r1', 'id': r1.id},
+                    {'name': 'r2', 'id': r2.id}
                 ],
                 'status': 0,
-                'sn': u.id
+                'id': u.id
             }], res)

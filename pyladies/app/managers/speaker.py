@@ -17,7 +17,7 @@ class Manager(BaseSpeakerManager):
             manager = current_app.db_api_class(db_sess)
             manager.create_speaker(info, autocommit=True)
             speaker = manager.get_speaker_by_name(info["name"])
-            return speaker.sn
+            return speaker.id
 
     @staticmethod
     def create_speaker_by_object(speaker_info):
@@ -25,28 +25,28 @@ class Manager(BaseSpeakerManager):
             manager = current_app.db_api_class(db_sess)
             manager.create_speaker(speaker_info, autocommit=True)
             speaker = manager.get_speaker_by_name(speaker_info["name"])
-            return speaker.sn
+            return speaker.id
 
     @staticmethod
-    def update_speaker(sn, file_path):
+    def update_speaker(id, file_path):
         with open(file_path) as f:
             new_info = json.loads(f.read())
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.update_speaker(sn, new_info, autocommit=True)
+            manager.update_speaker(id, new_info, autocommit=True)
 
     @staticmethod
-    def update_speaker_by_object(sn, speaker_info):
+    def update_speaker_by_object(id, speaker_info):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.update_speaker(sn, speaker_info, autocommit=True)
+            manager.update_speaker(id, speaker_info, autocommit=True)
 
     @staticmethod
-    def delete_speaker(sn):
+    def delete_speaker(id):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.delete_speaker(sn, autocommit=True)
+            manager.delete_speaker(id, autocommit=True)
 
     @staticmethod
     def list_speakers():
@@ -65,7 +65,7 @@ class Manager(BaseSpeakerManager):
             speaker_list = []
             for speaker in speakers:
                 data = {
-                    "id": speaker.sn,
+                    "id": speaker.id,
                     "name": speaker.name,
                     "title": speaker.title
                 }
@@ -99,7 +99,7 @@ class Manager(BaseSpeakerManager):
             for speaker in speakers:
                 if (not fields) or (fields.intersection(set(speaker.fields))):
                     speaker_list.append({
-                        "id": speaker.sn,
+                        "id": speaker.id,
                         "name": speaker.name,
                         "photo": speaker.photo,
                         "title": speaker.title,
@@ -108,20 +108,20 @@ class Manager(BaseSpeakerManager):
             return speaker_list
 
     @staticmethod
-    def get_speaker_profile(sn):
+    def get_speaker_profile(id):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            speaker = manager.get_speaker(sn)
+            speaker = manager.get_speaker(id)
             links = [{"type": link.type, "url": link.url} for link in speaker.links]
-            events = sorted(speaker.event_infos, key=lambda e: e.sn)
-            topics = sorted(set(map(lambda e: e.event_basic.topic, events)), key=lambda t: t.sn)
+            events = sorted(speaker.event_infos, key=lambda e: e.id)
+            topics = sorted(set(map(lambda e: e.event_basic.topic, events)), key=lambda t: t.id)
             talks = [
                 {
-                    "topic_id": topic.sn,
+                    "topic_id": topic.id,
                     "topic_name": topic.name,
                     "events": [
-                        {"title": event.title, "id": event.sn}
-                        for event in events if event.event_basic.topic.sn == topic.sn
+                        {"title": event.title, "id": event.id}
+                        for event in events if event.event_basic.topic.id == topic.id
                     ]
                 } for topic in topics
             ]

@@ -7,7 +7,7 @@ class AccupassCsvProcessor:
     """
         處理Accupass輸出的csv報名表
 
-        results = AccupassCsvProcessor(event_basic_sn, csv_file).get()
+        results = AccupassCsvProcessor(event_basic_id, csv_file).get()
     """
 
     _allow_columns = {
@@ -28,9 +28,9 @@ class AccupassCsvProcessor:
         '學生票': TicketType.STUDENT
     }
 
-    def __init__(self, manager, event_basic_sn, stream):
+    def __init__(self, manager, event_basic_id, stream):
         self.manager = manager
-        self.event_basic_sn = event_basic_sn
+        self.event_basic_id = event_basic_id
         self.csv_reader = self._get_csv_reader(stream=stream)
         self.emails = list()
         self.results = list()
@@ -65,7 +65,7 @@ class AccupassCsvProcessor:
         """
         return {}
         # users = self.manager.get_users_by_emails(emails=emails)
-        # return {user.mail: user.sn for user in users}
+        # return {user.mail: user.id for user in users}
 
     def _convert_ticket_type(self, origin):
         if not origin or origin not in self._ticket_type_maps:
@@ -81,17 +81,17 @@ class AccupassCsvProcessor:
         #     name=email,
         #     mail=email
         # )
-        # user_sn = self.manager.create_user(info=info, flush=True)
-        # return user_sn
+        # user_id = self.manager.create_user(info=info, flush=True)
+        # return user_id
 
     def _create_check_member(self, row, user_dict):
         email = row.get('mail')
         ticket_type = self._convert_ticket_type(origin=row.get('ticket_type'))
         ticket_amount = int(row.get('ticket_amount'))
-        user_sn = user_dict[email] if email in user_dict else self._insert_new_user(email=email)
+        user_id = user_dict[email] if email in user_dict else self._insert_new_user(email=email)
         info = dict(
-            event_basic_sn=self.event_basic_sn,
-            user_sn=user_sn,
+            event_basic_id=self.event_basic_id,
+            user_id=user_id,
             name=row.get('name'),
             mail=email,
             phone=row.get('phone'),
@@ -100,11 +100,11 @@ class AccupassCsvProcessor:
             remark=None,
             status=CheckInListStatus.NO_CHECK_IN
         )
-        check_in_list_sn = self.manager.create_check_in_list(info=info, flush=True)
+        check_in_list_id = self.manager.create_check_in_list(info=info, flush=True)
         schema = {
-            'id': check_in_list_sn,
-            'event_basic_id': info['event_basic_sn'],
-            'user_id': info['user_sn'],
+            'id': check_in_list_id,
+            'event_basic_id': info['event_basic_id'],
+            'user_id': info['user_id'],
             'name': info['name'],
             'mail': info['mail'],
             'phone': info['phone'],

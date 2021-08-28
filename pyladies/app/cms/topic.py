@@ -51,9 +51,9 @@ def create_topic():
         "fields": data["fields"],
     }
 
-    topic_sn = TopicManager().create_topic_by_object(topic_info)
+    topic_id = TopicManager().create_topic_by_object(topic_info)
     data = {
-        "id": topic_sn
+        "id": topic_id
     }
     info = {
         "code": OK.code,

@@ -5,7 +5,7 @@ import unittest
 from unittest.mock import patch
 
 from app import create_app
-from app.constant import DEFAULT_PLACE_SN
+from app.constant import DEFAULT_PLACE_ID
 from app.sqldb import DBWrapper
 from app.exceptions import (
     EVENTLIST_INVALID_KEYWORD,
@@ -41,7 +41,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             place_info = {
-                "sn": DEFAULT_PLACE_SN,
+                "id": DEFAULT_PLACE_ID,
                 "name": "default place",
                 "addr": "default place addr",
                 "map": "default place map",
@@ -122,7 +122,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 "url": "https://github.com/win911/flask_class",
             },
         ]
-        slide_resource_sns = []
+        slide_resource_ids = []
         topic_info = {
             "name": "Flask",
             "desc": "This is description",
@@ -132,34 +132,34 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "fields": [0, 1, 2],
         }
         event_basic_info = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2017-01-01",
             "start_time": "14:00",
             "end_time": "16:00",
         }
         event_info_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
-            "slide_resource_sns": slide_resource_sns,
+            "slide_resource_ids": slide_resource_ids,
         }
 
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
-            event_basic_info["topic_sn"] = 1
-            place_sn = manager.create_place(place_info, autocommit=True)
-            event_basic_info["place_sn"] = place_sn
+            event_basic_info["topic_id"] = 1
+            place_id = manager.create_place(place_info, autocommit=True)
+            event_basic_info["place_id"] = place_id
             manager.create_event_basic(event_basic_info, autocommit=True)
-            event_info_info["event_basic_sn"] = 1
+            event_info_info["event_basic_id"] = 1
             manager.create_speaker(speaker_info, autocommit=True)
-            event_info_info["speaker_sns"] = [1]
+            event_info_info["speaker_ids"] = [1]
             manager.create_speaker(assistant_info, autocommit=True)
-            event_info_info["assistant_sns"] = [2]
+            event_info_info["assistant_ids"] = [2]
             for item in slide_resources:
-                slide_resource_sns.append(manager.create_slide_resource(item, autocommit=True))
+                slide_resource_ids.append(manager.create_slide_resource(item, autocommit=True))
             manager.create_event_info(event_info_info, autocommit=True)
 
         # test
@@ -205,7 +205,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "fields": [0, 1, 2],
         }
         event_basic_info = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2017-01-01",
             "start_time": "14:00",
             "end_time": "16:00",
@@ -215,9 +215,9 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
-            event_basic_info["topic_sn"] = 1
-            place_sn = manager.create_place(place_info, autocommit=True)
-            event_basic_info["place_sn"] = place_sn
+            event_basic_info["topic_id"] = 1
+            place_id = manager.create_place(place_info, autocommit=True)
+            event_basic_info["place_id"] = place_id
             manager.create_event_basic(event_basic_info, autocommit=True)
 
         # test
@@ -274,7 +274,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 "url": "https://github.com/win911/flask_class",
             },
         ]
-        slide_resource_sns = []
+        slide_resource_ids = []
         topic_info = {
             "name": "Flask",
             "desc": "This is description",
@@ -284,34 +284,34 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "fields": [0, 1, 2],
         }
         event_basic_info = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2017-01-01",
             "start_time": "14:00",
             "end_time": "16:00",
         }
         event_info_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
-            "slide_resource_sns": slide_resource_sns,
+            "slide_resource_ids": slide_resource_ids,
         }
 
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
-            event_basic_info["topic_sn"] = 1
-            place_sn = manager.create_place(place_info, autocommit=True)
-            event_basic_info["place_sn"] = place_sn
+            event_basic_info["topic_id"] = 1
+            place_id = manager.create_place(place_info, autocommit=True)
+            event_basic_info["place_id"] = place_id
             manager.create_event_basic(event_basic_info, autocommit=True)
-            event_info_info["event_basic_sn"] = 1
+            event_info_info["event_basic_id"] = 1
             manager.create_speaker(speaker_info, autocommit=True)
-            event_info_info["speaker_sns"] = [1]
+            event_info_info["speaker_ids"] = [1]
             manager.create_speaker(assistant_info, autocommit=True)
-            event_info_info["assistant_sns"] = [2]
+            event_info_info["assistant_ids"] = [2]
             for item in slide_resources:
-                slide_resource_sns.append(manager.create_slide_resource(item, autocommit=True))
+                slide_resource_ids.append(manager.create_slide_resource(item, autocommit=True))
             manager.create_event_info(event_info_info, autocommit=True)
 
         # test
@@ -356,29 +356,29 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         place_info = {"name": "國立台灣大學", "addr": "台北市大安區羅斯福路四段1號", "map": ""}
         event_basics = [
             {
-                "topic_sn": 1,
+                "topic_id": 1,
                 "date": "2019-01-07",
                 "start_time": "10:00",
                 "end_time": "12:00",
-                "place_sn": 1,
+                "place_id": 1,
             },
             {
-                "topic_sn": 1,
+                "topic_id": 1,
                 "date": "2019-02-17",
                 "start_time": "17:30",
                 "end_time": "20:00",
-                "place_sn": None,
+                "place_id": None,
             },
         ]
         event_infos = [
             {
-                "event_basic_sn": 1,
+                "event_basic_id": 1,
                 "title": "event 1",
                 "desc": "this is event 1",
                 "fields": [0, 1],
             },
             {
-                "event_basic_sn": 2,
+                "event_basic_id": 2,
                 "title": "event 2",
                 "desc": "this is event 2",
                 "fields": [0],
@@ -390,8 +390,8 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             for topic in topics:
                 manager.create_topic(topic, autocommit=True)
-            place_sn = manager.create_place(place_info, autocommit=True)
-            event_basics[0]["place_sn"] = place_sn
+            place_id = manager.create_place(place_info, autocommit=True)
+            event_basics[0]["place_id"] = place_id
             for event_basic in event_basics:
                 manager.create_event_basic(event_basic, autocommit=True)
             for event_info in event_infos:
@@ -556,7 +556,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "fields": [0, 1, 2],
         }
         event_basic_info = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2017-01-01",
             "start_time": "14:00",
             "end_time": "16:00",
@@ -587,7 +587,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         }
 
         input_event_apply = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info_1, apply_info_2]
         }
 
@@ -596,21 +596,21 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_basic = topic.event_basics[0]
-            input_event_apply["event_basic_sn"] = event_basic.sn
-            event_apply_sn = manager.create_event_apply(
+            input_event_apply["event_basic_id"] = event_basic.id
+            event_apply_id = manager.create_event_apply(
                 input_event_apply, autocommit=True
             )
 
         # test
-        rv = self.test_client.get("/v1.0/api/apply_info/" + str(event_apply_sn))
+        rv = self.test_client.get("/v1.0/api/apply_info/" + str(event_apply_id))
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], 0)
         self.assertEqual(rv.json["data"], input_event_apply)
 
-    def test_get_event_apply_info_by_event_basic_sn(self):
+    def test_get_event_apply_info_by_event_basic_id(self):
         topic_info = {
             "name": "Flask",
             "desc": "This is description",
@@ -620,7 +620,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "fields": [0, 1, 2],
         }
         event_basic_info = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2017-01-01",
             "start_time": "14:00",
             "end_time": "16:00",
@@ -651,7 +651,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         }
 
         input_event_apply = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "apply": [apply_info_1, apply_info_2]
         }
 
@@ -660,15 +660,15 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
             event_basic = topic.event_basics[0]
-            input_event_apply["event_basic_sn"] = event_basic.sn
+            input_event_apply["event_basic_id"] = event_basic.id
             manager.create_event_apply(input_event_apply, autocommit=True)
 
         # test
         rv = self.test_client.get("/v1.0/api/event/"
-                                  + str(input_event_apply["event_basic_sn"]) + "/apply_info")
+                                  + str(input_event_apply["event_basic_id"]) + "/apply_info")
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], 0)
         self.assertEqual(rv.json["data"], input_event_apply)
@@ -678,7 +678,7 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], 1600)
 
-    def test_get_event_apply_info_by_event_basic_sn_but_event_not_exist(self):
+    def test_get_event_apply_info_by_event_basic_id_but_event_not_exist(self):
         rv = self.test_client.get("/v1.0/api/event/0/apply_info")
         self.assertEqual(rv.status_code, 200)
         self.assertEqual(rv.json["info"]["code"], 1600)
@@ -719,50 +719,50 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "fields": [0, 1, 2],
         }
         event_basic_info_1 = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2020-01-01",
             "start_time": "14:00",
             "end_time": "16:00",
         }
         event_basic_info_2 = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2020-03-08",
             "start_time": "14:00",
             "end_time": "16:00",
         }
         event_basic_info_3 = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2020-05-25",
             "start_time": "14:00",
             "end_time": "16:00",
         }
         event_basic_info_4 = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2020-10-30",
             "start_time": "14:00",
             "end_time": "16:00",
         }
 
         event_info_1 = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
         }
         event_info_2 = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 2",
             "desc": "This is description of class 2",
             "fields": [0, 1],
         }
         event_info_3 = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 3",
             "desc": "This is description of class 3",
             "fields": [0, 1],
         }
         event_info_4 = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "Flask class 4",
             "desc": "This is description of class 4",
             "fields": [0, 1],
@@ -776,10 +776,10 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             topic_3 = manager.create_topic(topic_info_3, autocommit=True)
             topic_4 = manager.create_topic(topic_info_4, autocommit=True)
 
-            event_basic_info_1["topic_sn"] = topic_1
-            event_basic_info_2["topic_sn"] = topic_2
-            event_basic_info_3["topic_sn"] = topic_3
-            event_basic_info_4["topic_sn"] = topic_4
+            event_basic_info_1["topic_id"] = topic_1
+            event_basic_info_2["topic_id"] = topic_2
+            event_basic_info_3["topic_id"] = topic_3
+            event_basic_info_4["topic_id"] = topic_4
 
             event_basic_1_id = manager.create_event_basic(
                 event_basic_info_1, autocommit=True
@@ -794,10 +794,10 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
                 event_basic_info_4, autocommit=True
             )
 
-            event_info_1["event_basic_sn"] = event_basic_1_id
-            event_info_2["event_basic_sn"] = event_basic_2_id
-            event_info_3["event_basic_sn"] = event_basic_3_id
-            event_info_4["event_basic_sn"] = event_basic_4_id
+            event_info_1["event_basic_id"] = event_basic_1_id
+            event_info_2["event_basic_id"] = event_basic_2_id
+            event_info_3["event_basic_id"] = event_basic_3_id
+            event_info_4["event_basic_id"] = event_basic_4_id
 
             manager.create_event_info(event_info_1, autocommit=True)
             manager.create_event_info(event_info_2, autocommit=True)
@@ -878,13 +878,13 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             "fields": [0, 1]
         }
         event_basic_info = {
-            "topic_sn": None,
+            "topic_id": None,
             "date": "2020-01-01",
             "start_time": "14:00",
             "end_time": "16:00"
         }
         event_info = {
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "class 1",
             "desc": "This is description of class 1",
             "fields": [0, 1],
@@ -900,16 +900,16 @@ class RESTfulAPIv1_0TestCase(unittest.TestCase):
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
 
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
 
-            event_info["event_basic_sn"] = topic.event_basics[0].sn
-            event_info["speaker_sns"] = [speaker.sn]
+            event_info["event_basic_id"] = topic.event_basics[0].id
+            event_info["speaker_ids"] = [speaker.id]
 
             manager.create_event_info(event_info, autocommit=True)
 
             expected_talks = [
-                {'topic_name': topic.name, 'topic_id': topic.sn,
+                {'topic_name': topic.name, 'topic_id': topic.id,
                  'events': [{'id': 1, 'title': event_info["title"]}]},
             ]
 

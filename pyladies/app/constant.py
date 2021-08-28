@@ -111,8 +111,8 @@ DEFINITION_1_0 = {
     "check_in_list_status": CHECK_IN_LIST_STATUS_1_0
 }
 
-DEFAULT_PLACE_SN = 37
-DEFAULT_FIELD_SN = -1
+DEFAULT_PLACE_ID = 37
+DEFAULT_FIELD_ID = -1
 
 class UserType:
     ADMIN = 'Admin'

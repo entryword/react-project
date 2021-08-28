@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import pytest
 from app import create_app
-from app.constant import DEFAULT_PLACE_SN
+from app.constant import DEFAULT_PLACE_ID
 from app.sqldb import DBWrapper
 
 
@@ -23,7 +23,7 @@ class TestEvents:
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             manager = self.app.db_api_class(db_sess)
             place_info = {
-                "sn": DEFAULT_PLACE_SN,
+                "id": DEFAULT_PLACE_ID,
                 "name": "default place",
                 "addr": "default place addr",
                 "map": "default place map",
@@ -44,10 +44,10 @@ class TestEvents:
     @pytest.mark.parametrize('event_basic_infos', [2], indirect=True)
     @pytest.mark.parametrize('event_infos', [2], indirect=True)
     def test_search_events_with_keywords(self, topic_infos, event_basic_infos, event_infos):
-        event_basic_infos[0]['topic_sn'] = 1
-        event_basic_infos[1]['topic_sn'] = 1
-        event_infos[0]['event_basic_sn'] = 1
-        event_infos[1]['event_basic_sn'] = 2
+        event_basic_infos[0]['topic_id'] = 1
+        event_basic_infos[1]['topic_id'] = 1
+        event_infos[0]['event_basic_id'] = 1
+        event_infos[1]['event_basic_id'] = 2
 
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -102,14 +102,14 @@ class TestEvents:
     @pytest.mark.parametrize('event_basic_infos', [3], indirect=True)
     @pytest.mark.parametrize('event_infos', [3], indirect=True)
     def test_search_events_with_date(self, topic_infos, event_basic_infos, event_infos):
-        event_basic_infos[0]['topic_sn'] = 1
-        event_basic_infos[1]['topic_sn'] = 1
-        event_basic_infos[2]['topic_sn'] = 2
+        event_basic_infos[0]['topic_id'] = 1
+        event_basic_infos[1]['topic_id'] = 1
+        event_basic_infos[2]['topic_id'] = 2
         event_basic_infos[0]['date'] = "2019-01-07"
         event_basic_infos[1]['date'] = "2019-02-03"
         event_basic_infos[2]['date'] = "2019-02-17"
         for i in range(3):
-            event_infos[i]['event_basic_sn'] = i + 1
+            event_infos[i]['event_basic_id'] = i + 1
 
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -147,14 +147,14 @@ class TestEvents:
     @pytest.mark.parametrize('event_infos', [3], indirect=True)
     def test_search_events_with_keywords_and_date(
             self, topic_infos, event_basic_infos, event_infos):
-        event_basic_infos[0]['topic_sn'] = 1
-        event_basic_infos[1]['topic_sn'] = 1
-        event_basic_infos[2]['topic_sn'] = 2
+        event_basic_infos[0]['topic_id'] = 1
+        event_basic_infos[1]['topic_id'] = 1
+        event_basic_infos[2]['topic_id'] = 2
         event_basic_infos[0]['date'] = "2019-01-07"
         event_basic_infos[1]['date'] = "2019-02-03"
         event_basic_infos[2]['date'] = "2019-02-17"
         for i in range(3):
-            event_infos[i]['event_basic_sn'] = i + 1
+            event_infos[i]['event_basic_id'] = i + 1
 
         # preparation
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
@@ -199,7 +199,7 @@ class TestEvents:
             manager.create_topic(topic_info, autocommit=True)
 
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
 
             # test
@@ -217,10 +217,10 @@ class TestEvents:
             manager.create_topic(topic_info, autocommit=True)
 
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
 
-            event_info["event_basic_sn"] = topic.event_basics[0].sn
+            event_info["event_basic_id"] = topic.event_basics[0].id
             manager.create_event_info(event_info, autocommit=True)
 
             # test
@@ -237,9 +237,9 @@ class TestEvents:
             manager = self.app.db_api_class(db_sess)
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
-            event_basic_info["topic_sn"] = topic.sn
+            event_basic_info["topic_id"] = topic.id
             manager.create_event_basic(event_basic_info, autocommit=True)
-            event_info["event_basic_sn"] = topic.event_basics[0].sn
+            event_info["event_basic_id"] = topic.event_basics[0].id
             manager.create_event_info(event_info, autocommit=True)
 
             # test
@@ -261,9 +261,9 @@ class TestEvents:
             manager.create_topic(topic_info, autocommit=True)
             topic = manager.get_topic_by_name(topic_info["name"])
             for event_basic, event_info, i in zip(event_basic_infos, event_infos, range(2)):
-                event_basic["topic_sn"] = topic.sn
+                event_basic["topic_id"] = topic.id
                 manager.create_event_basic(event_basic, autocommit=True)
-                event_info["event_basic_sn"] = topic.event_basics[i].sn
+                event_info["event_basic_id"] = topic.event_basics[i].id
                 manager.create_event_info(event_info, autocommit=True)
 
             # test
@@ -288,9 +288,9 @@ class TestEvents:
                     zip(topic_infos, event_basic_infos, event_infos):
                 manager.create_topic(topic_info, autocommit=True)
                 topic = manager.get_topic_by_name(topic_info["name"])
-                event_basic_info["topic_sn"] = topic.sn
+                event_basic_info["topic_id"] = topic.id
                 manager.create_event_basic(event_basic_info, autocommit=True)
-                event_info["event_basic_sn"] = topic.event_basics[0].sn
+                event_info["event_basic_id"] = topic.event_basics[0].id
                 manager.create_event_info(event_info, autocommit=True)
 
             # test
@@ -316,9 +316,9 @@ class TestEvents:
                     zip(topic_infos, event_basic_infos, event_infos):
                 manager.create_topic(topic_info, autocommit=True)
                 topic = manager.get_topic_by_name(topic_info["name"])
-                event_basic_info["topic_sn"] = topic.sn
+                event_basic_info["topic_id"] = topic.id
                 manager.create_event_basic(event_basic_info, autocommit=True)
-                event_info["event_basic_sn"] = topic.event_basics[0].sn
+                event_info["event_basic_id"] = topic.event_basics[0].id
                 manager.create_event_info(event_info, autocommit=True)
 
             # test
@@ -347,9 +347,9 @@ class TestEvents:
                     zip(topic_infos, event_basic_infos, event_infos):
                 manager.create_topic(topic_info, autocommit=True)
                 topic = manager.get_topic_by_name(topic_info["name"])
-                event_basic_info["topic_sn"] = topic.sn
+                event_basic_info["topic_id"] = topic.id
                 manager.create_event_basic(event_basic_info, autocommit=True)
-                event_info["event_basic_sn"] = topic.event_basics[0].sn
+                event_info["event_basic_id"] = topic.event_basics[0].id
                 manager.create_event_info(event_info, autocommit=True)
 
             # test

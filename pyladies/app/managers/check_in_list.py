@@ -13,9 +13,9 @@ class CheckInListManager(BaseCheckInListManager):
     @staticmethod
     def _extract_schema(record):
         schema = {
-            'id': record.sn,
-            'event_basic_id': record.event_basic_sn,
-            'user_id': record.user_sn,
+            'id': record.id,
+            'event_basic_id': record.event_basic_id,
+            'user_id': record.user_id,
             'name': record.name,
             'mail': record.mail,
             'phone': record.phone,
@@ -27,31 +27,31 @@ class CheckInListManager(BaseCheckInListManager):
         return schema
 
     @classmethod
-    def upload(cls, event_basic_sn, files):
+    def upload(cls, event_basic_id, files):
         stream = None
         if files[0].filename != '':
             file = files[0]
             stream = codecs.iterdecode(file.stream, 'utf-8')
         if not stream:
             raise FILE_REQUIRED
-        old_results = cls.get_check_in_list(event_basic_sn=event_basic_sn)
+        old_results = cls.get_check_in_list(event_basic_id=event_basic_id)
         if old_results:
             raise RECORD_IS_EXIST
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             results = AccupassCsvProcessor(
-                manager=manager, event_basic_sn=event_basic_sn, stream=stream
+                manager=manager, event_basic_id=event_basic_id, stream=stream
             ).get()
             return results
 
     @classmethod
     def create_check_in_list(cls, info):
         email = info['mail']
-        event_basic_sn = info['event_basic_sn']
+        event_basic_id = info['event_basic_id']
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            user_record = manager.get_check_in_list_by_event_basic_sn_and_email(
-                event_basic_sn=event_basic_sn, email=email
+            user_record = manager.get_check_in_list_by_event_basic_id_and_email(
+                event_basic_id=event_basic_id, email=email
             )
             if user_record:
                 raise RECORD_IS_EXIST
@@ -67,17 +67,17 @@ class CheckInListManager(BaseCheckInListManager):
                 user_id = manager.create_user(info=user_info, flush=True)
 
             info.update({
-                'user_sn': user_id
+                'user_id': user_id
             })
 
-            sn = manager.create_check_in_list(info=info, autocommit=True)
-            return sn
+            id = manager.create_check_in_list(info=info, autocommit=True)
+            return id
 
     @classmethod
-    def get_check_in_list(cls, event_basic_sn):
+    def get_check_in_list(cls, event_basic_id):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            records = manager.get_check_in_list(event_basic_sn=event_basic_sn)
+            records = manager.get_check_in_list(event_basic_id=event_basic_id)
             results = list()
             for record in records:
                 data = cls._extract_schema(record=record)
@@ -85,14 +85,14 @@ class CheckInListManager(BaseCheckInListManager):
             return results
 
     @classmethod
-    def update_check_in_list(cls, check_in_list_sn, info):
+    def update_check_in_list(cls, check_in_list_id, info):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             manager.update_check_in_list(
-                check_in_list_sn=check_in_list_sn, info=info, autocommit=True)
+                check_in_list_id=check_in_list_id, info=info, autocommit=True)
 
     @staticmethod
-    def delete_check_in_list(check_in_list_sn):
+    def delete_check_in_list(check_in_list_id):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.delete_check_in_list(sn=check_in_list_sn, autocommit=True)
+            manager.delete_check_in_list(id=check_in_list_id, autocommit=True)

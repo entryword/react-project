@@ -36,11 +36,11 @@ class Manager(BaseUserManager):
             {
                 'name': 'test_name',
                 'roles':[
-                    {'name': 'r1', 'sn': 1},
-                    {'name': 'r2', 'sn': 2}
+                    {'name': 'r1', 'id': 1},
+                    {'name': 'r2', 'id': 2}
                 ],
                 'status': 0,
-                'sn': 123
+                'id': 123
             },
         ]
         '''
@@ -53,8 +53,8 @@ class Manager(BaseUserManager):
                     user_info = {
                         'name': user.name,
                         'status': user.status,
-                        'sn': user.id,
-                        'roles': [{'name': r.name, 'sn': r.sn} for r in user.roles],
+                        'id': user.id,
+                        'roles': [{'name': r.name, 'id': r.id} for r in user.roles],
                     }
                     user_list.append(user_info)
             except PyLadiesException as e:

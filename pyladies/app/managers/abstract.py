@@ -4,11 +4,11 @@ class BaseTopicManager():
         raise NotImplementedError()
 
     @staticmethod
-    def update_topic(sn, file_path):
+    def update_topic(id, file_path):
         raise NotImplementedError()
 
     @staticmethod
-    def delete_topic(sn):
+    def delete_topic(id):
         raise NotImplementedError()
 
     @staticmethod
@@ -22,15 +22,15 @@ class BaseEventManager():
         raise NotImplementedError()
 
     @staticmethod
-    def update_event(sn, new_info):
+    def update_event(id, new_info):
         raise NotImplementedError()
 
     @staticmethod
-    def delete_event(sn):
+    def delete_event(id):
         raise NotImplementedError()
 
     @staticmethod
-    def list_events(topic_sn):
+    def list_events(topic_id):
         raise NotImplementedError()
 
 
@@ -40,7 +40,7 @@ class BasePlaceManager():
         raise NotImplementedError()
 
     @staticmethod
-    def update_place(sn, new_info):
+    def update_place(id, new_info):
         raise NotImplementedError()
 
     @staticmethod
@@ -54,11 +54,11 @@ class BaseSpeakerManager():
         raise NotImplementedError()
 
     @staticmethod
-    def update_speaker(sn, file_path):
+    def update_speaker(id, file_path):
         raise NotImplementedError()
 
     @staticmethod
-    def delete_speaker(sn):
+    def delete_speaker(id):
         raise NotImplementedError()
 
     @staticmethod
@@ -72,19 +72,19 @@ class BaseApplyManager():
         raise NotImplementedError()
 
     @staticmethod
-    def get_event_apply_info_by_event_basic_sn(event_basic_sn):
+    def get_event_apply_info_by_event_basic_id(event_basic_id):
         raise NotImplementedError()
 
     @staticmethod
-    def get_event_apply_info(event_apply_sn):
+    def get_event_apply_info(event_apply_id):
         raise NotImplementedError()
 
     @staticmethod
-    def update_event_apply_info(event_apply_sn, update_info):
+    def update_event_apply_info(event_apply_id, update_info):
         raise NotImplementedError()
 
     @staticmethod
-    def delete_event_apply_info(event_apply_sn):
+    def delete_event_apply_info(event_apply_id):
         raise NotImplementedError()
 
 
@@ -114,15 +114,15 @@ class BaseRoleManager():
         raise NotImplementedError()
 
     @staticmethod
-    def update_role(role_sn, info):
+    def update_role(role_id, info):
         raise NotImplementedError()
 
     @staticmethod
-    def delete_role(role_sn):
+    def delete_role(role_id):
         raise NotImplementedError()
 
     @staticmethod
-    def get_role(role_sn):
+    def get_role(role_id):
         raise NotImplementedError()
 
     @staticmethod
@@ -132,19 +132,19 @@ class BaseRoleManager():
 
 class BaseCheckInListManager():
     @staticmethod
-    def upload(event_basic_sn, csv_reader):
+    def upload(event_basic_id, csv_reader):
         raise NotImplementedError()
 
     @staticmethod
-    def get_check_in_list(event_basic_sn):
+    def get_check_in_list(event_basic_id):
         raise NotImplementedError()
 
     @staticmethod
-    def update_check_in_list(event_basic_sn, user_sn, info):
+    def update_check_in_list(event_basic_id, user_id, info):
         raise NotImplementedError()
 
     @staticmethod
-    def delete_check_in_list(check_in_list_sn):
+    def delete_check_in_list(check_in_list_id):
         raise NotImplementedError()
 
 

@@ -40,8 +40,8 @@ def upgrade():
         op.execute(text("""
             UPDATE event_apply
             SET apply = :apply
-            WHERE sn = :sn
-        """).bindparams(apply=json.dumps(apply), sn=row.sn))
+            WHERE id = :id
+        """).bindparams(apply=json.dumps(apply), id=row.id))
 
     op.drop_column('event_apply', 'limit')
     op.drop_column('event_apply', 'limit_desc')
@@ -82,6 +82,6 @@ def downgrade():
             `limit` = :limit,
             start_time = :start_time,
             end_time = :end_time
-            WHERE sn = :sn
-        """).bindparams(apply=json.dumps(apply), limit=json.dumps(limit), start_time=start_time, end_time=end_time, sn=row.sn))
+            WHERE id = :id
+        """).bindparams(apply=json.dumps(apply), limit=json.dumps(limit), start_time=start_time, end_time=end_time, id=row.id))
     # ### end Alembic commands ###

@@ -61,7 +61,7 @@ def _get_event_basic_infos(length=1):
         random_date = datetime.now() + timedelta(days=randint(1, 365))
         random_clock = randint(0, 21)
         event_basics.append({
-            "topic_sn": None,
+            "topic_id": None,
             "date": random_date.strftime("%Y-%m-%d"),
             "start_time": "%02d:00" % random_clock,
             "end_time": "%02d:00" % (random_clock + 2)
@@ -89,7 +89,7 @@ def _get_event_infos(length=1):
     for i in range(length):
         event_idx = i + 1
         events.append({
-            "event_basic_sn": None,
+            "event_basic_id": None,
             "title": "event %s" % event_idx,
             "desc": "this is event %s" % event_idx,
             "fields": sample(FIELDS, randint(1, len(FIELDS))),

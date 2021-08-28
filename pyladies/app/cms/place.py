@@ -38,9 +38,9 @@ def create_place(payload):
         "addr": payload["addr"],
         "map": payload["map"]
     }
-    place_sn = PlaceManager.create_place(place_data)
+    place_id = PlaceManager.create_place(place_data)
     data = {
-        "id": place_sn
+        "id": place_id
     }
     info = {
         "code": OK.code,

@@ -19,7 +19,7 @@ class Manager(BaseTopicManager):
             manager = current_app.db_api_class(db_sess)
             manager.create_topic(info, autocommit=True)
             topic = manager.get_topic_by_name(info["name"])
-            return topic.sn
+            return topic.id
 
     @staticmethod
     def create_topic_by_object(topic_object):
@@ -27,32 +27,32 @@ class Manager(BaseTopicManager):
             manager = current_app.db_api_class(db_sess)
             manager.create_topic(topic_object, autocommit=True)
             topic = manager.get_topic_by_name(topic_object["name"])
-            return topic.sn
+            return topic.id
 
     @staticmethod
-    def update_topic(sn, file_path):
+    def update_topic(id, file_path):
         with open(file_path) as f:
             new_info = json.loads(f.read())
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.update_topic(sn, new_info, autocommit=True)
+            manager.update_topic(id, new_info, autocommit=True)
 
     @staticmethod
-    def update_topic_by_object(sn, topic_object):
+    def update_topic_by_object(id, topic_object):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.update_topic(sn, topic_object, autocommit=True)
+            manager.update_topic(id, topic_object, autocommit=True)
 
     @staticmethod
-    def delete_topic(sn):
+    def delete_topic(id):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            topic = manager.get_topic(sn)
+            topic = manager.get_topic(id)
 
             # delete only when topic can not be associated to any event
             if not topic.event_basics:
-                manager.delete_topic(sn, autocommit=True)
+                manager.delete_topic(id, autocommit=True)
             else:
                 raise TOPIC_ASSOCIATED_WITH_EXISTED_EVENT
 
@@ -78,7 +78,7 @@ class Manager(BaseTopicManager):
             for topic in raw_topics:
                 if (not fields) or (fields and fields.intersection(set(topic.fields))):
                     topics.append({
-                        "id": topic.sn,
+                        "id": topic.id,
                         "name": topic.name,
                         "level": topic.level,
                         "freq": topic.freq,
@@ -108,7 +108,7 @@ class Manager(BaseTopicManager):
                     }
 
                 events.append({
-                    "id": event_basic.sn,
+                    "id": event_basic.id,
                     "date": event_basic.date,
                     "place_info": place_info
                 })
@@ -117,7 +117,7 @@ class Manager(BaseTopicManager):
                     if event_basic.event_info.speakers:
                         for speaker in event_basic.event_info.speakers:
                             speaker_info = HashableDict({
-                                "id": speaker.sn,
+                                "id": speaker.id,
                                 "name": speaker.name,
                                 "photo": speaker.photo
                             })
@@ -125,7 +125,7 @@ class Manager(BaseTopicManager):
                     if event_basic.event_info.assistants:
                         for assistant in event_basic.event_info.assistants:
                             assistant_info = HashableDict({
-                                "id": assistant.sn,
+                                "id": assistant.id,
                                 "name": assistant.name,
                                 "photo": assistant.photo
                             })
@@ -134,14 +134,14 @@ class Manager(BaseTopicManager):
                         for data in event_basic.event_info.slide_resources:
                             if data.type == "slide":
                                 slide_info = HashableDict({
-                                    "id": data.sn,
+                                    "id": data.id,
                                     "title": data.title,
                                     "url": data.url
                                     })
                                 slides.add(slide_info)
                             else:
                                 resource_info = HashableDict({
-                                    "id": data.sn,
+                                    "id": data.id,
                                     "title": data.title,
                                     "url": data.url
                                     })
@@ -177,7 +177,7 @@ class Manager(BaseTopicManager):
             all_data = []
             for topic in topics:
                 data = {
-                    "id": topic.sn,
+                    "id": topic.id,
                     "name": topic.name
                 }
                 all_data.append(data)

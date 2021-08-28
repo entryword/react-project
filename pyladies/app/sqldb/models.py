@@ -6,7 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import types, String, func, text
 from sqlalchemy.ext.declarative import declarative_base
 
-from app.constant import DEFAULT_PLACE_SN, UserType
+from app.constant import DEFAULT_PLACE_ID, UserType
+
 
 Base = declarative_base(name='Model')
 db = SQLAlchemy()
@@ -43,7 +44,7 @@ class IntegerArrayType(types.TypeDecorator):
 class Topic(db.Model):
     __tablename__ = "topic"
 
-    sn = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True, nullable=False)
     desc = db.Column(db.Text, nullable=True)
     freq = db.Column(db.Integer, nullable=False)
@@ -52,7 +53,7 @@ class Topic(db.Model):
     fields = db.Column(IntegerArrayType(128), nullable=False)
 
     def __str__(self):
-        return ("<Topic sn: {obj.sn}"
+        return ("<Topic id: {obj.id}"
                 ", name: {obj.name}"
                 ", desc: {obj.desc}"
                 ", freq: {obj.freq}"
@@ -64,7 +65,7 @@ class Topic(db.Model):
 class Speaker(db.Model):
     __tablename__ = "speaker"
 
-    sn = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True, nullable=False)
     photo = db.Column(db.String(128), nullable=True)
     title = db.Column(db.String(128), nullable=False)
@@ -73,7 +74,7 @@ class Speaker(db.Model):
     fields = db.Column(IntegerArrayType(128), nullable=False)
 
     def __str__(self):
-        return ("<Speaker sn: {obj.sn}"
+        return ("<Speaker id: {obj.id}"
                 ", name: {obj.name}"
                 ", photo: {obj.photo}"
                 ", title: {obj.title}"
@@ -84,9 +85,9 @@ class Speaker(db.Model):
 class Link(db.Model):
     __tablename__ = "link"
 
-    sn = db.Column(db.Integer, primary_key=True)
-    speaker_sn = db.Column(db.Integer,
-                           db.ForeignKey("speaker.sn", ondelete="CASCADE"),
+    id = db.Column(db.Integer, primary_key=True)
+    speaker_id = db.Column(db.Integer,
+                           db.ForeignKey("speaker.id", ondelete="CASCADE"),
                            nullable=False)
     type = db.Column(db.String(128), nullable=False)
     url = db.Column(db.String(1024), nullable=False)
@@ -98,13 +99,13 @@ class Link(db.Model):
 class Place(db.Model):
     __tablename__ = "place"
 
-    sn = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True, nullable=False)
     addr = db.Column(db.String(128), nullable=False)
     map = db.Column(db.String(128), nullable=False)
 
     def __str__(self):
-        return ("<Place sn: {obj.sn}"
+        return ("<Place id: {obj.id}"
                 ", name: {obj.name}"
                 ", addr: {obj.addr}"
                 ", map: {obj.map}>").format(obj=self)
@@ -120,16 +121,16 @@ def validate_time_format(time_str, expected_format, err_message):
 class EventBasic(db.Model):
     __tablename__ = "event_basic"
 
-    sn = db.Column(db.Integer, primary_key=True)
-    topic_sn = db.Column(db.Integer,
-                         db.ForeignKey("topic.sn", ondelete="CASCADE"),
+    id = db.Column(db.Integer, primary_key=True)
+    topic_id = db.Column(db.Integer,
+                         db.ForeignKey("topic.id", ondelete="CASCADE"),
                          nullable=False)
     date = db.Column(db.String(10), nullable=False)
     start_time = db.Column(db.String(5), nullable=False)
     end_time = db.Column(db.String(5), nullable=False)
-    place_sn = db.Column(db.Integer,
-                         db.ForeignKey("place.sn", ondelete="NO ACTION"),
-                         default=DEFAULT_PLACE_SN,
+    place_id = db.Column(db.Integer,
+                         db.ForeignKey("place.id", ondelete="NO ACTION"),
+                         default=DEFAULT_PLACE_ID,
                          nullable=False)
 
     topic = db.relationship("Topic",
@@ -151,8 +152,8 @@ class EventBasic(db.Model):
                              "The format of 'end_time' must be '%H:%M'")
 
     def __str__(self):
-        return ("<EventBasic sn: {obj.sn}"
-                ", topic_sn: {obj.topic_sn}"
+        return ("<EventBasic id: {obj.id}"
+                ", topic_id: {obj.topic_id}"
                 ", date: {obj.date}"
                 ", start_time: {obj.start_time}"
                 ", end_time: {obj.end_time}"
@@ -163,16 +164,16 @@ event_info_to_speaker = db.Table(
     "event_info_to_speaker",
     # Base.metadata,
     db.Column(
-        "event_info_sn",
+        "event_info_id",
         db.Integer,
-        db.ForeignKey("event_info.sn", ondelete="CASCADE")
+        db.ForeignKey("event_info.id", ondelete="CASCADE")
     ),
     db.Column(
-        "speaker_sn",
+        "speaker_id",
         db.Integer,
-        db.ForeignKey("speaker.sn", ondelete="CASCADE")
+        db.ForeignKey("speaker.id", ondelete="CASCADE")
     ),
-    db.PrimaryKeyConstraint("event_info_sn", "speaker_sn")
+    db.PrimaryKeyConstraint("event_info_id", "speaker_id")
 )
 
 
@@ -180,53 +181,53 @@ event_info_to_assistant = db.Table(
     "event_info_to_assistant",
     # Base.metadata,
     db.Column(
-        "event_info_sn",
+        "event_info_id",
         db.Integer,
-        db.ForeignKey("event_info.sn", ondelete="CASCADE")
+        db.ForeignKey("event_info.id", ondelete="CASCADE")
     ),
     db.Column(
-        "assistant_sn",
+        "assistant_id",
         db.Integer,
-        db.ForeignKey("speaker.sn", ondelete="CASCADE")
+        db.ForeignKey("speaker.id", ondelete="CASCADE")
     ),
-    db.PrimaryKeyConstraint("event_info_sn", "assistant_sn")
+    db.PrimaryKeyConstraint("event_info_id", "assistant_id")
 )
 
 
 class SlideResource(db.Model):
     __tablename__ = "slide_resource"
 
-    sn = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(128), nullable=False)
     title = db.Column(db.String(128), nullable=False)
     url = db.Column(db.String(1024), nullable=False)
 
     def __str__(self):
-        return ("<SlideResource sn {obj.sn}"
+        return ("<SlideResource id {obj.id}"
                 ", title: {obj.title}"
                 ", type: {obj.type}>").format(obj=self)
 
 event_slide = db.Table(
     'event_slide',
     db.Column(
-        'event_info_sn',
+        'event_info_id',
         db.Integer,
-        db.ForeignKey('event_info.sn', ondelete="CASCADE")
+        db.ForeignKey('event_info.id', ondelete="CASCADE")
     ),
     db.Column(
-        'slide_sn',
+        'slide_id',
         db.Integer,
-        db.ForeignKey('slide_resource.sn', ondelete="CASCADE")
+        db.ForeignKey('slide_resource.id', ondelete="CASCADE")
     ),
-    db.PrimaryKeyConstraint("event_info_sn", "slide_sn")
+    db.PrimaryKeyConstraint("event_info_id", "slide_id")
 )
 
 class EventInfo(db.Model):
     __tablename__ = "event_info"
 
-    sn = db.Column(db.Integer, primary_key=True)
-    event_basic_sn = db.Column(db.Integer,
-                               db.ForeignKey("event_basic.sn", ondelete="CASCADE"),
+    id = db.Column(db.Integer, primary_key=True)
+    event_basic_id = db.Column(db.Integer,
+                               db.ForeignKey("event_basic.id", ondelete="CASCADE"),
                                nullable=False,
                                unique=True)
     title = db.Column(db.String(128), nullable=False)
@@ -247,7 +248,7 @@ class EventInfo(db.Model):
                                  uselist=True)
 
     def __str__(self):
-        return ("<EventInfo event_basic_sn: {obj.event_basic_sn}"
+        return ("<EventInfo event_basic_id: {obj.event_basic_id}"
                 ", title: {obj.title}"
                 ", desc: {obj.desc}"
                 ", fields: {obj.fields}"
@@ -259,16 +260,16 @@ class EventInfo(db.Model):
 class EventApply(db.Model):
     __tablename__ = "event_apply"
 
-    sn = db.Column(db.Integer, primary_key=True)
-    event_basic_sn = db.Column(db.Integer,
-                               db.ForeignKey("event_basic.sn", ondelete="CASCADE"),
+    id = db.Column(db.Integer, primary_key=True)
+    event_basic_id = db.Column(db.Integer,
+                               db.ForeignKey("event_basic.id", ondelete="CASCADE"),
                                nullable=False,
                                unique=True)
     apply = db.Column(types.JSON, nullable=True)
 
     def __str__(self):
-        return ("<EventApply sn: {obj.sn}"
-                ", event_basic_sn: {obj.event_basic_sn}"
+        return ("<EventApply id: {obj.id}"
+                ", event_basic_id: {obj.event_basic_id}"
                 ", apply: {obj.apply}").format(obj=self)
 
 
@@ -280,11 +281,11 @@ user_to_role = db.Table(
         db.ForeignKey("user.id", ondelete="CASCADE")
     ),
     db.Column(
-        "role_sn",
+        "role_id",
         db.Integer,
-        db.ForeignKey("role.sn", ondelete="CASCADE")
+        db.ForeignKey("role.id", ondelete="CASCADE")
     ),
-    db.PrimaryKeyConstraint("user_id", "role_sn")
+    db.PrimaryKeyConstraint("user_id", "role_id")
 )
 
 
@@ -310,14 +311,14 @@ class User(UserMixin, db.Model):
 
     @property
     def role_ids(self):
-        return [r.sn for r in self.roles]
+        return [r.id for r in self.roles]
 
     @property
     def type(self):
         return UserType.ADMIN
 
     def __str__(self):
-        return ("<User sn: {obj.id}"
+        return ("<User id: {obj.id}"
                 ", name: {obj.name}"
                 ", mail: {obj.mail}"
                 ", status: {obj.status}"
@@ -330,7 +331,7 @@ class User(UserMixin, db.Model):
 class Role(db.Model):
     __tablename__ = "role"
 
-    sn = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), unique=True, nullable=False)
     permission = db.Column(types.JSON, nullable=False)
     users = db.relationship("User",
@@ -342,7 +343,7 @@ class Role(db.Model):
         return [u.id for u in self.users]
 
     def __str__(self):
-        return ("<Role sn: {obj.sn}"
+        return ("<Role id: {obj.id}"
                 ", name: {obj.name}"
                 ", permission: {obj.permission}"
                 ", user_ids: {obj.user_ids}").format(obj=self)
@@ -360,9 +361,9 @@ class AnonymousUser(AnonymousUserMixin):
 class CheckInList(db.Model):
     __tablename__ = "check_in_list"
 
-    sn = db.Column(db.Integer, primary_key=True)
-    event_basic_sn = db.Column(db.Integer, nullable=False)  # 活動id
-    user_sn = db.Column(db.Integer)  # 參加者id (當下有在user table的話就加入，沒有就null)
+    id = db.Column(db.Integer, primary_key=True)
+    event_basic_id = db.Column(db.Integer, nullable=False)  # 活動id
+    user_id = db.Column(db.Integer)  # 參加者id (當下有在user table的話就加入，沒有就null)
     name = db.Column(db.String(128), nullable=False)  # 參加者名稱
     mail = db.Column(db.String(128), nullable=False)  # 參加者email
     phone = db.Column(db.String(128), nullable=False)  # 參加者phone

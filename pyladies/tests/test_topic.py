@@ -120,7 +120,7 @@ class TestTopic:
             topic = manager.get_topic_by_name(topic_info["name"])
 
             # test
-            manager.delete_topic(topic.sn, autocommit=True)
+            manager.delete_topic(topic.id, autocommit=True)
 
             # assertion
             with pytest.raises(PyLadiesException) as cm:
@@ -142,7 +142,7 @@ class TestTopic:
                 manager.get_topic_by_name("topic 2")
             self.assert_exception(cm.value, TOPIC_NOT_EXIST)
 
-    def test_get_topic_by_sn(self, topic_info):
+    def test_get_topic_by_id(self, topic_info):
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             # preparation
             manager = self.app.db_api_class(db_sess)

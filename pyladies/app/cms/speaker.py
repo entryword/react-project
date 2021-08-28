@@ -3,7 +3,7 @@ from flask import jsonify, request
 from app.schemas.speaker_info import schema_create
 from app.utils import login_required, payload_validator
 from . import api
-from ..constant import DEFAULT_FIELD_SN
+from ..constant import DEFAULT_FIELD_ID
 from ..exceptions import OK
 from ..managers.speaker import Manager as SpeakerManager
 
@@ -32,7 +32,7 @@ def create_speaker(payload):
         "photo": data.get("photo", None),
         "major_related": data.get("major_related", True),
         "intro": data.get("intro", ""),
-        "fields": data.get("fields", [DEFAULT_FIELD_SN]),
+        "fields": data.get("fields", [DEFAULT_FIELD_ID]),
         "links": data.get("links", [])
     }
 

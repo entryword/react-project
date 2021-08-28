@@ -24,19 +24,19 @@ def get_events():
 def create_event(payload):
     event_info = {
         "event_basic": {
-            "topic_sn": payload["topic_id"],
+            "topic_id": payload["topic_id"],
             "date": payload["start_date"],
             # TODO:waiting table schema and payload["end_date"] will add here
             "start_time": payload["start_time"],
             "end_time": payload["end_time"],
-            "place_sn": payload["place_id"],
+            "place_id": payload["place_id"],
         },
         "event_info": {
             "title": payload["title"],
             "desc": payload["desc"],
             "fields": payload["field_ids"],
-            "speaker_sns": payload["speaker_ids"],
-            "assistant_sns": payload["assistant_ids"],
+            "speaker_ids": payload["speaker_ids"],
+            "assistant_ids": payload["assistant_ids"],
         },
     }
     new_id = EventManager.create_event(event_info)
@@ -67,19 +67,19 @@ def get_event(e_id):
 def update_event(e_id, payload):
     event_info = {
         "event_basic": {
-            "topic_sn": payload["topic_id"],
+            "topic_id": payload["topic_id"],
             "date": payload["start_date"],
             "start_time": payload["start_time"],
             "end_time": payload["end_time"],
-            "place_sn": payload["place_id"]
+            "place_id": payload["place_id"]
         },
         "event_info": {
             "title": payload["title"],
             "desc": payload["desc"],
             "fields": payload["field_ids"],
-            "slide_resource_sns": payload["slide_resource_ids"],
-            "speaker_sns": payload["speaker_ids"],
-            "assistant_sns": payload["assistant_ids"]
+            "slide_resource_ids": payload["slide_resource_ids"],
+            "speaker_ids": payload["speaker_ids"],
+            "assistant_ids": payload["assistant_ids"]
         },
         "apply_info": {
             "apply": payload["apply"]

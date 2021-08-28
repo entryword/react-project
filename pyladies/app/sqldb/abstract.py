@@ -38,7 +38,7 @@ class SQLDatabaseAPI():
     def get_topics(self):
         raise NotImplementedError()
 
-    def get_topic(self, sn):
+    def get_topic(self, id):
         raise NotImplementedError()
 
     def get_topic_by_name(self, name):
@@ -47,28 +47,28 @@ class SQLDatabaseAPI():
     # def get_event_basics(self):
     #     raise NotImplementedError()
 
-    def get_event_basic(self, sn):
+    def get_event_basic(self, id):
         raise NotImplementedError()
 
-    def get_event_info(self, sn):
+    def get_event_info(self, id):
         raise NotImplementedError()
 
-    # def get_event_info_by_event_basic_sn(self, event_basic_sn):
+    # def get_event_info_by_event_basic_id(self, event_basic_id):
     #     raise NotImplementedError()
 
-    def get_slide_resource(self, sn):
+    def get_slide_resource(self, id):
         raise NotImplementedError()
 
     def get_speakers(self):
         raise NotImplementedError()
 
-    def get_speaker(self, sn):
+    def get_speaker(self, id):
         raise NotImplementedError()
 
-    def get_event_apply_by_event_basic_sn(self, event_basic_sn):
+    def get_event_apply_by_event_basic_id(self, event_basic_id):
         raise NotImplementedError()
 
-    def get_event_apply(self, sn):
+    def get_event_apply(self, id):
         raise NotImplementedError()
 
     def get_user_by_name(self, name):
@@ -83,60 +83,60 @@ class SQLDatabaseAPI():
     def get_roles(self):
         raise NotImplementedError()
 
-    def get_role(self, sn):
+    def get_role(self, id):
         raise NotImplementedError()
 
-    def get_check_in_list(self, event_basic_sn):
+    def get_check_in_list(self, event_basic_id):
         raise NotImplementedError()
 
-    def get_check_in_list_by_event_basic_sn_and_email(self, event_basic_sn, email):
+    def get_check_in_list_by_event_basic_id_and_email(self, event_basic_id, email):
         raise NotImplementedError()
 
     ########## update
 
-    def update_topic(self, sn, info, autocommit=False):
+    def update_topic(self, id, info, autocommit=False):
         raise NotImplementedError()
 
-    def update_event_basic(self, sn, info, autocommit=False):
+    def update_event_basic(self, id, info, autocommit=False):
         raise NotImplementedError()
 
-    def update_event_info(self, sn, info, autocommit=False):
+    def update_event_info(self, id, info, autocommit=False):
         raise NotImplementedError()
 
-    # def update_slide_resource(self, sn, info, autocommit=False):
+    # def update_slide_resource(self, id, info, autocommit=False):
     #     raise NotImplementedError()
 
-    def update_speaker(self, sn, info, autocommit=False):
+    def update_speaker(self, id, info, autocommit=False):
         raise NotImplementedError()
 
-    def update_event_apply(self, sn, info, autocommit=False):
+    def update_event_apply(self, id, info, autocommit=False):
         raise NotImplementedError()
 
-    def update_role(self, sn, info, autocommit=False):
+    def update_role(self, id, info, autocommit=False):
         raise NotImplementedError()
 
     ########## delete
 
-    def delete_topic(self, sn, autocommit=False):
+    def delete_topic(self, id, autocommit=False):
         raise NotImplementedError()
 
-    def delete_event_basic(self, sn, autocommit=False):
+    def delete_event_basic(self, id, autocommit=False):
         raise NotImplementedError()
 
-    def delete_event_info(self, sn, autocommit=False):
+    def delete_event_info(self, id, autocommit=False):
         raise NotImplementedError()
 
-    def delete_slide_resource(self, sn, autocommit=False):
+    def delete_slide_resource(self, id, autocommit=False):
         raise NotImplementedError()
 
-    def delete_speaker(self, sn, autocommit=False):
+    def delete_speaker(self, id, autocommit=False):
         raise NotImplementedError()
 
-    def delete_event_apply(self, sn, autocommit=False):
+    def delete_event_apply(self, id, autocommit=False):
         raise NotImplementedError()
 
-    def delete_role(self, sn, autocommit=False):
+    def delete_role(self, id, autocommit=False):
         raise NotImplementedError()
 
-    def delete_check_in_list(self, sn, autocommit=False):
+    def delete_check_in_list(self, id, autocommit=False):
         raise NotImplementedError()

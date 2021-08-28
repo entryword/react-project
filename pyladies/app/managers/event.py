@@ -20,16 +20,16 @@ class Manager(BaseEventManager):
 
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            event_basic_sn = manager.create_event_basic(info["event_basic"], autocommit=True)
+            event_basic_id = manager.create_event_basic(info["event_basic"], autocommit=True)
 
             if info["event_info"]:
-                info["event_info"]["event_basic_sn"] = event_basic_sn
+                info["event_info"]["event_basic_id"] = event_basic_id
                 manager.create_event_info(info["event_info"], autocommit=True)
 
-            return event_basic_sn
+            return event_basic_id
 
     @staticmethod
-    def update_event(sn, new_info):
+    def update_event(id, new_info):
         if not isinstance(new_info, dict):
             with open(new_info) as f:
                 new_info = json.loads(f.read())
@@ -37,35 +37,35 @@ class Manager(BaseEventManager):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
             if new_info["event_basic"]:
-                manager.update_event_basic(sn, new_info["event_basic"], autocommit=True)
+                manager.update_event_basic(id, new_info["event_basic"], autocommit=True)
 
-            event_basic = manager.get_event_basic(sn)
+            event_basic = manager.get_event_basic(id)
             if new_info["event_info"]:
                 if event_basic.event_info:
-                    manager.update_event_info(event_basic.event_info.sn, new_info["event_info"],
+                    manager.update_event_info(event_basic.event_info.id, new_info["event_info"],
                                               autocommit=True)
                 else:
-                    new_info["event_info"]["event_basic_sn"] = event_basic.sn
+                    new_info["event_info"]["event_basic_id"] = event_basic.id
                     manager.create_event_info(new_info["event_info"], autocommit=True)
 
             if "apply_info" in new_info and new_info["apply_info"]:
-                new_info["apply_info"]["event_basic_sn"] = event_basic.sn
+                new_info["apply_info"]["event_basic_id"] = event_basic.id
                 if event_basic.apply:
-                    manager.update_event_apply(event_basic.apply.sn, new_info["apply_info"], autocommit=True)
+                    manager.update_event_apply(event_basic.apply.id, new_info["apply_info"], autocommit=True)
                 else:
                     manager.create_event_apply(new_info["apply_info"], autocommit=True)
 
     @staticmethod
-    def delete_event(sn):
+    def delete_event(id):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            manager.delete_event_basic(sn, autocommit=True)
+            manager.delete_event_basic(id, autocommit=True)
 
     @staticmethod
-    def list_events(topic_sn):
+    def list_events(topic_id):
         with DBWrapper(current_app.db.engine.url).session() as db_sess:
             manager = current_app.db_api_class(db_sess)
-            event_basics = manager.get_event_basics_by_topic(topic_sn)
+            event_basics = manager.get_event_basics_by_topic(topic_id)
             for i in event_basics:
                 print(i)
                 if i.event_info:
@@ -90,7 +90,7 @@ class Manager(BaseEventManager):
                     # "host": event_basic.topic.host,
                     # "freq": event_basic.topic.freq,
                     # "fields": event_basic.topic.fields,
-                    "id": event_basic.topic_sn,
+                    "id": event_basic.topic_id,
                 }
 
                 place_info = None
@@ -102,7 +102,7 @@ class Manager(BaseEventManager):
                     }
 
                 event = {
-                    "id": event_basic.sn,
+                    "id": event_basic.id,
                     "title": event_basic.event_info.title,
                     "date": event_basic.date,
                     "start_time": event_basic.start_time,
@@ -157,7 +157,7 @@ class Manager(BaseEventManager):
             event_basic = manager.get_event_basic(e_id)
             try:
                 tm = ApplyManager()
-                event_apply_info = tm.get_event_apply_info_by_event_basic_sn(e_id)
+                event_apply_info = tm.get_event_apply_info_by_event_basic_id(e_id)
                 event_apply_info = event_apply_info["apply"]
             except PyLadiesException as e:
                 if e.code == APPLY_NOT_EXIST.code:
@@ -168,7 +168,7 @@ class Manager(BaseEventManager):
             place_info = None
             if event_basic.place:
                 place_info = {
-                    "id": event_basic.place.sn,
+                    "id": event_basic.place.id,
                     "name": event_basic.place.name,
                     "addr": event_basic.place.addr,
                     "map": event_basic.place.map
@@ -188,7 +188,7 @@ class Manager(BaseEventManager):
                 if event_basic.event_info.speakers:
                     for speaker in event_basic.event_info.speakers:
                         speaker_info = HashableDict({
-                            "id": speaker.sn,
+                            "id": speaker.id,
                             "name": speaker.name,
                             "photo": speaker.photo
                         })
@@ -196,7 +196,7 @@ class Manager(BaseEventManager):
                 if event_basic.event_info.assistants:
                     for assistant in event_basic.event_info.assistants:
                         assistant_info = HashableDict({
-                            "id": assistant.sn,
+                            "id": assistant.id,
                             "name": assistant.name,
                             "photo": assistant.photo
                         })
@@ -205,14 +205,14 @@ class Manager(BaseEventManager):
                     for data in event_basic.event_info.slide_resources:
                         if data.type == "slide":
                             slide_info = HashableDict({
-                                "id": data.sn,
+                                "id": data.id,
                                 "title": data.title,
                                 "url": data.url
                                 })
                             slides.add(slide_info)
                         else:
                             resource_info = HashableDict({
-                                "id": data.sn,
+                                "id": data.id,
                                 "title": data.title,
                                 "url": data.url
                                 })
@@ -224,7 +224,7 @@ class Manager(BaseEventManager):
             data = {
                 "topic_info": {
                     "name": event_basic.topic.name,
-                    "id": event_basic.topic.sn
+                    "id": event_basic.topic.id
                 },
                 "title": title,
                 "fields": fields,
@@ -283,7 +283,7 @@ class Manager(BaseEventManager):
                     info_event = {
                         "topic_info": {
                             "name": event_basic.topic.name,
-                            "id": event_basic.topic.sn,
+                            "id": event_basic.topic.id,
                         },
                         "event_info": {
                             "title": event_basic.event_info.title,
@@ -291,7 +291,7 @@ class Manager(BaseEventManager):
                             "date": event_basic.date,
                             "start_time": event_basic.start_time,
                             "end_time": event_basic.end_time,
-                            "event_basic_id": event_basic.sn
+                            "event_basic_id": event_basic.id
                         }
                     }
                     events.append(info_event)
@@ -305,7 +305,7 @@ class Manager(BaseEventManager):
             events = []
             for event_basic in event_basics:
                 data = {
-                    "id": event_basic.sn,
+                    "id": event_basic.id,
                     "title": event_basic.event_info.title,
                     "topic": {
                         "name": event_basic.topic.name

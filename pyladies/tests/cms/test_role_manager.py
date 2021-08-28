@@ -39,11 +39,11 @@ class RoleManagerTestCase(unittest.TestCase):
             }
             db_sess.add(r1)
             db_sess.commit()
-            return r1.sn
+            return r1.id
 
     def test_get_roles(self):
         # preparation
-        r1_sn = self._create_test_role_basic()
+        r1_id = self._create_test_role_basic()
         with DBWrapper(self.app.db.engine.url).session() as db_sess:
             r2 = Role()
             r2.name = 'r2'
@@ -57,7 +57,7 @@ class RoleManagerTestCase(unittest.TestCase):
             # assert
             self.assertEqual([
                 {
-                    'id': r1_sn,
+                    'id': r1_id,
                     'name': 'r1',
                     'permission': {
                         "EventList": 2,
@@ -71,7 +71,7 @@ class RoleManagerTestCase(unittest.TestCase):
                         "Role": 2
                     }
                 }, {
-                    'id': r2.sn,
+                    'id': r2.id,
                     'name': 'r2',
                     'permission': {'feat3': 2, 'feat2': 1}
                 }
@@ -86,14 +86,14 @@ class RoleManagerTestCase(unittest.TestCase):
 
     def test_get_role(self):
         # preparation
-        r1_sn = self._create_test_role_basic()
+        r1_id = self._create_test_role_basic()
 
         # test
-        res = RoleManager.get_role(r1_sn)
+        res = RoleManager.get_role(r1_id)
 
         # assert
         self.assertEqual({
-            'id': r1_sn,
+            'id': r1_id,
             'name': 'r1',
             'permission': {
                 "EventList": 2,
@@ -110,11 +110,11 @@ class RoleManagerTestCase(unittest.TestCase):
 
     def test_get_role_id_not_found(self):
         # preparation
-        not_existed_sn = 123
+        not_existed_id = 123
 
         # test and assert
         with self.assertRaises(PyLadiesException) as cm:
-            RoleManager.get_role(not_existed_sn)
+            RoleManager.get_role(not_existed_id)
         self.assertEqual(cm.exception, ROLE_NOT_EXIST)
 
     def test_create_role(self):
@@ -135,10 +135,10 @@ class RoleManagerTestCase(unittest.TestCase):
         }
 
         # test
-        sn = RoleManager.create_role(role_info)
+        id = RoleManager.create_role(role_info)
 
         # assert
-        self.assertIsNotNone(sn)
+        self.assertIsNotNone(id)
 
     def test_create_role_duplicate_role_name(self):
         self._create_test_role_basic()
@@ -163,7 +163,7 @@ class RoleManagerTestCase(unittest.TestCase):
 
     def test_update_role(self):
         # preparation
-        r1_sn = self._create_test_role_basic()
+        r1_id = self._create_test_role_basic()
         update_role_info = {
             "name": "now_role_name",
             "permission": {
@@ -180,7 +180,7 @@ class RoleManagerTestCase(unittest.TestCase):
         }
 
         # test
-        res = RoleManager.update_role(r1_sn, update_role_info)
+        res = RoleManager.update_role(r1_id, update_role_info)
 
         # assert
         self.assertIsNone(res)
@@ -222,12 +222,12 @@ class RoleManagerTestCase(unittest.TestCase):
 
             # test and assert
             with self.assertRaises(PyLadiesException) as cm:
-                RoleManager.update_role(r2.sn, update_r2_with_r1_name_info)
+                RoleManager.update_role(r2.id, update_r2_with_r1_name_info)
             self.assertEqual(cm.exception, ROLE_NAME_DUPLICATE)
 
     def test_update_role_id_not_found(self):
         # preparation
-        not_existed_sn = 123
+        not_existed_id = 123
         update_role_info = {
             "name": "role",
             "permission": {
@@ -245,25 +245,25 @@ class RoleManagerTestCase(unittest.TestCase):
 
         # test and assert
         with self.assertRaises(PyLadiesException) as cm:
-            RoleManager.update_role(not_existed_sn, update_role_info)
+            RoleManager.update_role(not_existed_id, update_role_info)
         self.assertEqual(cm.exception, ROLE_NOT_EXIST)
 
     def test_delete_role(self):
         # preparation
-        r1_sn = self._create_test_role_basic()
+        r1_id = self._create_test_role_basic()
 
         # test
-        res = RoleManager.delete_role(r1_sn)
+        res = RoleManager.delete_role(r1_id)
 
         # assert
         self.assertIsNone(res)
 
     def test_delete_role_id_not_found(self):
         # preparation
-        not_existed_sn = 123
+        not_existed_id = 123
 
         # test
-        res = RoleManager.delete_role(not_existed_sn)
+        res = RoleManager.delete_role(not_existed_id)
 
         # assert
         self.assertIsNone(res)
