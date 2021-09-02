@@ -129,5 +129,32 @@ export default {
         } else {
             alert(data.info.message);
         }
+    },
+    getRoles: async function(context) {
+        const data = await api.getRoles().then(res => res.data);
+        if (data.info.code == 0) {
+            context.commit('SET_ROLE', data.data);
+        } else {
+            alert(data.info.message);
+            window.location.href = loginUrl;
+        }
+    },
+    putRole: async function({ commit, state }, data) {
+        const putRoleResult = await api.putRole(data).then(res => res.data);
+        if (putRoleResult.info.code == 0) {
+            commit('PUT_ROLE_RESULT', putRoleResult.data);
+        } else {
+            alert(putRoleResult.info.message);
+            // window.location.href = loginUrl;
+        }
+    },
+    postRole: async function({ commit, state }, data) {
+        const postRoleResultData = await api.postRole(data).then(res => res.data);
+        if (postRoleResultData.info.code == 0) {
+            commit('POST_ROLE_RESULT', postRoleResultData.data);
+        } else {
+            alert(postRoleResultData.info.message);
+            // window.location.href = loginUrl;
+        }
     }
 }

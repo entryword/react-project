@@ -208,6 +208,46 @@ export default {
     }
     return axios({ method, url, data })
   },
+  getRoles() {
+    let method = "get";
+    let url = "";
+    let data = null;
+    if (useFakeData && process.env.NODE_ENV === 'development'){
+      url = "/static/fake_data/roles.json"
+    } else if (!useFakeData && process.env.NODE_ENV === 'development'){
+      url = `${devPrefix}/roles`
+    } else {
+      url = `${prefix}/roles`
+    }
+    return axios({ method, url, data })
+  },
+  postRole(data){
+    let method = "POST";
+    let url = "";
+    if (useFakeData && process.env.NODE_ENV === 'development'){
+      method = "get";
+      url = "/static/fake_data/post_role_result.json"
+    } else if (!useFakeData && process.env.NODE_ENV === 'development'){
+      url = `${devPrefix}/role`
+    } else {
+      url = `${prefix}/slide`
+    }
+    return axios({ method, url, data })
+  },
+  putRole({data, id}){
+    let method = "PUT";
+    let url = "";
+    if (useFakeData && process.env.NODE_ENV === 'development'){
+      //console.log(data)
+      method = "get";
+      url = "/static/fake_data/put_role_result.json"
+    } else if (!useFakeData && process.env.NODE_ENV === 'development'){
+      url = `${devPrefix}/role/${id}`
+    } else {
+      url = `${prefix}/role/${id}`
+    }
+    return axios({ method, url, data })
+  },
   logout(){
     let method = "PUT";
     let url = "";

@@ -14,6 +14,7 @@ import PlaceEditView from './components/views/PlaceEdit.vue'
 import PlaceAddView from './components/views/PlaceAdd.vue'
 import PlaceListView from './components/views/PlaceList.vue'
 import TutorListView from './components/views/TutorList.vue'
+import RoleView from './components/views/Role.vue'
 
 // Routes
 const routes = [
@@ -95,6 +96,12 @@ const routes = [
         path: '/tutor-list',
         component: TutorListView,
         name: '講師/助教列表',
+        meta: {description: '', requiresAuth: true}
+      },
+      {
+        path: '/role',
+        component: RoleView,
+        name: '角色設定',
         meta: {description: '', requiresAuth: true}
       }
     ]

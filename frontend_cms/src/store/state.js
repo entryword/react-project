@@ -10,6 +10,7 @@ export default {
   places: [],
   speakers: [],
   fields: [],
+  roles: [],
   slide_resources: [],
   post_event_result: null,
   post_place_result: null,

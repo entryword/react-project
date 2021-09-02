@@ -35,13 +35,13 @@
         <i class="fa fa-info-circle"></i>
         <span>FAQ</span>
       </a>
-    </router-link>
-    <router-link tag="li" class="pageLink" to="/">
+    </router-link>-->
+    <router-link tag="li" class="pageLink" to="/role">
       <a>
         <i class="fa fa-gears"></i>
         <span>權限設定</span>
       </a>
-    </router-link>-->
+    </router-link>
   </ul>
 </template>
 <script>

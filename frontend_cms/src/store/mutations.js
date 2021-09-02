@@ -52,6 +52,9 @@ export default {
   SET_SPEAKERS (state, speakers){
     state.speakers = speakers;
   },
+  SET_ROLE (state, roles){
+    state.roles = roles;
+  },
   SET_FIELDS (state, fields){
    const modFields = Object.keys(fields).map(key => {
     return {
@@ -78,5 +81,11 @@ export default {
   },
   POST_SLIDE_RESULT(state, postSlideResult){
     state.post_slide_result = postSlideResult;
+  },
+  PUT_ROLE_RESULT(state, putRoleResult){
+    state.put_role_result = putRoleResult;
+  },
+  POST_ROLE_RESULT(state, postRoleResult){
+    state.post_role_result = postRoleResult;
   }
 }
